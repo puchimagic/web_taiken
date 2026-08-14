@@ -48,7 +48,7 @@ function get_db(): PDO
 
 function seed_test_users(PDO $pdo): void
 {
-    $testUsers = ['taro' => 'taro123', 'hanako' => 'hanako123'];
+    $testUsers = ['test' => 'test'];
 
     $insertUser = $pdo->prepare(
         'INSERT OR IGNORE INTO users (username, password_hash) VALUES (:username, :password_hash)'

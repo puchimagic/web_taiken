@@ -41,7 +41,7 @@ if (isset($_SESSION['user_id'])) {
       </form>
 
       <p class="test-account-hint">
-        テスト用アカウント: <code>taro / taro123</code>、<code>hanako / hanako123</code>
+        テスト用アカウント: <code>test / test</code>
       </p>
     </div>
   </div>
