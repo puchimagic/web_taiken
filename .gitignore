@@ -1,0 +1,6 @@
+db/*.sqlite
+cache/*.json
+public/uploads/*
+!public/uploads/.gitkeep
+*.pptx
+.DS_Store

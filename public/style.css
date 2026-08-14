@@ -1,0 +1,292 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --main-color: #4a6cf7;
+  --main-color-hover: #3a56d4;
+  /* コメントアウトを外すとテーマカラーが緑に変わります */
+  /*
+  --main-color: #2ea043;
+  --main-color-hover: #22863a;
+  */
+}
+
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  background: #f4f4f7;
+  margin: 0;
+  padding: 40px 16px;
+  color: #333;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+.header-bar h1 {
+  margin-bottom: 0;
+}
+
+.user-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #555;
+}
+
+.user-bar button {
+  padding: 6px 10px;
+  font-size: 12px;
+  background: #888;
+}
+
+.user-bar button:hover {
+  background: #666;
+}
+
+.login-box {
+  max-width: 360px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-btn {
+  flex: 1;
+  background: none;
+  color: #888;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+  color: var(--main-color);
+  border-bottom: 2px solid var(--main-color);
+}
+
+.tab-btn:hover {
+  background: #f4f4f7;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-form.hidden {
+  display: none;
+}
+
+.auth-error {
+  margin: 0;
+  font-size: 12px;
+  color: #c00;
+  min-height: 16px;
+}
+
+.test-account-hint {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: #888;
+  text-align: center;
+}
+
+.test-account-hint code {
+  background: #f4f4f7;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+input, textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+button {
+  padding: 10px;
+  background: var(--main-color);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--main-color-hover);
+}
+
+.empty {
+  text-align: center;
+  color: #999;
+  padding: 20px 0;
+}
+
+/* 動画一覧 */
+.video-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.video-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.video-card a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.video-thumb {
+  flex: none;
+  width: 80px;
+  height: 56px;
+  background: #222;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 20px;
+}
+
+.video-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.video-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.video-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #888;
+}
+
+/* 動画詳細 */
+.video-player {
+  width: 100%;
+  max-height: 400px;
+  background: #000;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.video-detail {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.video-title-large {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.video-description {
+  margin: 12px 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* コメント */
+.comment-form {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment {
+  background: #fff;
+  padding: 12px 14px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.comment-meta {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.comment-message {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 投稿フォーム */
+.upload-form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
