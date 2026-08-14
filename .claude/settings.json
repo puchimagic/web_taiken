@@ -19,7 +19,8 @@
       "Bash(cd /Users/shoyabushita/Desktop/web_taiken *)",
       "Bash(php -d upload_max_filesize=200M -d post_max_size=200M -S 127.0.0.1:8000 -t public)",
       "Bash(curl -s -c /tmp/c.txt -X POST http://127.0.0.1:8000/auth.php -H \"Content-Type: application/json\" -d '{\"action\":\"login\",\"username\":\"test\",\"password\":\"test\"}')",
-      "Bash(curl -s -X POST http://127.0.0.1:8000/auth.php -H \"Content-Type: application/json\" -d '{\"action\":\"login\",\"username\":\"taro\",\"password\":\"taro123\"}')"
+      "Bash(curl -s -X POST http://127.0.0.1:8000/auth.php -H \"Content-Type: application/json\" -d '{\"action\":\"login\",\"username\":\"taro\",\"password\":\"taro123\"}')",
+      "Bash(python3 -c \"import pptx; print\\('ok', pptx.__version__\\)\")"
     ],
     "additionalDirectories": [
       "/tmp",
