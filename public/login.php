@@ -49,7 +49,8 @@ $prefectures = $pdo->query(
 
         <div class="location-row">
           <input type="text" id="register-postal-code" placeholder="郵便番号（例：1000001）" maxlength="8" inputmode="numeric" style="flex:1; min-width:160px;">
-          <button type="button" id="register-postal-lookup-btn" class="btn-ghost">住所を検索</button>
+          <!-- 体験用：この文字を分かりやすい表示に書き換えてみよう（例：「住所を検索」） -->
+          <button type="button" id="register-postal-lookup-btn" class="btn-ghost">ボタン</button>
         </div>
         <p id="register-postal-lookup-status" class="geo-status"></p>
 
