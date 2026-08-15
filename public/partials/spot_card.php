@@ -3,11 +3,21 @@
  * スポット1件分のカードを描画する部分テンプレート。
  * 呼び出し側で $spot（id, title, file_name, username を含む連想配列）と
  * $spotTags（spot_id => タグ配列）を用意してから include する。
+ *
+ * おすすめページなど、根拠を示したい場合は以下も渡せる（任意）。
+ * - $rankBadges: 1位から順に表示する絵文字バッジの配列（例: ['🥇', '🥈', '🥉']）。
+ *   $spotRank（1始まりの順位）がこの配列の範囲内のときだけバッジを表示する。
+ * - $spotRank: このスポットの順位（1始まり）
+ * - $spot['comment_count']: 渡されていれば「💬n件の口コミ」を表示する
  */
+$rankBadge = (isset($rankBadges, $spotRank) && isset($rankBadges[$spotRank - 1])) ? $rankBadges[$spotRank - 1] : null;
 ?>
 <li class="video-card">
   <a href="show.php?id=<?= (int)$spot['id'] ?>">
     <div class="video-thumb">
+      <?php if ($rankBadge !== null): ?>
+        <span class="rank-badge"><?= $rankBadge ?></span>
+      <?php endif; ?>
       <img class="thumb-img" src="uploads/<?= htmlspecialchars($spot['file_name'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($spot['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
     </div>
   </a>
@@ -21,6 +31,9 @@
       </a>
       <div class="video-meta">
         <a href="user.php?name=<?= urlencode($spot['username']) ?>" class="author"><?= htmlspecialchars($spot['username'], ENT_QUOTES, 'UTF-8') ?></a>
+        <?php if (isset($spot['comment_count'])): ?>
+          <span class="comment-count-badge">💬<?= (int)$spot['comment_count'] ?>件の口コミ</span>
+        <?php endif; ?>
       </div>
       <?php if (!empty($spotTags[$spot['id']])): ?>
         <div class="card-tags">

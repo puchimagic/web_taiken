@@ -5,7 +5,7 @@ $pdo = get_db();
 session_start();
 $loginUsername = $_SESSION['username'] ?? null;
 
-// コメント数が多い順（同数なら新しい投稿順）をおすすめとする
+// コメント数が多い順（同数なら新しい投稿順）に上位20件だけを「おすすめ」とする
 $stmt = $pdo->query(
     'SELECT spots.id, spots.title, spots.file_name, spots.address, spots.created_at, users.username,
             COUNT(comments.id) AS comment_count
@@ -13,7 +13,8 @@ $stmt = $pdo->query(
      JOIN users ON users.id = spots.user_id
      LEFT JOIN comments ON comments.spot_id = spots.id
      GROUP BY spots.id
-     ORDER BY comment_count DESC, spots.id DESC'
+     ORDER BY comment_count DESC, spots.id DESC
+     LIMIT 20'
 );
 $spots = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -37,12 +38,15 @@ require __DIR__ . '/partials/spot_tags.php';
       <?php include __DIR__ . '/partials/search_bar.php'; ?>
 
       <p class="page-title">おすすめのスポット</p>
+      <p class="page-subtitle">口コミが多かった順にトップ<?= count($spots) ?>を紹介します</p>
 
       <ul id="spot-list" class="video-list">
         <?php if (empty($spots)): ?>
           <li class="empty">まだスポットが投稿されていません</li>
         <?php else: ?>
-          <?php foreach ($spots as $spot): ?>
+          <?php $rankBadges = ['🥇', '🥈', '🥉']; ?>
+          <?php foreach ($spots as $index => $spot): ?>
+            <?php $spotRank = $index + 1; ?>
             <?php require __DIR__ . '/partials/spot_card.php'; ?>
           <?php endforeach; ?>
         <?php endif; ?>
