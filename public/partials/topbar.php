@@ -1,6 +1,6 @@
 <div class="topbar">
   <button type="button" id="sidebar-toggle-btn" class="sidebar-toggle-btn" aria-label="メニューを開く">☰</button>
-  <a href="index.php" class="brand"><span class="dot"></span>旅行共有サイト</a>
+  <a href="index.php" class="brand"><span class="dot"></span>キミの旅</a>
   <div class="topbar-spacer"></div>
   <div class="user-bar">
     <?php if (!empty($loginUsername)): ?>

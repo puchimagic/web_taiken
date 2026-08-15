@@ -33,7 +33,7 @@ require __DIR__ . '/partials/spot_tags.php';
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= htmlspecialchars($targetUser['username'], ENT_QUOTES, 'UTF-8') ?> さんの投稿 - 旅行共有サイト</title>
+<title><?= htmlspecialchars($targetUser['username'], ENT_QUOTES, 'UTF-8') ?> さんの投稿 - キミの旅</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>

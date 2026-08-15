@@ -18,13 +18,13 @@ $prefectures = $pdo->query(
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ログイン - 旅行共有サイト</title>
+<title>ログイン - キミの旅</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <div class="login-hero">
-      <a href="index.php" class="brand"><span class="dot"></span>旅行共有サイト</a>
+      <a href="index.php" class="brand"><span class="dot"></span>キミの旅</a>
       <p class="tagline">知る人ぞ知る旅行スポットを見て、投稿しよう</p>
     </div>
 

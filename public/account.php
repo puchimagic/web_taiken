@@ -26,7 +26,7 @@ $prefectures = $pdo->query(
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>アカウント設定 - 旅行共有サイト</title>
+<title>アカウント設定 - キミの旅</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>

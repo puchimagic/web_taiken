@@ -76,7 +76,7 @@ $relatedSpots = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= htmlspecialchars($spot['title'], ENT_QUOTES, 'UTF-8') ?> - 旅行共有サイト</title>
+<title><?= htmlspecialchars($spot['title'], ENT_QUOTES, 'UTF-8') ?> - キミの旅</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>

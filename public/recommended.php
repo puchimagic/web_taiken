@@ -24,7 +24,7 @@ require __DIR__ . '/partials/spot_tags.php';
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>おすすめ - 旅行共有サイト</title>
+<title>おすすめ - キミの旅</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
