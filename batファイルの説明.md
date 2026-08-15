@@ -21,9 +21,9 @@
      残すのはスライド(pptx)、`public/`・`src/`・`db/`（`import/`以外）・`画像/`（アプリの動作に必要）、
      `Webプロサーバー起動.bat`（サーバー再起動用）・`Webプロクリーン.bat`（体験授業の最後にPCを
      片付けたいときに手動実行する用）のみ
-2. **VSCode拡張機能「PHP Server」を確認・インストール**
+2. **VSCode拡張機能「PHP Server」「SQLite Viewer」を確認・インストール**
    - `code` コマンドの有無を確認（無ければエラーで停止）
-   - 拡張機能 `brapifra.phpserver` が、後述の専用extensions-dir（`%VSCODE_EXTENSIONS%`）に入っていなければ `code --extensions-dir "%VSCODE_EXTENSIONS%" --install-extension` でインストール
+   - 拡張機能 `brapifra.phpserver`・`qwtel.sqlite-viewer`（`db/board.sqlite` をVSCode上でダブルクリックしてテーブル閲覧できるようにする。ネイティブの`sqlite3`コマンド等への依存が無く、体験授業の使い捨て環境に向く）が、後述の専用extensions-dir（`%VSCODE_EXTENSIONS%`）にそれぞれ入っていなければ `code --extensions-dir "%VSCODE_EXTENSIONS%" --install-extension` でインストール
 3. **VSCodeでプロジェクト専用プロファイルを使ってフォルダを開く**
    - この端末で普段使っているVSCodeの標準プロファイル（`%APPDATA%\Code`）は使わず、専用の `--user-data-dir`（`%VSCODE_USER_DATA%`、`%APP_BASE%\vscode_data`）を使う。これは普段のVSCodeのレイアウト記憶（サイドバー開閉状態など）や個人的にインストールしている拡張機能から完全に分離された領域
    - 開く前に `VSCODE_USER_DATA` を毎回削除してから作り直し、`User\settings.json` に以下を書き込む

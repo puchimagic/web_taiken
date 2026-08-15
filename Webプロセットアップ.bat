@@ -5,7 +5,7 @@ rem 体験授業の準備用bat。デスクトップに配置してダブルクリックすると、
 rem 1) 実プロジェクト一式（%APP_BASE%\project、OneDriveと同期されない場所）に
 rem    既存のリポジトリがあれば削除してから、改めてclone
 rem    （.gitフォルダ・READMEなど体験授業に不要な開発用ファイルは取得後に削除する）
-rem 2) VSCodeにPHP Server拡張機能が無ければインストール
+rem 2) VSCodeにPHP Server拡張機能・SQLite Viewer拡張機能が無ければインストール
 rem 3) VSCodeでプロジェクト専用プロファイルを使ってフォルダを開く（毎回まっさらな画面になる）
 rem 4) PHPサーバーを起動する
 rem をまとめて行う。
@@ -22,6 +22,7 @@ rem 実行内容はすべて %LOG_FILE% にも記録される（トラブル時の調査用）。
 
 set REPO_URL=https://github.com/puchimagic/web_taiken.git
 set EXTENSION_ID=brapifra.phpserver
+set SQLITE_EXTENSION_ID=qwtel.sqlite-viewer
 
 rem OneDriveの「デスクトップと同期」が有効な環境では、実際にエクスプローラーで
 rem 見えているデスクトップが %USERPROFILE%\Desktop ではなく OneDrive 配下に
@@ -125,7 +126,7 @@ if exist "%TARGET_DIR%\scripts" rd /s /q "%TARGET_DIR%\scripts"
 if exist "%TARGET_DIR%\db\import" rd /s /q "%TARGET_DIR%\db\import"
 
 call :log ""
-call :log "==== 2/4: VSCode拡張機能「PHP Server」を確認します ===="
+call :log "==== 2/4: VSCode拡張機能を確認します ===="
 where code >nul 2>nul
 if errorlevel 1 (
     call :log "エラー: 「code」コマンドが見つかりません。VSCodeがインストールされているか確認してください。"
@@ -139,6 +140,14 @@ if errorlevel 1 (
     call code --extensions-dir "%VSCODE_EXTENSIONS%" --install-extension %EXTENSION_ID% >> "%LOG_FILE%" 2>&1
 ) else (
     call :log "「PHP Server」拡張機能は既にインストールされています。"
+)
+
+call code --extensions-dir "%VSCODE_EXTENSIONS%" --list-extensions | findstr /I /C:"%SQLITE_EXTENSION_ID%" >nul
+if errorlevel 1 (
+    call :log "「SQLite Viewer」拡張機能をインストールします..."
+    call code --extensions-dir "%VSCODE_EXTENSIONS%" --install-extension %SQLITE_EXTENSION_ID% >> "%LOG_FILE%" 2>&1
+) else (
+    call :log "「SQLite Viewer」拡張機能は既にインストールされています。"
 )
 
 call :log ""

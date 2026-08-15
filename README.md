@@ -87,7 +87,7 @@ PHPがインストールされていない、またはPATHが通っていない�
 
 ## 体験授業当日の準備（Windows）
 
-各PCのデスクトップに `Webプロセットアップ.bat` を配置してダブルクリックすると、リポジトリのclone（`%LOCALAPPDATA%\web_taiken\project` に、既にあれば削除して新しくclone）・VSCode拡張機能「PHP Server」の確認とインストール・VSCode専用プロファイルでのフォルダオープン・Google Chromeでのホームページ自動オープン・PHPサーバーの起動までを一括で行います。プロジェクト本体はOneDriveと同期されない場所に置くため、生成・削除がOneDriveの同期に邪魔されません。
+各PCのデスクトップに `Webプロセットアップ.bat` を配置してダブルクリックすると、リポジトリのclone（`%LOCALAPPDATA%\web_taiken\project` に、既にあれば削除して新しくclone）・VSCode拡張機能「PHP Server」「SQLite Viewer」の確認とインストール・VSCode専用プロファイルでのフォルダオープン・Google Chromeでのホームページ自動オープン・PHPサーバーの起動までを一括で行います。プロジェクト本体はOneDriveと同期されない場所に置くため、生成・削除がOneDriveの同期に邪魔されません。
 
 clone後、体験授業の実施に直接関係ない開発用ファイル（`.git`・`README.md`・`CLAUDE.md`・`batファイルの説明.md`・`体験内容.md`・`.gitignore`・`scripts/`・`db/import/`など）は自動で削除されます。残るのはスライド(pptx)、`public/`・`src/`・`db/`（`import/`以外）・`画像/`（アプリの動作に必要なもの）と `Webプロサーバー起動.bat`・`Webプロクリーン.bat` のみです。実行するたびにまっさらな状態から始まるので、生徒が入れ替わるときも同じファイルを再実行するだけです。
 
