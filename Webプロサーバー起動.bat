@@ -3,30 +3,19 @@ setlocal enabledelayedexpansion
 
 rem 接続が切れた等でPHPサーバーだけ再起動したいときに使うbat。
 rem Webプロセットアップ.bat の「5/5: PHPサーバーを起動する」と同じ処理を、
-rem デスクトップに置いたこのファイル単体から実行できるようにしたもの。
+rem このファイル単体から実行できるようにしたもの。
 rem 実行内容はすべて %LOG_FILE% にも記録される（トラブルの調査用）。
+rem
+rem DOCROOTとLOG_FILEは %~dp0（このbat自身のあるフォルダ）基準にしている。
+rem 体験授業ではプロジェクトフォルダ（%LOCALAPPDATA%\web_taiken\project）の
+rem 中でこのbatを実行する想定で、その場合は自動的にそのプロジェクトの
+rem public を指す。通常の開発でリポジトリ直下から実行した場合も同様に
+rem そのリポジトリの public を指す。
 
-rem OneDriveの「デスクトップと同期」が有効な環境では、実際にエクスプローラーで
-rem 見えているデスクトップが %USERPROFILE%\Desktop ではなく OneDrive 配下に
-rem 移動していることがある。Webプロセットアップ.bat と同じロジックで実際の
-rem デスクトップの場所を取得する（取得できない場合は %USERPROFILE%\Desktop に
-rem フォールバック）。
-set "DESKTOP_DIR=%USERPROFILE%\Desktop"
-for /f "usebackq tokens=2,*" %%A in (`reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop 2^>nul`) do set "DESKTOP_DIR=%%B"
-call set "DESKTOP_DIR=%DESKTOP_DIR%"
-
-set HOST=127.0.0.1
-set PORT=8000
-set DOCROOT=%DESKTOP_DIR%\web_taiken\public
-set LOG_FILE=%DESKTOP_DIR%\web_taiken_start_log.txt
+set DOCROOT=%~dp0public
+set LOG_FILE=%~dp0web_taiken_start_log.txt
 
 echo ==== Webプロサーバー起動.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
-
-if not exist "%DOCROOT%" (
-    call :log "エラー: 「%DOCROOT%」が見つかりません。先に「Webプロセットアップ.bat」を実行してください。"
-    set "EXIT_CODE=1"
-    goto :pause_and_exit
-)
 
 call :find_php
 if errorlevel 1 (
@@ -35,11 +24,11 @@ if errorlevel 1 (
     goto :pause_and_exit
 )
 
-call :log "PHP組み込みサーバーを起動します: http://%HOST%:%PORT%/index.php"
+call :log "PHP組み込みサーバーを起動します: http://127.0.0.1:8000/index.php"
 call :log "停止するには Ctrl+C を押してください。"
 echo PHPサーバーを起動しました >> "%LOG_FILE%"
 
-php -d upload_max_filesize=200M -d post_max_size=200M -S %HOST%:%PORT% -t "%DOCROOT%"
+php -d upload_max_filesize=200M -d post_max_size=200M -S 127.0.0.1:8000 -t "%DOCROOT%"
 
 set "EXIT_CODE=0"
 goto :pause_and_exit
