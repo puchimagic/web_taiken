@@ -3,13 +3,15 @@ setlocal enabledelayedexpansion
 
 rem 体験授業の準備用bat。デスクトップに配置してダブルクリックすると、
 rem 1) デスクトップに既存のリポジトリがあれば削除してから、改めてclone
+rem    （.gitフォルダとREADME.mdは体験授業に不要なので取得後に削除する）
 rem 2) VSCodeにPHP Server拡張機能が無ければインストール
-rem 3) スライド(pptx)をデスクトップにコピー
-rem 4) VSCodeでプロジェクトフォルダを開く（前回のサイドバー等のレイアウト状態はリセットする）
+rem 3) スライド(pptx)とサーバー起動用bat(Webプロサーバー起動.bat)をデスクトップに配置
+rem    （コピー後、プロジェクトフォルダ内の元ファイルは削除する）
+rem 4) VSCodeでプロジェクト専用プロファイルを使ってフォルダを開く（毎回まっさらな画面になる）
 rem 5) PHPサーバーを起動する
 rem をまとめて行う。
 rem
-rem 接続が切れてサーバーだけ再起動したい場合は、cloneされたフォルダ内の
+rem 接続が切れてサーバーだけ再起動したい場合は、デスクトップに配置される
 rem Webプロサーバー起動.bat を直接実行すればよい（このbatの5番目の処理と同じ内容）。
 rem
 rem 実行内容はすべて %LOG_FILE% にも記録される（トラブル時の調査用）。
@@ -28,6 +30,13 @@ call set "DESKTOP_DIR=%DESKTOP_DIR%"
 
 set TARGET_DIR=%DESKTOP_DIR%\web_taiken
 set LOG_FILE=%DESKTOP_DIR%\web_taiken_setup_log.txt
+
+rem VSCodeのレイアウト状態（サイドバー開閉など）や拡張機能を、この端末で
+rem 普段使っているVSCodeのプロファイルとは分離するための専用ディレクトリ。
+rem USER_DATAは毎回削除してから作り直す（常にまっさらな画面にするため）。
+rem EXTENSIONSは削除せず使い回す（毎回のPHP Server再インストールを避けるため）。
+set VSCODE_USER_DATA=%DESKTOP_DIR%\.web_taiken_vscode_data
+set VSCODE_EXTENSIONS=%DESKTOP_DIR%\.web_taiken_vscode_extensions
 
 rem 過去バージョンが残した旧ログ（現在は使用しない）があれば削除しておく。
 del /f /q "%DESKTOP_DIR%\web_taiken_cleanup_log.txt" >nul 2>nul
@@ -73,6 +82,17 @@ if errorlevel 1 (
     goto :pause_and_exit
 )
 
+rem 体験授業ではgit操作やREADMEの閲覧は不要で、VSCode上に見えるとかえって
+rem 紛らわしいため、clone直後に取り除いておく（.gitを消してもこのPCの手元の
+rem 履歴が消えるだけで、GitHub側やこのリポジトリ自体には影響しない）。
+if exist "%TARGET_DIR%\.git" (
+    attrib -r "%TARGET_DIR%\.git\*.*" /s /d >nul 2>nul
+    rd /s /q "%TARGET_DIR%\.git"
+)
+if exist "%TARGET_DIR%\README.md" (
+    del /f /q "%TARGET_DIR%\README.md"
+)
+
 call :log ""
 call :log "==== 2/5: VSCode拡張機能「PHP Server」を確認します ===="
 where code >nul 2>nul
@@ -82,45 +102,54 @@ if errorlevel 1 (
     goto :pause_and_exit
 )
 
-call code --list-extensions | findstr /I /C:"%EXTENSION_ID%" >nul
+call code --extensions-dir "%VSCODE_EXTENSIONS%" --list-extensions | findstr /I /C:"%EXTENSION_ID%" >nul
 if errorlevel 1 (
     call :log "「PHP Server」拡張機能をインストールします..."
-    call code --install-extension %EXTENSION_ID% >> "%LOG_FILE%" 2>&1
+    call code --extensions-dir "%VSCODE_EXTENSIONS%" --install-extension %EXTENSION_ID% >> "%LOG_FILE%" 2>&1
 ) else (
     call :log "「PHP Server」拡張機能は既にインストールされています。"
 )
 
 call :log ""
-call :log "==== 3/5: スライドをデスクトップにコピーします ===="
+call :log "==== 3/5: スライドとサーバー起動用batをデスクトップに配置します ===="
 set SLIDE_NAME=Webプログラミング体験_資料.pptx
 if exist "%TARGET_DIR%\%SLIDE_NAME%" (
     copy /Y "%TARGET_DIR%\%SLIDE_NAME%" "%DESKTOP_DIR%\%SLIDE_NAME%" >nul
+    del /f /q "%TARGET_DIR%\%SLIDE_NAME%"
     call :log "デスクトップに「%SLIDE_NAME%」を配置しました。"
 ) else (
     call :log "警告: 「%SLIDE_NAME%」が見つかりませんでした。スキップします。"
 )
 
-call :log ""
-call :log "==== 4/5: VSCodeでプロジェクトを開きます ===="
-rem 前回このフォルダを開いた際のVSCodeのレイアウト状態（サイドバーの開閉状態
-rem など）が残っていると、意図しない画面で開いてしまうことがある。VSCodeの
-rem workspaceStorageから該当ワークスペースの保存状態を削除し、常に既定のレイ
-rem アウト（プライマリサイドバーでエクスプローラーにフォーカス、セカンダリサイド
-rem バーは閉じた状態）で開かれるようにする。
-set "VSCODE_STORAGE=%APPDATA%\Code\User\workspaceStorage"
-if exist "%VSCODE_STORAGE%" (
-    for /f "delims=" %%D in ('dir /b "%VSCODE_STORAGE%" 2^>nul') do (
-        if exist "%VSCODE_STORAGE%\%%D\workspace.json" (
-            findstr /I /C:"web_taiken" "%VSCODE_STORAGE%\%%D\workspace.json" >nul
-            if not errorlevel 1 (
-                call :log "VSCodeの保存済みレイアウト状態を初期化します。"
-                rd /s /q "%VSCODE_STORAGE%\%%D"
-            )
-        )
-    )
+set SERVER_BAT_NAME=Webプロサーバー起動.bat
+if exist "%TARGET_DIR%\%SERVER_BAT_NAME%" (
+    copy /Y "%TARGET_DIR%\%SERVER_BAT_NAME%" "%DESKTOP_DIR%\%SERVER_BAT_NAME%" >nul
+    del /f /q "%TARGET_DIR%\%SERVER_BAT_NAME%"
+    call :log "デスクトップに「%SERVER_BAT_NAME%」を配置しました。"
+) else (
+    call :log "警告: 「%SERVER_BAT_NAME%」が見つかりませんでした。スキップします。"
 )
 
-call code --disable-workspace-trust "%TARGET_DIR%"
+call :log ""
+call :log "==== 4/5: VSCodeでプロジェクトを開きます ===="
+rem 普段使っているVSCodeのプロファイル（%APPDATA%\Code）をそのまま使うと、
+rem 前回このPCで開いていたときのサイドバー開閉状態などのレイアウト記憶や、
+rem この端末に個人的に入れている拡張機能がそのまま引き継がれてしまう。
+rem このプロジェクト専用のuser-data-dirを使い、開く前に毎回削除してから
+rem 作り直すことで、常にVSCode本来の初期状態（プライマリサイドバーで
+rem エクスプローラーにフォーカス、セカンダリサイドバーは閉じた状態、余計な
+rem 拡張機能のパネルも出ない）で開かれるようにする。
+if exist "%VSCODE_USER_DATA%" rd /s /q "%VSCODE_USER_DATA%"
+md "%VSCODE_USER_DATA%\User" >nul 2>nul
+attrib +h "%VSCODE_USER_DATA%" >nul 2>nul
+attrib +h "%VSCODE_EXTENSIONS%" >nul 2>nul
+> "%VSCODE_USER_DATA%\User\settings.json" (
+    echo {
+    echo   "workbench.startupEditor": "none"
+    echo }
+)
+
+call code --disable-workspace-trust --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"
 
 call :log ""
 call :log "==== 5/5: PHPサーバーを起動します ===="
