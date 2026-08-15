@@ -39,8 +39,6 @@ if ($message === '') {
 }
 */
 
-// 体験用：/* と */ を外すとコメント投稿が有効になります
-/*
 $stmt = $pdo->prepare('INSERT INTO comments (spot_id, user_id, message) VALUES (:spot_id, :user_id, :message)');
 $stmt->execute(['spot_id' => $spotId, 'user_id' => $currentUserId, 'message' => $message]);
 $commentId = (int)$pdo->lastInsertId();
@@ -53,8 +51,3 @@ echo json_encode([
     'message' => $message,
     'created_at' => $createdAt,
 ]);
-exit;
-*/
-
-http_response_code(500);
-echo json_encode(['error' => 'コメント投稿はまだ準備中です']);
