@@ -1,28 +1,34 @@
-# 動画共有サイト
+# 旅行共有サイト
 
-PHP + SQLite + HTML/CSS/JS で作ったシンプルな動画共有サイトです。
+PHP + SQLite + HTML/CSS/JS で作った「知る人ぞ知る旅行スポット」共有サイトです。予約機能はなく、個人が写真とタグでスポットを投稿・閲覧できます。
 
 ## ページ構成
 
 - `login.php` — ログイン／新規登録ページ
-- `index.php` — ホーム（投稿された動画の一覧）ページ
-- `show.php?id=...` — 動画詳細ページ（視聴＋コメント一覧・コメント投稿）
-- `upload.php` — 動画投稿（アップロード）ページ
+- `index.php` — ホーム（投稿されたスポットの一覧・タグ絞り込み）ページ
+- `show.php?id=...` — スポット詳細ページ（写真・位置情報・タグ・コメント一覧・コメント投稿）
+- `upload.php` — スポット投稿ページ（画像アップロード・現在地取得・タグ入力）
 
 ## 構成
 
 - `public/` — Webサーバーの公開ルート（PHP Server拡張はここを開いて起動する）
   - `login.php`, `login.js` — ログイン・新規登録
   - `auth.php` — ログイン・新規登録・ログアウトAPI
-  - `index.php`, `index.js` — 動画一覧
-  - `show.php`, `show.js` — 動画詳細・コメント
+  - `index.php`, `index.js` — スポット一覧・タグ絞り込み
+  - `show.php`, `show.js` — スポット詳細・コメント
   - `comments.php` — コメント投稿API
-  - `upload.php`, `upload.js` — 動画投稿フォーム
-  - `videos.php` — 動画投稿（アップロード）API
-  - `uploads/` — アップロードされた動画ファイルの保存先
+  - `upload.php`, `upload.js` — スポット投稿フォーム（現在地取得を含む）
+  - `spots.php` — スポット投稿（画像アップロード）API
+  - `geocode.php` — 緯度経度から住所を取得する逆ジオコーディングAPI（OpenStreetMap Nominatimを利用）
+  - `partials/` — 共通のトップバー・サイドバー
+  - `uploads/` — アップロードされた画像ファイルの保存先
   - `style.css`
 - `src/db.php` — SQLite接続・テーブル初期化
 - `db/board.sqlite` — SQLiteデータベース本体（初回アクセス時に自動生成）
+
+## 位置情報機能について
+
+投稿フォームの「現在地を取得」ボタンは、ブラウザのGeolocation APIを使って緯度・経度を取得します（PCブラウザでも動作しますが、初回はブラウザの位置情報利用の許可が必要です）。取得した緯度・経度は `geocode.php` 経由で外部の住所検索API（OpenStreetMap Nominatim）に渡され、住所テキストに変換されて自動入力されます。
 
 ## 動かし方（VSCode拡張 PHP Server）
 

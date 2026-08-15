@@ -18,25 +18,37 @@ function get_db(): PDO
     );
 
     $pdo->exec(
-        "CREATE TABLE IF NOT EXISTS videos (
+        "CREATE TABLE IF NOT EXISTS spots (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             title TEXT NOT NULL,
             description TEXT NOT NULL DEFAULT '',
             file_name TEXT NOT NULL,
+            address TEXT NOT NULL DEFAULT '',
+            latitude REAL,
+            longitude REAL,
             created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
             FOREIGN KEY (user_id) REFERENCES users(id)
         )"
     );
 
     $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS spot_tags (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            spot_id INTEGER NOT NULL,
+            tag TEXT NOT NULL,
+            FOREIGN KEY (spot_id) REFERENCES spots(id)
+        )"
+    );
+
+    $pdo->exec(
         "CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            video_id INTEGER NOT NULL,
+            spot_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             message TEXT NOT NULL,
             created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-            FOREIGN KEY (video_id) REFERENCES videos(id),
+            FOREIGN KEY (spot_id) REFERENCES spots(id),
             FOREIGN KEY (user_id) REFERENCES users(id)
         )"
     );

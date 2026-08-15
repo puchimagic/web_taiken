@@ -18,7 +18,10 @@ if (isset($_SESSION['user_id'])) {
 </head>
 <body>
   <div class="container">
-    <h1>動画共有サイト</h1>
+    <div class="login-hero">
+      <span class="brand"><span class="dot"></span>動画共有サイト</span>
+      <p class="tagline">みんなの動画を見て、投稿しよう</p>
+    </div>
 
     <div class="login-box">
       <div class="tabs">

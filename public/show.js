@@ -1,7 +1,7 @@
 const form = document.getElementById('comment-form');
 const messageInput = document.getElementById('comment-message');
 const errorEl = document.getElementById('comment-error');
-const videoId = form.dataset.videoId;
+const spotId = form.dataset.spotId;
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -13,7 +13,7 @@ form.addEventListener('submit', async (e) => {
   const res = await fetch('comments.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ video_id: Number(videoId), message }),
+    body: JSON.stringify({ spot_id: Number(spotId), message }),
   });
 
   if (res.ok) {
