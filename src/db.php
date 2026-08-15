@@ -41,7 +41,50 @@ function get_db(): PDO
         migrate_schema($pdo);
     }
 
+    // public/uploads/ は .gitignore 対象のため git 管理外で、DBファイル
+    // （board.sqlite）だけをcloneした場合は $isNewDatabase が false になり
+    // 上のシード処理が丸ごとスキップされる。そのため画像コピーはDBの
+    // 新規作成有無と切り離し、毎回（ただしuploads内が空の時だけ）実行する。
+    sync_seed_images();
+
     return $pdo;
+}
+
+// 画像/ ディレクトリから public/uploads/ へシード画像をコピーする。
+// public/uploads/ に何かファイルがあれば既にコピー済みとみなして即returnする
+// ため、通常のリクエストではglob呼び出し1回だけの軽量な判定で済む。
+function sync_seed_images(): void
+{
+    $uploadDir = __DIR__ . '/../public/uploads';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+    if (glob($uploadDir . '/*') !== []) {
+        return;
+    }
+
+    $sourceImageDir = __DIR__ . '/../画像';
+    foreach (['seed_spots.json', 'seed_spots_new.json'] as $jsonFile) {
+        $jsonPath = __DIR__ . '/../db/' . $jsonFile;
+        if (!file_exists($jsonPath)) {
+            continue;
+        }
+        $spots = json_decode(file_get_contents($jsonPath), true);
+        if (!is_array($spots)) {
+            continue;
+        }
+        foreach ($spots as $spot) {
+            $fileName = $spot['file'] ?? '';
+            if ($fileName === '') {
+                continue;
+            }
+            $sourcePath = $sourceImageDir . '/' . $fileName;
+            $destPath = $uploadDir . '/' . $fileName;
+            if (file_exists($sourcePath) && !file_exists($destPath)) {
+                copy($sourcePath, $destPath);
+            }
+        }
+    }
 }
 
 // 既存DBに後から追加したカラム・テーブルを補う軽量マイグレーション。
@@ -205,7 +248,7 @@ function seed_sample_authors(PDO $pdo): void
 }
 
 // db/seed_spots.json と db/seed_spots_new.json から初期スポットデータを投入する（初回起動時のみ）。
-// 画像は 画像/ ディレクトリから public/uploads/ へコピーする。
+// 画像のコピーは sync_seed_images() が別途担当する。
 // 全体の1件目は test ユーザー、残りはサンプル投稿者にラウンドロビンで割り当てる。
 function seed_spots_from_json(PDO $pdo): void
 {
@@ -236,12 +279,6 @@ function seed_spots_from_json(PDO $pdo): void
     $authorStmt->execute(SAMPLE_AUTHOR_USERNAMES);
     $authorIds = $authorStmt->fetchAll(PDO::FETCH_COLUMN);
 
-    $sourceImageDir = __DIR__ . '/../画像';
-    $uploadDir = __DIR__ . '/../public/uploads';
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-    }
-
     $insertSpot = $pdo->prepare(
         'INSERT INTO spots (user_id, title, description, file_name, address, latitude, longitude, created_at)
          VALUES (:user_id, :title, :description, :file_name, :address, :latitude, :longitude, :created_at)'
@@ -252,12 +289,6 @@ function seed_spots_from_json(PDO $pdo): void
         $fileName = $spot['file'] ?? '';
         if ($fileName === '') {
             continue;
-        }
-
-        $sourcePath = $sourceImageDir . '/' . $fileName;
-        $destPath = $uploadDir . '/' . $fileName;
-        if (file_exists($sourcePath) && !file_exists($destPath)) {
-            copy($sourcePath, $destPath);
         }
 
         // 1件目は test ユーザー、残りはサンプル投稿者にラウンドロビンで割り当てる

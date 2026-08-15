@@ -15,9 +15,19 @@ rem
 rem 実行内容はすべて %LOG_FILE% にも記録される（トラブル時の調査用）。
 
 set REPO_URL=https://github.com/puchimagic/web_taiken.git
-set TARGET_DIR=%USERPROFILE%\Desktop\web_taiken
 set EXTENSION_ID=brapifra.phpserver
-set LOG_FILE=%USERPROFILE%\Desktop\web_taiken_setup_log.txt
+
+rem OneDriveの「デスクトップと同期」が有効な環境では、実際にエクスプローラーで
+rem 見えているデスクトップが %USERPROFILE%\Desktop ではなく OneDrive 配下に
+rem 移動していることがある。%USERPROFILE%\Desktop 決め打ちだとユーザーから
+rem 見えない場所にファイルが作られてしまうため、レジストリから実際のデスクトップの
+rem 場所を取得する（取得できない場合は %USERPROFILE%\Desktop にフォールバック）。
+set "DESKTOP_DIR=%USERPROFILE%\Desktop"
+for /f "usebackq tokens=2,*" %%A in (`reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop 2^>nul`) do set "DESKTOP_DIR=%%B"
+call set "DESKTOP_DIR=%DESKTOP_DIR%"
+
+set TARGET_DIR=%DESKTOP_DIR%\web_taiken
+set LOG_FILE=%DESKTOP_DIR%\web_taiken_setup_log.txt
 
 echo ==== setup-win.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
 
@@ -62,7 +72,7 @@ call :log ""
 call :log "==== 3/5: スライドをデスクトップにコピーします ===="
 set SLIDE_NAME=Webプログラミング体験_資料.pptx
 if exist "%TARGET_DIR%\%SLIDE_NAME%" (
-    copy /Y "%TARGET_DIR%\%SLIDE_NAME%" "%USERPROFILE%\Desktop\%SLIDE_NAME%" >nul
+    copy /Y "%TARGET_DIR%\%SLIDE_NAME%" "%DESKTOP_DIR%\%SLIDE_NAME%" >nul
     call :log "デスクトップに「%SLIDE_NAME%」を配置しました。"
 ) else (
     call :log "警告: 「%SLIDE_NAME%」が見つかりませんでした。スキップします。"
@@ -70,7 +80,7 @@ if exist "%TARGET_DIR%\%SLIDE_NAME%" (
 
 call :log ""
 call :log "==== 4/5: VSCodeでプロジェクトを開きます ===="
-call code "%TARGET_DIR%"
+call code --disable-workspace-trust "%TARGET_DIR%"
 
 call :log ""
 call :log "==== 5/5: PHPサーバーを起動します ===="
