@@ -52,7 +52,8 @@ $loginUsername = $_SESSION['username'];
           <input type="file" id="image-file" name="image" accept="image/*" required>
         </div>
         <p id="upload-error" class="auth-error"></p>
-        <button type="submit">投稿する</button>
+        <!-- 体験用：この文字を分かりやすい表示に書き換えてみよう（例：「投稿する」） -->
+        <button type="submit">ボタン</button>
       </form>
     </div>
   </div>

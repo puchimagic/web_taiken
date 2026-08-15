@@ -12,7 +12,6 @@ if (form) {
     errorEl.textContent = '';
 
     const message = messageInput.value.trim();
-    if (!message) return;
 
     const res = await fetch('comments.php', {
       method: 'POST',
