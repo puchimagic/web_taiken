@@ -31,6 +31,10 @@ $rankBadge = (isset($rankBadges, $spotRank) && isset($rankBadges[$spotRank - 1])
       </a>
       <div class="video-meta">
         <a href="user.php?name=<?= urlencode($spot['username']) ?>" class="author"><?= htmlspecialchars($spot['username'], ENT_QUOTES, 'UTF-8') ?></a>
+        <?php if (isset($spot['created_at'])): ?>
+          <span class="dot-sep"></span>
+          <span class="post-date"><?= htmlspecialchars(substr($spot['created_at'], 0, 10), ENT_QUOTES, 'UTF-8') ?></span>
+        <?php endif; ?>
         <?php if (isset($spot['comment_count'])): ?>
           <span class="comment-count-badge">💬<?= (int)$spot['comment_count'] ?>件の口コミ</span>
         <?php endif; ?>

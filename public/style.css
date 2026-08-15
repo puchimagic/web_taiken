@@ -742,6 +742,10 @@ button:hover {
   font-weight: 600;
 }
 
+.post-date {
+  color: var(--sub);
+}
+
 .video-meta .dot-sep {
   width: 3px;
   height: 3px;
