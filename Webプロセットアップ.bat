@@ -161,7 +161,7 @@ md "%VSCODE_USER_DATA%\User" >nul 2>nul
     echo }
 )
 
-start "" /max code --disable-workspace-trust --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"
+call code --disable-workspace-trust --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"
 
 call :log ""
 call :log "==== 4/4: PHPサーバーを起動します ===="

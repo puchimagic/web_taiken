@@ -32,7 +32,9 @@
      - `"workbench.secondarySideBar.defaultVisibility": "hidden"` — VSCode 1.100以降、ワークスペースを開くとセカンダリサイドバー（VSCode組み込みのChatパネル等）が既定で表示されるようになったため、明示的に非表示にする
      - `"chat.commandCenter.enabled": false` — タイトルバーのChatアイコンも非表示にする
    - 拡張機能用の `--extensions-dir`（`%VSCODE_EXTENSIONS%`、`%APP_BASE%\vscode_extensions`）は削除せず使い回すので、「PHP Server」拡張機能の再インストールは初回のみで済む
-   - `start "" /max code --disable-workspace-trust --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"` でclone先フォルダをVSCodeで開く（ワークスペース信頼ダイアログも省略）。`code` はCLIとしては `--maximized` 相当の公式フラグを持たないため、`start /max` でプロセス起動時のウィンドウ表示状態を「最大化」に指定している（`start` は常に別プロセスとして起動するため、`call`無しで直接batを呼ぶ場合のような「呼び出し元が終了してしまう」問題も起きない）
+   - `call code --disable-workspace-trust --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"` でclone先フォルダをVSCodeで開く（ワークスペース信頼ダイアログも省略）
+
+⚠️ 以前は `start "" /max code ...` として、`code` に `--maximized` 相当の公式フラグが無い代わりに `start /max` でウィンドウを最大化しようとしていたが、`code` の実体はWindowsでは `code.cmd`（バッチファイル）であり、`start` 経由でバッチファイルを実行すると、それを解釈するための新しいcmd.exeウィンドウが余分に開いてしまう（実機で確認）。最大化効果自体も実機で確認できなかったため、`call code ...` に戻して撤去した。VSCodeは開いた時点のウィンドウサイズのままになる。
 4. **PHPサーバーを起動する**
    - `php` コマンドが無ければ、`:find_php` 処理でよくあるインストール先
      （`C:\php`、`C:\xampp\php`、`%LOCALAPPDATA%\Programs\php`）を探し、
