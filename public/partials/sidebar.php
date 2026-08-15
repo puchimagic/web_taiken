@@ -1,4 +1,5 @@
-<div class="sidebar">
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="sidebar" id="sidebar">
   <div class="side-group">
     <a class="side-link<?= ($active ?? '') === 'home' ? ' active' : '' ?>" href="index.php">
       <span class="side-icon">🏠</span>ホーム

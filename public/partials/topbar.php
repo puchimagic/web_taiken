@@ -1,4 +1,5 @@
 <div class="topbar">
+  <button type="button" id="sidebar-toggle-btn" class="sidebar-toggle-btn" aria-label="メニューを開く">☰</button>
   <a href="index.php" class="brand"><span class="dot"></span>旅行共有サイト</a>
   <form class="search-bar" action="index.php" method="get">
     <div class="search-input-wrap">
@@ -20,4 +21,4 @@
     <?php endif; ?>
   </div>
 </div>
-<script src="partials/topbar.js"></script>
+<script src="partials/topbar.js" defer></script>
