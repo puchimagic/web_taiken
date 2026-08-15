@@ -11,77 +11,97 @@ rem をまとめて行う。
 rem
 rem 接続が切れてサーバーだけ再起動したい場合は、cloneされたフォルダ内の
 rem start-win.bat を直接実行すればよい（このbatの5番目の処理と同じ内容）。
+rem
+rem 実行内容はすべて %LOG_FILE% にも記録される（トラブル時の調査用）。
 
 set REPO_URL=https://github.com/puchimagic/web_taiken.git
 set TARGET_DIR=%USERPROFILE%\Desktop\web_taiken
 set EXTENSION_ID=brapifra.phpserver
+set LOG_FILE=%USERPROFILE%\Desktop\web_taiken_setup_log.txt
 
-echo ==== 1/5: リポジトリを取得します ====
+echo ==== setup-win.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
+
+call :log "==== 1/5: リポジトリを取得します ===="
 where git >nul 2>nul
 if errorlevel 1 (
-    echo エラー: "git" コマンドが見つかりません。Gitをインストールし、PATHに追加してください。
-    pause
-    exit /b 1
+    call :log "エラー: \"git\" コマンドが見つかりません。Gitをインストールし、PATHに追加してください。"
+    call :pause_and_exit 1
 )
 
 if exist "%TARGET_DIR%" (
-    echo フォルダ "%TARGET_DIR%" はすでに存在するため、cloneをスキップします。
+    call :log "フォルダ \"%TARGET_DIR%\" はすでに存在するため、cloneをスキップします。"
 ) else (
-    git clone "%REPO_URL%" "%TARGET_DIR%"
+    call :log "git clone %REPO_URL% %TARGET_DIR%"
+    git clone "%REPO_URL%" "%TARGET_DIR%" >> "%LOG_FILE%" 2>&1
     if errorlevel 1 (
-        echo エラー: git clone に失敗しました。
-        pause
-        exit /b 1
+        call :log "エラー: git clone に失敗しました。詳細は %LOG_FILE% を確認してください。"
+        call :pause_and_exit 1
     )
 )
 
-echo.
-echo ==== 2/5: VSCode拡張機能 "PHP Server" を確認します ====
+call :log ""
+call :log "==== 2/5: VSCode拡張機能 \"PHP Server\" を確認します ===="
 where code >nul 2>nul
 if errorlevel 1 (
-    echo エラー: "code" コマンドが見つかりません。VSCodeがインストールされているか確認してください。
-    pause
-    exit /b 1
+    call :log "エラー: \"code\" コマンドが見つかりません。VSCodeがインストールされているか確認してください。"
+    call :pause_and_exit 1
 )
 
 code --list-extensions | findstr /I /C:"%EXTENSION_ID%" >nul
 if errorlevel 1 (
-    echo "PHP Server" 拡張機能をインストールします...
-    code --install-extension %EXTENSION_ID%
+    call :log "\"PHP Server\" 拡張機能をインストールします..."
+    code --install-extension %EXTENSION_ID% >> "%LOG_FILE%" 2>&1
 ) else (
-    echo "PHP Server" 拡張機能は既にインストールされています。
+    call :log "\"PHP Server\" 拡張機能は既にインストールされています。"
 )
 
-echo.
-echo ==== 3/5: スライドをデスクトップにコピーします ====
+call :log ""
+call :log "==== 3/5: スライドをデスクトップにコピーします ===="
 set SLIDE_NAME=Webプログラミング体験_資料.pptx
 if exist "%TARGET_DIR%\%SLIDE_NAME%" (
     copy /Y "%TARGET_DIR%\%SLIDE_NAME%" "%USERPROFILE%\Desktop\%SLIDE_NAME%" >nul
-    echo デスクトップに "%SLIDE_NAME%" を配置しました。
+    call :log "デスクトップに \"%SLIDE_NAME%\" を配置しました。"
 ) else (
-    echo 警告: "%SLIDE_NAME%" が見つかりませんでした。スキップします。
+    call :log "警告: \"%SLIDE_NAME%\" が見つかりませんでした。スキップします。"
 )
 
-echo.
-echo ==== 4/5: VSCodeでプロジェクトを開きます ====
+call :log ""
+call :log "==== 4/5: VSCodeでプロジェクトを開きます ===="
 code "%TARGET_DIR%"
 
-echo.
-echo ==== 5/5: PHPサーバーを起動します ====
+call :log ""
+call :log "==== 5/5: PHPサーバーを起動します ===="
 call :find_php
 if errorlevel 1 (
-    echo エラー: "php" コマンドが見つかりません。PHPをインストールしてください。
-    pause
-    exit /b 1
+    call :log "エラー: \"php\" コマンドが見つかりません。PHPをインストールしてください。"
+    call :pause_and_exit 1
 )
 
-echo http://127.0.0.1:8000/login.php をブラウザで開いてください。
-echo 停止するには Ctrl+C を押してください。
+call :log "http://127.0.0.1:8000/login.php をブラウザで開いてください。"
+call :log "停止するには Ctrl+C を押してください。"
+echo PHPサーバーを起動しました >> "%LOG_FILE%"
 php -d upload_max_filesize=200M -d post_max_size=200M -S 127.0.0.1:8000 -t "%TARGET_DIR%\public"
 
+call :pause_and_exit 0
+
+rem ---------------------------------------------------------
+rem 画面表示とログファイルへの記録を同時に行うサブルーチン。
+rem 引数はダブルクォートで囲んで渡す（空行を出したい場合は ""）。
+rem ---------------------------------------------------------
+:log
+echo %~1
+echo %~1 >> "%LOG_FILE%"
+exit /b 0
+
+rem ---------------------------------------------------------
+rem ログを保存した旨を表示してpauseし、指定した終了コードで終了する。
+rem ---------------------------------------------------------
+:pause_and_exit
+echo.
+echo ログを "%LOG_FILE%" に保存しました。
 pause
 endlocal
-exit /b 0
+exit /b %~1
 
 rem ---------------------------------------------------------
 rem PHPコマンドの検出。PATHになければよくあるインストール先を
@@ -93,13 +113,13 @@ rem ---------------------------------------------------------
 where php >nul 2>nul
 if not errorlevel 1 exit /b 0
 
-echo "php" コマンドが見つからないため、インストール先を探します...
+call :log "\"php\" コマンドが見つからないため、インストール先を探します..."
 
 set PHP_CANDIDATES=C:\php;C:\xampp\php;%LOCALAPPDATA%\Programs\php
 
 for %%D in (%PHP_CANDIDATES%) do (
     if exist "%%D\php.exe" (
-        echo PHPを発見しました: %%D
+        call :log "PHPを発見しました: %%D"
         set "PATH=%%D;%PATH%"
 
         rem ユーザー環境変数PATHのみを読み取って追記する（システムPATHには触れない）
@@ -117,5 +137,5 @@ for %%D in (%PHP_CANDIDATES%) do (
     )
 )
 
-echo PHPが見つかりませんでした。C:\php や C:\xampp\php などに配置してください。
+call :log "PHPが見つかりませんでした。C:\php や C:\xampp\php などに配置してください。"
 exit /b 1
