@@ -9,13 +9,9 @@ html {
 }
 
 :root {
+  /* 体験用：好きな色に書き換えてみよう（例：#1d4e6b、#2e7d4f など） */
   --main-color: #b5551f;
   --main-color-hover: #96461a;
-  /* コメントアウトを外すとテーマカラーが藍色に変わります */
-  /*
-  --main-color: #1d4e6b;
-  --main-color-hover: #163d54;
-  */
   --bg: #f6f1e6;
   --surface: #fffdf8;
   --surface-2: #efe6d3;
