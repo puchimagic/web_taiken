@@ -1,8 +1,8 @@
-db/*.sqlite
 db/import/*.csv
 db/import/*.zip
 public/uploads/*
 !public/uploads/.gitkeep
-*.pptx
+2024*.pptx
+2026*.pptx
 .DS_Store
 .claude/settings.json
