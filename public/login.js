@@ -77,6 +77,7 @@ registerForm.addEventListener('submit', async (e) => {
 
   const username = document.getElementById('register-username').value.trim();
   const password = document.getElementById('register-password').value;
+  const email = document.getElementById('register-email').value.trim();
   const phone = document.getElementById('register-phone').value.trim();
   const postalCode = registerPostalCodeInput.value.trim();
   const prefecture = registerPrefectureSelect.value;
@@ -90,6 +91,7 @@ registerForm.addEventListener('submit', async (e) => {
       action: 'register',
       username,
       password,
+      email,
       phone,
       postal_code: postalCode,
       prefecture,

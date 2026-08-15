@@ -37,6 +37,8 @@ require __DIR__ . '/partials/spot_tags.php';
     <?php $active = 'mine'; include __DIR__ . '/partials/sidebar.php'; ?>
 
     <div class="main-area">
+      <?php include __DIR__ . '/partials/search_bar.php'; ?>
+
       <p class="page-title">投稿したスポット（<?= count($spots) ?>件）</p>
 
       <ul id="spot-list" class="video-list">

@@ -44,6 +44,7 @@ $prefectures = $pdo->query(
       <form id="register-form" class="auth-form hidden">
         <input type="text" id="register-username" placeholder="ユーザー名" required>
         <input type="password" id="register-password" placeholder="パスワード" required>
+        <input type="email" id="register-email" placeholder="メールアドレス（例：taro@example.com）">
         <input type="tel" id="register-phone" placeholder="電話番号（例：09012345678）">
 
         <div class="location-row">

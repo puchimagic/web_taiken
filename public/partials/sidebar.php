@@ -17,6 +17,9 @@
       <a class="side-link<?= ($active ?? '') === 'mine' ? ' active' : '' ?>" href="mine.php">
         <span class="side-icon">📍</span>投稿したスポット
       </a>
+      <a class="side-link<?= ($active ?? '') === 'account' ? ' active' : '' ?>" href="account.php">
+        <span class="side-icon">⚙️</span>ユーザー情報編集
+      </a>
     </div>
   <?php endif; ?>
 </div>

@@ -11,7 +11,7 @@ $loginUsername = $_SESSION['username'];
 $currentUserId = (int)$_SESSION['user_id'];
 
 $stmt = $pdo->prepare(
-    'SELECT username, postal_code, prefecture, city, address_line, phone FROM users WHERE id = :id'
+    'SELECT username, email, postal_code, prefecture, city, address_line, phone FROM users WHERE id = :id'
 );
 $stmt->execute(['id' => $currentUserId]);
 $profile = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -33,7 +33,7 @@ $prefectures = $pdo->query(
   <?php include __DIR__ . '/partials/topbar.php'; ?>
 
   <div class="page-shell">
-    <?php $active = ''; include __DIR__ . '/partials/sidebar.php'; ?>
+    <?php $active = 'account'; include __DIR__ . '/partials/sidebar.php'; ?>
 
     <div class="main-area narrow">
       <p class="page-title">アカウント設定</p>
@@ -44,6 +44,9 @@ $prefectures = $pdo->query(
 
         <label>新しいパスワード（変更する場合のみ入力）</label>
         <input type="password" id="account-new-password" name="new_password" placeholder="変更しない場合は空欄のまま">
+
+        <label>メールアドレス</label>
+        <input type="email" id="account-email" name="email" value="<?= htmlspecialchars($profile['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="taro@example.com" maxlength="255">
 
         <label>電話番号</label>
         <input type="tel" id="account-phone" name="phone" value="<?= htmlspecialchars($profile['phone'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="09012345678" maxlength="20">

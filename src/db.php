@@ -98,6 +98,7 @@ function migrate_schema(PDO $pdo): void
         'city' => "ALTER TABLE users ADD COLUMN city TEXT NOT NULL DEFAULT ''",
         'address_line' => "ALTER TABLE users ADD COLUMN address_line TEXT NOT NULL DEFAULT ''",
         'phone' => "ALTER TABLE users ADD COLUMN phone TEXT NOT NULL DEFAULT ''",
+        'email' => "ALTER TABLE users ADD COLUMN email TEXT NOT NULL DEFAULT ''",
     ];
     foreach ($profileColumns as $column => $sql) {
         if (!in_array($column, $columns, true)) {
@@ -107,6 +108,32 @@ function migrate_schema(PDO $pdo): void
 
     create_postal_codes_table($pdo);
     create_reactions_table($pdo);
+    backfill_missing_profiles($pdo);
+}
+
+// 既存DBに元々いたユーザー（プロフィール未入力のまま作られたアカウント）に、
+// postal_codesと整合する住所・電話番号・メールアドレスを一括で補う。
+// email・postal_code等がまだ空文字のユーザーだけが対象なので、既に入力済みの
+// プロフィールを上書きすることはない。
+function backfill_missing_profiles(PDO $pdo): void
+{
+    $users = $pdo->query(
+        "SELECT id FROM users WHERE email = '' AND postal_code = '' ORDER BY id ASC"
+    )->fetchAll(PDO::FETCH_COLUMN);
+    if (empty($users)) {
+        return;
+    }
+
+    $updateStmt = $pdo->prepare(
+        'UPDATE users SET email = :email, phone = :phone, postal_code = :postal_code,
+            prefecture = :prefecture, city = :city, address_line = :address_line
+         WHERE id = :id'
+    );
+
+    foreach ($users as $seedIndex => $userId) {
+        $profile = build_seed_profile($pdo, (int)$seedIndex);
+        $updateStmt->execute(array_merge($profile, ['id' => $userId]));
+    }
 }
 
 function create_reactions_table(PDO $pdo): void
@@ -151,6 +178,7 @@ function init_schema(PDO $pdo): void
             city TEXT NOT NULL DEFAULT '',
             address_line TEXT NOT NULL DEFAULT '',
             phone TEXT NOT NULL DEFAULT '',
+            email TEXT NOT NULL DEFAULT '',
             created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
         )"
     );
@@ -207,19 +235,69 @@ function init_schema(PDO $pdo): void
     create_postal_codes_table($pdo);
 }
 
+// 番地・建物名のダミー候補（postal_codesの町域名だけでは番地が無いため別途組み合わせる）
+const SEED_PROFILE_ADDRESS_LINES = [
+    '1-2-3', '2-15-1', '3-4', '5-6-7 〇〇マンション101', '1-1',
+    '4-8-2', '2-3', '6-1-9', '1-14-5 〇〇ビル3F', '3-7',
+];
+
+// postal_codesテーブル（郵便番号データ）から実在する郵便番号・都道府県・市区町村の組み合わせを
+// $seedIndex 件目としてOFFSET取得し、住所として矛盾がないダミープロフィールを組み立てる。
+// postal_codesが未インポート（0件）の場合はダミーの固定値にフォールバックする。
+function build_seed_profile(PDO $pdo, int $seedIndex): array
+{
+    static $totalRows = null;
+    if ($totalRows === null) {
+        $totalRows = (int)$pdo->query('SELECT COUNT(*) FROM postal_codes')->fetchColumn();
+    }
+
+    $phone = sprintf('090%08d', 10000000 + ($seedIndex * 7919) % 90000000);
+    $email = sprintf('user%02d@example.com', $seedIndex + 1);
+    $addressLine = SEED_PROFILE_ADDRESS_LINES[$seedIndex % count(SEED_PROFILE_ADDRESS_LINES)];
+
+    if ($totalRows === 0) {
+        return [
+            'postal_code' => '',
+            'prefecture' => '',
+            'city' => '',
+            'address_line' => '',
+            'phone' => $phone,
+            'email' => $email,
+        ];
+    }
+
+    $offset = ($seedIndex * 4177) % $totalRows;
+    $stmt = $pdo->prepare('SELECT postal_code, prefecture, city, town FROM postal_codes LIMIT 1 OFFSET :offset');
+    $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return [
+        'postal_code' => $row['postal_code'],
+        'prefecture' => $row['prefecture'],
+        'city' => $row['city'] . $row['town'],
+        'address_line' => $addressLine,
+        'phone' => $phone,
+        'email' => $email,
+    ];
+}
+
 function seed_test_users(PDO $pdo): void
 {
     $testUsers = ['test' => 'test'];
 
     $insertUser = $pdo->prepare(
-        'INSERT OR IGNORE INTO users (username, password_hash) VALUES (:username, :password_hash)'
+        'INSERT OR IGNORE INTO users (username, password_hash, postal_code, prefecture, city, address_line, phone, email)
+         VALUES (:username, :password_hash, :postal_code, :prefecture, :city, :address_line, :phone, :email)'
     );
 
+    $seedIndex = 0;
     foreach ($testUsers as $username => $password) {
-        $insertUser->execute([
+        $profile = build_seed_profile($pdo, $seedIndex++);
+        $insertUser->execute(array_merge($profile, [
             'username' => $username,
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
-        ]);
+        ]));
     }
 }
 
@@ -236,14 +314,18 @@ const SAMPLE_AUTHOR_USERNAMES = [
 function seed_sample_authors(PDO $pdo): void
 {
     $insertUser = $pdo->prepare(
-        'INSERT OR IGNORE INTO users (username, password_hash) VALUES (:username, :password_hash)'
+        'INSERT OR IGNORE INTO users (username, password_hash, postal_code, prefecture, city, address_line, phone, email)
+         VALUES (:username, :password_hash, :postal_code, :prefecture, :city, :address_line, :phone, :email)'
     );
 
+    // seedIndex は test ユーザー（0番）の続きの 1 から割り当て、住所・電話番号・メールが重複しないようにする
+    $seedIndex = 1;
     foreach (SAMPLE_AUTHOR_USERNAMES as $username) {
-        $insertUser->execute([
+        $profile = build_seed_profile($pdo, $seedIndex++);
+        $insertUser->execute(array_merge($profile, [
             'username' => $username,
             'password_hash' => password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT),
-        ]);
+        ]));
     }
 }
 

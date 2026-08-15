@@ -34,6 +34,8 @@ require __DIR__ . '/partials/spot_tags.php';
     <?php $active = 'recommended'; include __DIR__ . '/partials/sidebar.php'; ?>
 
     <div class="main-area">
+      <?php include __DIR__ . '/partials/search_bar.php'; ?>
+
       <p class="page-title">おすすめのスポット</p>
 
       <ul id="spot-list" class="video-list">

@@ -43,6 +43,8 @@ require __DIR__ . '/partials/spot_tags.php';
     <?php $active = ''; include __DIR__ . '/partials/sidebar.php'; ?>
 
     <div class="main-area">
+      <?php include __DIR__ . '/partials/search_bar.php'; ?>
+
       <div class="channel-block" style="margin-bottom:16px;">
         <div class="channel-avatar"><?= mb_substr(htmlspecialchars($targetUser['username'], ENT_QUOTES, 'UTF-8'), 0, 1) ?></div>
         <div>

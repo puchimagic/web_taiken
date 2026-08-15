@@ -1,6 +1,7 @@
 const accountForm = document.getElementById('account-form');
 const usernameInput = document.getElementById('account-username');
 const newPasswordInput = document.getElementById('account-new-password');
+const emailInput = document.getElementById('account-email');
 const phoneInput = document.getElementById('account-phone');
 const postalCodeInput = document.getElementById('account-postal-code');
 const prefectureSelect = document.getElementById('account-prefecture');
@@ -49,6 +50,7 @@ accountForm.addEventListener('submit', async (e) => {
       action: 'update_profile',
       username: usernameInput.value.trim(),
       new_password: newPasswordInput.value,
+      email: emailInput.value.trim(),
       phone: phoneInput.value.trim(),
       postal_code: postalCodeInput.value.trim(),
       prefecture: prefectureSelect.value,
