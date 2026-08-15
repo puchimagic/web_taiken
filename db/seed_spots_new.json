@@ -1,0 +1,502 @@
+[
+  {
+    "title": "タウシュベツ川橋梁・幻のコンクリートアーチ橋",
+    "address": "北海道河東郡上士幌町",
+    "lat": 43.2244,
+    "lon": 143.2703,
+    "tags": "鉄道 廃線 秘境 眼鏡橋",
+    "commons_query": "Taushubetsu River Bridge",
+    "file": "taushubetsu_bridge.jpg",
+    "description": "ダム湖の水位変化によって水没と姿を現すことを繰り返す、幻のアーチ橋。かつて鉄道が走っていた廃線跡で、朽ちていく橋の姿から「タウシュベツ」の名で鉄道ファンに知られています。"
+  },
+  {
+    "title": "小幌駅・列車でしか行けない秘境駅",
+    "address": "北海道虻田郡豊浦町",
+    "lat": 42.5306,
+    "lon": 140.7972,
+    "tags": "鉄道 秘境駅 無人駅",
+    "commons_query": "Hoboro Station Hokkaido",
+    "file": "hoboro_station.jpg",
+    "description": "1日に数本しか列車が停まらない、列車でしか到達できない秘境駅。周囲は断崖と原生林に囲まれ、駅の存在自体が奇跡のような場所として鉄道マニアの間で語り継がれています。"
+  },
+  {
+    "title": "姨捨駅・日本三大車窓のスイッチバック",
+    "address": "長野県千曲市",
+    "lat": 36.5375,
+    "lon": 138.1017,
+    "tags": "鉄道 棚田 絶景 スイッチバック",
+    "commons_query": "Obasute Station Nagano",
+    "file": "obasute_station.jpg",
+    "description": "日本三大車窓のひとつに数えられる、善光寺平を一望できるスイッチバック駅。棚田と夜景が広がる景色は、鉄道ファンならずとも一度は見ておきたい絶景です。"
+  },
+  {
+    "title": "京都鉄道博物館の扇形車庫",
+    "address": "京都府京都市下京区",
+    "lat": 34.9856,
+    "lon": 135.7397,
+    "tags": "鉄道 博物館 蒸気機関車",
+    "commons_query": "Kyoto Railway Museum roundhouse",
+    "file": "kyoto_railway_museum.jpg",
+    "description": "扇形に並んだ機関車庫に蒸気機関車がずらりと収蔵された、鉄道ファン垂涎の博物館。転車台の実演や実物大の車両展示など、鉄道の歴史を体感できます。"
+  },
+  {
+    "title": "余部橋梁・空を渡る鉄道橋",
+    "address": "兵庫県美方郡香美町",
+    "lat": 35.6389,
+    "lon": 134.8253,
+    "tags": "鉄道 橋梁 絶景",
+    "commons_query": "Amarube Viaduct",
+    "file": "amarube_viaduct.jpg",
+    "description": "日本海を見下ろす高さ41mの鉄橋。かつての鋼製トレッスル橋の一部が展望施設として保存されており、空を渡るような絶景の中を列車が走り抜けます。"
+  },
+  {
+    "title": "黒部峡谷トロッコ電車の絶景区間",
+    "address": "富山県黒部市",
+    "lat": 36.8814,
+    "lon": 137.5556,
+    "tags": "鉄道 渓谷 絶景",
+    "commons_query": "Kurobe Gorge Railway",
+    "file": "kurobe_gorge_railway.jpg",
+    "description": "断崖絶壁の渓谷を縫うように走るトロッコ電車。眼下には黒部川の急流、頭上には紅葉や新緑の山肌が広がり、日本屈指の秘境路線として知られています。"
+  },
+  {
+    "title": "大井川鐵道を走るSL列車",
+    "address": "静岡県島田市",
+    "lat": 34.8228,
+    "lon": 138.1364,
+    "tags": "鉄道 SL レトロ",
+    "commons_query": "Oigawa Railway steam locomotive",
+    "file": "oigawa_sl.jpg",
+    "description": "今も現役で走り続ける本物の蒸気機関車。汽笛を鳴らしながら大井川沿いを走る姿は、レトロな旅情を求める鉄道ファンに根強い人気があります。"
+  },
+  {
+    "title": "十勝三股・幻の終着駅跡",
+    "address": "北海道上川郡新得町",
+    "lat": 43.335,
+    "lon": 142.9469,
+    "tags": "鉄道 廃線 秘境",
+    "commons_query": "Tokachi Mitsumata former station",
+    "file": "tokachi_mitsumata.jpg",
+    "description": "かつて存在した終着駅の跡地で、今は森の中にひっそりと痕跡だけが残る「幻の駅」。訪れる人も少なく、廃線マニアの間で聖地とされています。"
+  },
+  {
+    "title": "尾道本通り商店街・映画の舞台になった坂道の町",
+    "address": "広島県尾道市",
+    "lat": 34.4083,
+    "lon": 133.2044,
+    "tags": "聖地巡礼 商店街 レトロ 映画",
+    "commons_query": "Onomichi Hondori shopping street",
+    "file": "onomichi_hondori.jpg",
+    "description": "坂道と路地が入り組む港町の商店街で、数々の映画やアニメの舞台として知られています。レトロな看板建築が並ぶ通りを歩けば、作品の世界観を追体験できます。"
+  },
+  {
+    "title": "鞆の浦・ジブリ作品ゆかりの港町",
+    "address": "広島県福山市",
+    "lat": 34.3814,
+    "lon": 133.3814,
+    "tags": "聖地巡礼 港町 レトロ",
+    "commons_query": "Tomonoura port town",
+    "file": "tomonoura.jpg",
+    "description": "江戸時代の港町の面影を色濃く残す町並みで、ジブリ作品の構想に影響を与えたとされる景観が広がります。石造りの常夜灯や雁木が当時のまま残っています。"
+  },
+  {
+    "title": "江の島・湘南アニメ聖地の定番スポット",
+    "address": "神奈川県藤沢市",
+    "lat": 35.2989,
+    "lon": 139.4808,
+    "tags": "聖地巡礼 島 絶景",
+    "commons_query": "Enoshima island",
+    "file": "enoshima.jpg",
+    "description": "湘南の海に浮かぶ島で、数々のアニメ作品の舞台として登場する定番の聖地巡礼スポット。江の島シーキャンドルから望む相模湾と富士山の眺めも圧巻です。"
+  },
+  {
+    "title": "道後温泉本館・千と千尋の元ネタとされる名湯",
+    "address": "愛媛県松山市",
+    "lat": 33.8517,
+    "lon": 132.7856,
+    "tags": "聖地巡礼 温泉 レトロ建築",
+    "commons_query": "Dogo Onsen Honkan",
+    "file": "dogo_onsen.jpg",
+    "description": "3000年の歴史を持つ日本最古級の温泉で、その独特な木造建築は名作アニメ映画の湯屋のモデルとも噂されています。夜になるとライトアップされ幻想的な姿に。"
+  },
+  {
+    "title": "秩父・アニメロケ地巡りで人気の街並み",
+    "address": "埼玉県秩父市",
+    "lat": 35.9917,
+    "lon": 139.0783,
+    "tags": "聖地巡礼 街並み 神社",
+    "commons_query": "Chichibu shrine townscape",
+    "file": "chichibu.jpg",
+    "description": "秩父盆地に広がる街並みと神社仏閣が、青春アニメの舞台として全国のファンの巡礼地になっています。作品に登場する橋や踏切を巡るファンの姿も見られます。"
+  },
+  {
+    "title": "鎌倉高校前踏切・バスケ漫画の聖地",
+    "address": "神奈川県鎌倉市",
+    "lat": 35.3072,
+    "lon": 139.5308,
+    "tags": "聖地巡礼 踏切 海",
+    "commons_query": "Kamakurakoukoumae Station crossing",
+    "file": "kamakurakoukoumae.jpg",
+    "description": "海沿いを走る江ノ電の踏切と、その向こうに広がる海。人気バスケットボール漫画のオープニングに登場したことで、国内外から聖地巡礼者が訪れる有名スポットです。"
+  },
+  {
+    "title": "官営八幡製鐵所旧本事務所・世界遺産の産業遺構",
+    "address": "福岡県北九州市",
+    "lat": 33.8867,
+    "lon": 130.8206,
+    "tags": "産業遺産 世界遺産 レンガ建築",
+    "commons_query": "Yawata Steel Works old headquarters",
+    "file": "yawata_steel_works.jpg",
+    "description": "日本の近代製鉄業発祥の地に建つ、明治時代のレンガ造り本事務所。世界文化遺産にも登録されており、産業遺産ファンには外せない聖地です。"
+  },
+  {
+    "title": "別子銅山跡・東平の産業遺産群",
+    "address": "愛媛県新居浜市",
+    "lat": 33.9339,
+    "lon": 133.2467,
+    "tags": "産業遺産 廃墟 鉱山",
+    "commons_query": "Besshi Copper Mine Toneken",
+    "file": "besshi_copper_mine.jpg",
+    "description": "かつて東洋一の産出量を誇った銅山跡。山の斜面に沿って選鉱場やインクラインの遺構が朽ちながらも残り、産業考古学の宝庫として知られています。"
+  },
+  {
+    "title": "四日市コンビナート・幻想的な工場夜景",
+    "address": "三重県四日市市",
+    "lat": 34.965,
+    "lon": 136.6244,
+    "tags": "工場夜景 産業遺産 夜景",
+    "commons_query": "Yokkaichi kombinato night view",
+    "file": "yokkaichi_kombinato.jpg",
+    "description": "無数のパイプや煙突が光を反射し、夜になると近未来的な光景に変わる石油化学コンビナート。工場夜景ファンの間で人気の撮影スポットです。"
+  },
+  {
+    "title": "三菱重工業長崎造船所・占勝閣の眺め",
+    "address": "長崎県長崎市",
+    "lat": 32.7386,
+    "lon": 129.8681,
+    "tags": "産業遺産 造船 工場夜景",
+    "commons_query": "Mitsubishi Nagasaki Shipyard",
+    "file": "nagasaki_shipyard.jpg",
+    "description": "明治時代から続く現役の造船所で、高台の洋館から見下ろす夜景は「工場萌え」の火付け役ともいわれています。産業と美が同居する独特の景観です。"
+  },
+  {
+    "title": "池島・かつての炭鉱の島",
+    "address": "長崎県長崎市",
+    "lat": 32.8851,
+    "lon": 129.6002,
+    "tags": "産業遺産 廃墟 島",
+    "commons_query": "Ikeshima coal mine island",
+    "file": "ikeshima.jpg",
+    "description": "1990年代まで炭鉱の島として栄え、今も当時の集合住宅や炭鉱施設が静かに残る島。かつての賑わいを想像しながら歩く、産業遺産好きにはたまらないスポットです。"
+  },
+  {
+    "title": "室蘭・白鳥大橋展望台からの工場夜景",
+    "address": "北海道室蘭市",
+    "lat": 42.3442,
+    "lon": 140.9499,
+    "tags": "工場夜景 橋 夜景",
+    "commons_query": "Muroran Hakucho Bridge night view",
+    "file": "muroran_hakucho_bridge.jpg",
+    "description": "室蘭港をまたぐ大吊橋の展望台から見下ろす、工場群が灯す幻想的な夜景。北海道有数の工場夜景スポットとして知られています。"
+  },
+  {
+    "title": "軍艦島（端島）・廃墟の無人島",
+    "address": "長崎県長崎市",
+    "lat": 32.6272,
+    "lon": 129.7386,
+    "tags": "廃墟 産業遺産 世界遺産 島",
+    "commons_query": "Hashima Island Gunkanjima",
+    "file": "hashima_island.jpg",
+    "description": "「軍艦島」の通称で知られる、かつて海底炭鉱で栄えた無人島。コンクリート造りの高層集合住宅群が廃墟のまま残り、世界文化遺産にも登録されています。"
+  },
+  {
+    "title": "猿島・旧陸軍要塞のレンガトンネル",
+    "address": "神奈川県横須賀市",
+    "lat": 35.285,
+    "lon": 139.6932,
+    "tags": "廃墟 軍事遺構 島 レンガ",
+    "commons_query": "Sarushima Fort ruins",
+    "file": "sarushima.jpg",
+    "description": "東京湾に浮かぶ唯一の自然島で、明治期に築かれた旧陸軍要塞のレンガトンネルや砲台跡が今も残ります。緑に覆われた要塞遺構を巡るハイキングが人気です。"
+  },
+  {
+    "title": "松代大本営地下壕・戦争遺構",
+    "address": "長野県長野市",
+    "lat": 36.5522,
+    "lon": 138.1817,
+    "tags": "廃墟 軍事遺構 地下壕",
+    "commons_query": "Matsushiro Underground Imperial Headquarters",
+    "file": "matsushiro_bunker.jpg",
+    "description": "太平洋戦争末期に大本営を移転させる計画のために掘られた巨大な地下壕。総延長10km近い坑道の一部が公開されており、戦争の記憶を伝える遺構です。"
+  },
+  {
+    "title": "舞鶴赤れんがパーク・旧海軍倉庫群",
+    "address": "京都府舞鶴市",
+    "lat": 35.4748,
+    "lon": 135.3814,
+    "tags": "産業遺産 レンガ建築 軍事遺構",
+    "commons_query": "Maizuru Red Brick Park",
+    "file": "maizuru_red_brick.jpg",
+    "description": "旧日本海軍の倉庫として建てられたレンガ建築群。現在は資料館やイベントスペースとして活用され、赤レンガと海のコントラストが美しい景観です。"
+  },
+  {
+    "title": "太刀洗平和記念館・特攻基地の記憶",
+    "address": "福岡県朝倉郡筑前町",
+    "lat": 33.4128,
+    "lon": 130.6194,
+    "tags": "軍事遺構 資料館 平和学習",
+    "commons_query": "Tachiarai Peace Memorial Museum",
+    "file": "tachiarai_peace_museum.jpg",
+    "description": "特攻隊の出撃基地があった場所に建つ資料館。当時の実機や遺品が展示され、平和学習の場として静かに歴史と向き合える場所です。"
+  },
+  {
+    "title": "野辺山宇宙電波観測所・巨大パラボラアンテナ",
+    "address": "長野県南佐久郡南牧村",
+    "lat": 35.9425,
+    "lon": 138.4728,
+    "tags": "天文 電波望遠鏡 絶景",
+    "commons_query": "Nobeyama Radio Observatory",
+    "file": "nobeyama_observatory.jpg",
+    "description": "標高1350mの高原に並ぶ巨大なパラボラアンテナ群。宇宙からの電波を観測する国立天文台の施設で、SF映画のような光景が広がります。"
+  },
+  {
+    "title": "種子島宇宙センター・ロケット打ち上げの聖地",
+    "address": "鹿児島県熊毛郡南種子町",
+    "lat": 30.39,
+    "lon": 130.9686,
+    "tags": "宇宙 ロケット 岬",
+    "commons_query": "Tanegashima Space Center",
+    "file": "tanegashima_space_center.jpg",
+    "description": "日本のロケット打ち上げの中心地で、「世界一美しいロケット発射場」とも称される岬に建設されています。打ち上げ日には全国から見学者が集まります。"
+  },
+  {
+    "title": "国立天文台三鷹キャンパス・歴史的観測ドーム",
+    "address": "東京都三鷹市",
+    "lat": 35.6742,
+    "lon": 139.5386,
+    "tags": "天文 観測所 歴史的建築",
+    "commons_query": "National Astronomical Observatory of Japan Mitaka",
+    "file": "mitaka_observatory.jpg",
+    "description": "明治期から続く日本の天文学研究の拠点で、歴史的な観測ドームが今も残っています。構内は自由に見学でき、天文ファンの聖地となっています。"
+  },
+  {
+    "title": "美星天文台・日本一の星空指定地",
+    "address": "岡山県井原市",
+    "lat": 34.5789,
+    "lon": 133.5322,
+    "tags": "天文 星空 観測所",
+    "commons_query": "Bisei Astronomical Observatory",
+    "file": "bisei_observatory.jpg",
+    "description": "環境省の「星空指定地」にも選ばれた、日本有数の星空観賞スポット。大型望遠鏡を備えた天文台で、天の川を肉眼で見られる夜も少なくありません。"
+  },
+  {
+    "title": "常盤平団地・昭和レトロ団地の代表格",
+    "address": "千葉県松戸市",
+    "lat": 35.7875,
+    "lon": 139.9231,
+    "tags": "団地 レトロ建築 昭和",
+    "commons_query": "Tokiwadaira danchi Matsudo",
+    "file": "tokiwadaira_danchi.jpg",
+    "description": "高度経済成長期に建てられた、日本最大級のマンモス団地。整然と並ぶ同型の集合住宅群は、昭和の暮らしを今に伝える生きた遺産です。"
+  },
+  {
+    "title": "香川県庁舎旧本館・モダニズム建築の傑作",
+    "address": "香川県高松市",
+    "lat": 34.3428,
+    "lon": 134.0453,
+    "tags": "レトロ建築 モダニズム 庁舎",
+    "commons_query": "Kagawa Prefectural Government Hall old building",
+    "file": "kagawa_kencho.jpg",
+    "description": "戦後モダニズム建築を代表する建築家が手がけた県庁舎旧本館。日本の伝統美とモダニズムを融合させた設計は、建築ファンの間で高く評価されています。"
+  },
+  {
+    "title": "代官山・同潤会アパート跡地の街並み",
+    "address": "東京都渋谷区",
+    "lat": 35.6497,
+    "lon": 139.7031,
+    "tags": "レトロ建築 団地 街並み",
+    "commons_query": "Daikanyama Address Tokyo",
+    "file": "daikanyama.jpg",
+    "description": "かつて日本初の鉄筋コンクリート集合住宅として建てられた同潤会アパートの跡地に生まれた、洗練された街並み。都市開発の変遷をたどれる場所です。"
+  },
+  {
+    "title": "高蔵寺ニュータウン・昭和の団地遺産",
+    "address": "愛知県春日井市",
+    "lat": 35.2497,
+    "lon": 137.0044,
+    "tags": "団地 昭和 ニュータウン",
+    "commons_query": "Kozoji New Town Kasugai",
+    "file": "kozoji_newtown.jpg",
+    "description": "高度経済成長期に丘陵地を切り開いて造成された、昭和のニュータウン計画を代表する団地群。当時の未来都市構想の名残を随所に感じられます。"
+  },
+  {
+    "title": "牛久大仏・世界最大級のブロンズ立像",
+    "address": "茨城県牛久市",
+    "lat": 35.9694,
+    "lon": 140.1428,
+    "tags": "珍スポット 巨大仏像",
+    "commons_query": "Ushiku Daibutsu",
+    "file": "ushiku_daibutsu.jpg",
+    "description": "全高120mを誇る世界最大級のブロンズ立像で、自由の女神がすっぽり手のひらに収まるほどの大きさ。遠くからでもその姿を確認できる圧倒的スケール感が話題です。"
+  },
+  {
+    "title": "五色沼・摩訶不思議な色をたたえる沼群",
+    "address": "福島県耶麻郡北塩原村",
+    "lat": 37.6572,
+    "lon": 140.0964,
+    "tags": "自然 湖沼 絶景",
+    "commons_query": "Goshikinuma Five Colored Ponds",
+    "file": "goshikinuma.jpg",
+    "description": "磐梯山の噴火によって生まれた、鉱物成分の違いで沼ごとに異なる色を見せる沼群。エメラルド、コバルトブルーなど摩訶不思議な色彩が広がります。"
+  },
+  {
+    "title": "尾道・猫がたたずむ細い路地裏",
+    "address": "広島県尾道市",
+    "lat": 34.4092,
+    "lon": 133.2028,
+    "tags": "珍スポット 路地裏 猫",
+    "commons_query": "Onomichi Cat Alley",
+    "file": "onomichi_cat_alley.jpg",
+    "description": "坂の町・尾道の細い路地裏に、まるで住人のように猫たちがくつろぐ光景が広がります。猫好きの間で「聖地」として知られる散策スポットです。"
+  },
+  {
+    "title": "満濃池・日本最大の灌漑用ため池",
+    "address": "香川県仲多度郡まんのう町",
+    "lat": 34.1381,
+    "lon": 133.8494,
+    "tags": "自然 ため池 歴史",
+    "commons_query": "Manno Pond Kagawa",
+    "file": "manno_pond.jpg",
+    "description": "奈良時代に築造されたと伝わる、日本最大級の灌漑用ため池。周囲を桜並木が囲み、歴史と自然が調和した静かな景観が広がります。"
+  },
+  {
+    "title": "マザー牧場・房総の高原にそびえる観覧車",
+    "address": "千葉県富津市",
+    "lat": 35.2094,
+    "lon": 139.9219,
+    "tags": "珍スポット 牧場 観覧車",
+    "commons_query": "Mother Farm Chiba",
+    "file": "mother_farm.jpg",
+    "description": "房総半島の高原に広がる牧場で、山肌に沿ってそびえる観覧車が独特の存在感を放ちます。動物たちとのふれあいと絶景を同時に楽しめる珍スポットです。"
+  },
+  {
+    "title": "大久野島・うさぎと廃墟の島",
+    "address": "広島県竹原市",
+    "lat": 34.3086,
+    "lon": 132.9689,
+    "tags": "廃墟 島 珍スポット",
+    "commons_query": "Okunoshima Rabbit Island poison gas factory",
+    "file": "okunoshima.jpg",
+    "description": "野生のうさぎが数百羽暮らす島として知られる一方、かつて毒ガス製造工場があった歴史を持つ複雑な背景の島。廃墟となった工場跡も今なお残っています。"
+  },
+  {
+    "title": "原鉄道模型博物館・精密な鉄道模型の世界",
+    "address": "神奈川県横浜市西区",
+    "lat": 35.4589,
+    "lon": 139.6297,
+    "tags": "鉄道 博物館 模型",
+    "commons_query": "Hara Model Railway Museum",
+    "file": "hara_railway_museum.jpg",
+    "description": "実物さながらの精密なジオラマと膨大な数の鉄道模型コレクションを展示する私設博物館。鉄道模型ファンの間で聖地とされる空間です。"
+  },
+  {
+    "title": "大牟田市石炭産業科学館・炭鉱の記憶",
+    "address": "福岡県大牟田市",
+    "lat": 33.031,
+    "lon": 130.4245,
+    "tags": "産業遺産 博物館 炭鉱",
+    "commons_query": "Omuta Coal Industry Science Museum",
+    "file": "omuta_coal_museum.jpg",
+    "description": "かつて日本最大級の産炭地だった大牟田の炭鉱の歴史を伝える科学館。当時の採掘技術や坑内の様子を再現した展示が見どころです。"
+  },
+  {
+    "title": "竹中大工道具館・伝統技術の博物館",
+    "address": "兵庫県神戸市中央区",
+    "lat": 34.7031,
+    "lon": 135.1928,
+    "tags": "博物館 伝統工芸 建築",
+    "commons_query": "Takenaka Carpentry Tools Museum",
+    "file": "takenaka_carpentry_museum.jpg",
+    "description": "宮大工の伝統技術と道具を専門に紹介する、世界でも珍しい大工道具の博物館。木の香りが漂う館内で職人技の粋に触れられます。"
+  },
+  {
+    "title": "博物館明治村・移築された近代建築群",
+    "address": "愛知県犬山市",
+    "lat": 35.3161,
+    "lon": 136.9414,
+    "tags": "博物館 レトロ建築 野外博物館",
+    "commons_query": "Meiji Mura open air museum",
+    "file": "meiji_mura.jpg",
+    "description": "全国各地から移築復元された明治・大正期の洋館や建造物が広大な敷地に立ち並ぶ野外博物館。レトロ建築好きにはたまらない散策スポットです。"
+  },
+  {
+    "title": "秋芳洞・日本屈指の大鍾乳洞",
+    "address": "山口県美祢市",
+    "lat": 34.2306,
+    "lon": 131.3086,
+    "tags": "自然 鍾乳洞 地質",
+    "commons_query": "Akiyoshido Cave",
+    "file": "akiyoshido.jpg",
+    "description": "日本屈指のスケールを誇る大鍾乳洞で、内部は総延長10km以上に及びます。幻想的にライトアップされた鍾乳石群は地質好きを魅了します。"
+  },
+  {
+    "title": "大室山・お椀型の美しい火山地形",
+    "address": "静岡県伊東市",
+    "lat": 34.9147,
+    "lon": 139.0906,
+    "tags": "自然 火山 地質",
+    "commons_query": "Mount Omuro Izu",
+    "file": "mount_omuro.jpg",
+    "description": "きれいなお椀を伏せたような形が特徴の単成火山。山頂までリフトで登ることができ、伊豆の海と山々を一望できる360度パノラマが広がります。"
+  },
+  {
+    "title": "玄武洞・柱状節理が織りなす洞窟",
+    "address": "兵庫県豊岡市",
+    "lat": 35.5361,
+    "lon": 134.8153,
+    "tags": "自然 地質 洞窟",
+    "commons_query": "Genbudo Cave basalt",
+    "file": "genbudo.jpg",
+    "description": "柱状節理と呼ばれる、溶岩が冷え固まる際にできた六角形の岩肌が広がる洞窟群。地質学の教科書にも登場する貴重な自然景観です。"
+  },
+  {
+    "title": "昇仙峡・花崗岩がそびえる奇岩渓谷",
+    "address": "山梨県甲府市",
+    "lat": 35.6733,
+    "lon": 138.6444,
+    "tags": "自然 渓谷 奇岩",
+    "commons_query": "Shosenkyo Gorge",
+    "file": "shosenkyo.jpg",
+    "description": "花崗岩が長い年月をかけて浸食されてできた奇岩が連なる渓谷。切り立った岩壁と清流のコントラストが美しい、日本屈指の渓谷美です。"
+  },
+  {
+    "title": "丸亀城・現存12天守と高石垣",
+    "address": "香川県丸亀市",
+    "lat": 34.2894,
+    "lon": 133.7972,
+    "tags": "城 現存天守 石垣",
+    "commons_query": "Marugame Castle",
+    "file": "marugame_castle.jpg",
+    "description": "江戸時代から残る現存12天守のひとつで、日本一高い石垣を誇ります。石垣の上にそびえる小ぶりな天守閣の佇まいが城好きに愛されています。"
+  },
+  {
+    "title": "備中松山城・雲海に浮かぶ天空の城",
+    "address": "岡山県高梁市",
+    "lat": 34.7683,
+    "lon": 133.6178,
+    "tags": "城 現存天守 雲海",
+    "commons_query": "Bitchu Matsuyama Castle",
+    "file": "bitchu_matsuyama_castle.jpg",
+    "description": "標高430mの山上に築かれた、現存天守の中で最も高い場所にある城。秋から冬の早朝には雲海に浮かぶ「天空の城」の絶景が見られます。"
+  },
+  {
+    "title": "弘前城・桜と現存天守の競演",
+    "address": "青森県弘前市",
+    "lat": 40.6083,
+    "lon": 140.4633,
+    "tags": "城 現存天守 桜",
+    "commons_query": "Hirosaki Castle",
+    "file": "hirosaki_castle.jpg",
+    "description": "現存12天守のひとつで、春には約2600本の桜に包まれる桜の名所としても有名。天守と桜、そして岩木山を一枚に収められる絶景ポイントです。"
+  }
+]

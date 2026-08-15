@@ -30,9 +30,16 @@ if ($spotId <= 0 || $message === '') {
     exit;
 }
 
-// この2行のコメントを外すとコメント投稿が有効になります
-// $stmt = $pdo->prepare('INSERT INTO comments (spot_id, user_id, message) VALUES (:spot_id, :user_id, :message)');
-// $stmt->execute(['spot_id' => $spotId, 'user_id' => $currentUserId, 'message' => $message]);
+$stmt = $pdo->prepare('INSERT INTO comments (spot_id, user_id, message) VALUES (:spot_id, :user_id, :message)');
+$stmt->execute(['spot_id' => $spotId, 'user_id' => $currentUserId, 'message' => $message]);
+$commentId = (int)$pdo->lastInsertId();
+
+$createdAt = $pdo->query('SELECT created_at FROM comments WHERE id = ' . $commentId)->fetchColumn();
 
 http_response_code(201);
-echo json_encode(['ok' => true]);
+echo json_encode([
+    'ok' => true,
+    'username' => $_SESSION['username'],
+    'message' => $message,
+    'created_at' => $createdAt,
+]);

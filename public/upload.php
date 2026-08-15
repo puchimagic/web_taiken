@@ -39,7 +39,7 @@ $loginUsername = $_SESSION['username'];
         <label>場所</label>
         <div class="location-box">
           <div class="location-row">
-            <button type="button" id="geo-btn" class="btn-ghost">📍 現在地を取得</button>
+            <button type="button" id="geo-btn" class="btn-accent-outline">📍 現在地を取得</button>
             <span id="geo-status" class="geo-status"></span>
           </div>
           <input type="text" id="address" name="address" placeholder="住所（現在地取得で自動入力、または手入力）">

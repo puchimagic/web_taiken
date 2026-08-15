@@ -3,11 +3,7 @@ require __DIR__ . '/../src/db.php';
 $pdo = get_db(); // 初回アクセス時にDB/テーブルを自動作成
 
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-$loginUsername = $_SESSION['username'];
+$loginUsername = $_SESSION['username'] ?? null;
 
 $selectedTag = trim((string)($_GET['tag'] ?? ''));
 $keyword = trim((string)($_GET['q'] ?? ''));
@@ -56,17 +52,38 @@ $tagStmt = $pdo->query(
 );
 $popularTags = $tagStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 各スポットのタグ一覧をまとめて取得
-$spotTags = [];
-if (!empty($spots)) {
-    $ids = array_column($spots, 'id');
-    $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $tagsStmt = $pdo->prepare("SELECT spot_id, tag FROM spot_tags WHERE spot_id IN ($placeholders)");
-    $tagsStmt->execute($ids);
-    foreach ($tagsStmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-        $spotTags[$row['spot_id']][] = $row['tag'];
-    }
+// ホーム上部の「ニッチな旅の入口」用に、テーマごとの代表スポット（最新1件＋件数）を取得する
+$nicheThemes = [
+    ['tag' => '聖地巡礼', 'label' => '聖地巡礼', 'icon' => '🎬'],
+    ['tag' => '鉄道', 'label' => '鉄オタの旅', 'icon' => '🚃'],
+    ['tag' => '産業遺産', 'label' => '産業遺産', 'icon' => '🏭'],
+    ['tag' => '軍事遺構', 'label' => '軍事遺構', 'icon' => '🪖'],
+    ['tag' => '天文', 'label' => '天文・宇宙', 'icon' => '🌌'],
+    ['tag' => '団地', 'label' => '団地・ニュータウン', 'icon' => '🏘️'],
+    ['tag' => '珍スポット', 'label' => '珍スポット', 'icon' => '❓'],
+];
+$nicheStmt = $pdo->prepare(
+    'SELECT spots.id, spots.title, spots.file_name
+     FROM spots
+     JOIN spot_tags ON spot_tags.spot_id = spots.id
+     WHERE spot_tags.tag = :tag
+     ORDER BY spots.id DESC
+     LIMIT 1'
+);
+$nicheCountStmt = $pdo->prepare('SELECT COUNT(*) FROM spot_tags WHERE tag = :tag');
+foreach ($nicheThemes as &$theme) {
+    $nicheStmt->execute(['tag' => $theme['tag']]);
+    $rep = $nicheStmt->fetch(PDO::FETCH_ASSOC);
+    $nicheCountStmt->execute(['tag' => $theme['tag']]);
+    $theme['count'] = (int)$nicheCountStmt->fetchColumn();
+    $theme['spot_id'] = $rep['id'] ?? null;
+    $theme['file_name'] = $rep['file_name'] ?? null;
 }
+unset($theme);
+$nicheThemes = array_values(array_filter($nicheThemes, fn($t) => $t['spot_id'] !== null));
+
+// 各スポットのタグ一覧をまとめて取得
+require __DIR__ . '/partials/spot_tags.php';
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -83,6 +100,27 @@ if (!empty($spots)) {
     <?php $active = 'home'; include __DIR__ . '/partials/sidebar.php'; ?>
 
     <div class="main-area">
+      <?php if ($keyword === '' && $selectedTag === '' && !empty($nicheThemes)): ?>
+        <div class="niche-intro">
+          <p class="niche-intro-title">ニッチな旅の入口</p>
+          <p class="niche-intro-lead">普段は旅行に行かない人でも、好きなジャンルならきっと気になる。そんなスポットを集めました。</p>
+          <div class="niche-theme-list">
+            <?php foreach ($nicheThemes as $theme): ?>
+              <a class="niche-theme-card" href="index.php?tag=<?= urlencode($theme['tag']) ?>">
+                <div class="niche-theme-thumb">
+                  <img src="uploads/<?= htmlspecialchars($theme['file_name'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($theme['label'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+                </div>
+                <div class="niche-theme-label">
+                  <span class="niche-theme-icon"><?= $theme['icon'] ?></span>
+                  <?= htmlspecialchars($theme['label'], ENT_QUOTES, 'UTF-8') ?>
+                  <span class="niche-theme-count"><?= $theme['count'] ?>件</span>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+
       <?php $tagQuerySuffix = $keyword !== '' ? '&q=' . urlencode($keyword) : ''; ?>
       <div class="filter-chips">
         <a href="index.php<?= $keyword !== '' ? '?q=' . urlencode($keyword) : '' ?>" class="chip<?= $selectedTag === '' ? ' active' : '' ?>">すべて</a>
@@ -106,29 +144,7 @@ if (!empty($spots)) {
           <li class="empty"><?= $keyword !== '' || $selectedTag !== '' ? '該当するスポットが見つかりませんでした' : 'まだスポットが投稿されていません' ?></li>
         <?php else: ?>
           <?php foreach ($spots as $spot): ?>
-            <li class="video-card">
-              <a href="show.php?id=<?= (int)$spot['id'] ?>">
-                <div class="video-thumb">
-                  <img class="thumb-img" src="uploads/<?= htmlspecialchars($spot['file_name'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($spot['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
-                </div>
-                <div class="video-info">
-                  <div class="video-avatar"><?= mb_substr(htmlspecialchars($spot['username'], ENT_QUOTES, 'UTF-8'), 0, 1) ?></div>
-                  <div>
-                    <div class="video-title"><?= htmlspecialchars($spot['title'], ENT_QUOTES, 'UTF-8') ?></div>
-                    <div class="video-meta">
-                      <span class="author"><?= htmlspecialchars($spot['username'], ENT_QUOTES, 'UTF-8') ?></span>
-                    </div>
-                    <?php if (!empty($spotTags[$spot['id']])): ?>
-                      <div class="card-tags">
-                        <?php foreach ($spotTags[$spot['id']] as $tag): ?>
-                          <span class="tag-badge">#<?= htmlspecialchars($tag, ENT_QUOTES, 'UTF-8') ?></span>
-                        <?php endforeach; ?>
-                      </div>
-                    <?php endif; ?>
-                  </div>
-                </div>
-              </a>
-            </li>
+            <?php require __DIR__ . '/partials/spot_card.php'; ?>
           <?php endforeach; ?>
         <?php endif; ?>
       </ul>

@@ -3,11 +3,7 @@ require __DIR__ . '/../src/db.php';
 $pdo = get_db();
 
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-$loginUsername = $_SESSION['username'];
+$loginUsername = $_SESSION['username'] ?? null;
 
 $spotId = (int)($_GET['id'] ?? 0);
 
@@ -26,20 +22,28 @@ if (!$spot) {
     exit;
 }
 
-// 緯度経度からタイル座標(z/x/y)とタイル内オフセットを求める（地図表示用）
-function latlon_to_tile(float $lat, float $lon, int $zoom): array
-{
-    $latRad = deg2rad($lat);
-    $n = 2 ** $zoom;
-    $xFloat = ($lon + 180) / 360 * $n;
-    $yFloat = (1 - log(tan($latRad) + 1 / cos($latRad)) / M_PI) / 2 * $n;
-    return [
-        'x' => (int)floor($xFloat),
-        'y' => (int)floor($yFloat),
-        'offsetXPercent' => ($xFloat - floor($xFloat)) * 100,
-        'offsetYPercent' => ($yFloat - floor($yFloat)) * 100,
-        'zoom' => $zoom,
-    ];
+if (isset($_SESSION['user_id'])) {
+    $currentUserId = (int)$_SESSION['user_id'];
+    $pdo->prepare(
+        'INSERT INTO view_history (user_id, spot_id) VALUES (:user_id, :spot_id)
+         ON CONFLICT(user_id, spot_id) DO UPDATE SET viewed_at = datetime(\'now\', \'localtime\')'
+    )->execute(['user_id' => $currentUserId, 'spot_id' => $spotId]);
+}
+
+$reactionCounts = ['want_to_go' => 0, 'helpful' => 0];
+$countStmt = $pdo->prepare('SELECT type, COUNT(*) AS cnt FROM reactions WHERE spot_id = :spot_id GROUP BY type');
+$countStmt->execute(['spot_id' => $spotId]);
+foreach ($countStmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+    $reactionCounts[$row['type']] = (int)$row['cnt'];
+}
+
+$myReactions = ['want_to_go' => false, 'helpful' => false];
+if (isset($_SESSION['user_id'])) {
+    $myStmt = $pdo->prepare('SELECT type FROM reactions WHERE spot_id = :spot_id AND user_id = :user_id');
+    $myStmt->execute(['spot_id' => $spotId, 'user_id' => (int)$_SESSION['user_id']]);
+    foreach ($myStmt->fetchAll(PDO::FETCH_COLUMN) as $type) {
+        $myReactions[$type] = true;
+    }
 }
 
 $stmt = $pdo->prepare('SELECT tag FROM spot_tags WHERE spot_id = :spot_id ORDER BY id ASC');
@@ -51,13 +55,13 @@ $stmt = $pdo->prepare(
      FROM comments
      JOIN users ON users.id = comments.user_id
      WHERE comments.spot_id = :spot_id
-     ORDER BY comments.id ASC'
+     ORDER BY comments.created_at ASC, comments.id ASC'
 );
 $stmt->execute(['spot_id' => $spotId]);
 $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $stmt = $pdo->prepare(
-    'SELECT spots.id, spots.title, users.username
+    'SELECT spots.id, spots.title, spots.file_name, users.username
      FROM spots
      JOIN users ON users.id = spots.user_id
      WHERE spots.id != :id
@@ -97,22 +101,31 @@ $relatedSpots = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <?php endif; ?>
 
           <div class="video-actions-row">
-            <div class="channel-block">
+            <a class="channel-block" href="user.php?name=<?= urlencode($spot['username']) ?>">
               <div class="channel-avatar"><?= mb_substr(htmlspecialchars($spot['username'], ENT_QUOTES, 'UTF-8'), 0, 1) ?></div>
               <div>
                 <div class="channel-name"><?= htmlspecialchars($spot['username'], ENT_QUOTES, 'UTF-8') ?></div>
                 <div class="channel-sub">投稿者</div>
               </div>
-            </div>
+            </a>
 
             <div class="action-buttons">
               <div class="pill-group">
-                <button type="button" class="pill-btn">🚩 行ってみたい</button>
-                <button type="button" class="pill-btn">👏 参考になった</button>
+                <button type="button" class="pill-btn<?= $myReactions['want_to_go'] ? ' active' : '' ?>" id="reaction-want_to_go" data-spot-id="<?= (int)$spot['id'] ?>" data-type="want_to_go" <?= $loginUsername === null ? 'disabled' : '' ?>>
+                  🚩 行ってみたい <span class="reaction-count"><?= $reactionCounts['want_to_go'] ?></span>
+                </button>
+                <button type="button" class="pill-btn<?= $myReactions['helpful'] ? ' active' : '' ?>" id="reaction-helpful" data-spot-id="<?= (int)$spot['id'] ?>" data-type="helpful" <?= $loginUsername === null ? 'disabled' : '' ?>>
+                  👏 参考になった <span class="reaction-count"><?= $reactionCounts['helpful'] ?></span>
+                </button>
               </div>
               <button type="button" class="icon-btn">↗ 共有</button>
             </div>
           </div>
+
+          <div class="video-meta" style="margin-bottom:10px;">
+            <span><?= htmlspecialchars($spot['created_at'], ENT_QUOTES, 'UTF-8') ?> に投稿</span>
+          </div>
+          <p class="video-description"><?= nl2br(htmlspecialchars($spot['description'], ENT_QUOTES, 'UTF-8')) ?></p>
 
           <?php if ($spot['address'] !== ''): ?>
             <div class="location-info">
@@ -125,24 +138,18 @@ $relatedSpots = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <?php endif; ?>
 
           <?php if ($spot['latitude'] !== null && $spot['longitude'] !== null): ?>
-            <?php $tile = latlon_to_tile((float)$spot['latitude'], (float)$spot['longitude'], 15); ?>
+            <?php $latLon = $spot['latitude'] . ',' . $spot['longitude']; ?>
             <div class="spot-map">
-              <div class="spot-map-grid">
-                <?php for ($dy = -1; $dy <= 1; $dy++): ?>
-                  <?php for ($dx = -1; $dx <= 1; $dx++): ?>
-                    <img class="spot-map-tile" src="https://tile.openstreetmap.org/<?= $tile['zoom'] ?>/<?= $tile['x'] + $dx ?>/<?= $tile['y'] + $dy ?>.png" alt="" loading="lazy">
-                  <?php endfor; ?>
-                <?php endfor; ?>
-              </div>
-              <span class="spot-map-pin" style="left:calc((100% / 3) + (<?= $tile['offsetXPercent'] ?>% / 3)); top:calc((100% / 3) + (<?= $tile['offsetYPercent'] ?>% / 3));">📍</span>
-              <a class="spot-map-link" href="https://www.openstreetmap.org/?mlat=<?= urlencode((string)$spot['latitude']) ?>&mlon=<?= urlencode((string)$spot['longitude']) ?>#map=<?= $tile['zoom'] ?>/<?= htmlspecialchars((string)$spot['latitude'], ENT_QUOTES, 'UTF-8') ?>/<?= htmlspecialchars((string)$spot['longitude'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">大きな地図で見る ↗</a>
+              <iframe
+                class="spot-map-frame"
+                src="https://www.google.com/maps?q=<?= urlencode($latLon) ?>&z=15&hl=ja&output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen>
+              </iframe>
+              <a class="spot-map-link" href="https://www.google.com/maps?q=<?= urlencode($latLon) ?>&hl=ja" target="_blank" rel="noopener">大きな地図で見る ↗</a>
             </div>
           <?php endif; ?>
-
-          <div class="video-meta" style="margin-bottom:10px;">
-            <span><?= htmlspecialchars($spot['created_at'], ENT_QUOTES, 'UTF-8') ?> に投稿</span>
-          </div>
-          <p class="video-description"><?= nl2br(htmlspecialchars($spot['description'], ENT_QUOTES, 'UTF-8')) ?></p>
         </div>
 
         <div>
@@ -152,14 +159,18 @@ $relatedSpots = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <span class="count"><?= count($comments) ?></span>
             </div>
 
-            <div class="comment-form-row">
-              <div class="comment-avatar"><?= mb_substr(htmlspecialchars($loginUsername, ENT_QUOTES, 'UTF-8'), 0, 1) ?></div>
-              <form id="comment-form" class="comment-form" data-spot-id="<?= (int)$spot['id'] ?>">
-                <textarea id="comment-message" placeholder="コメントを追加..." maxlength="300" required></textarea>
-                <p id="comment-error" class="auth-error"></p>
-                <button type="submit">コメントする</button>
-              </form>
-            </div>
+            <?php if ($loginUsername !== null): ?>
+              <div class="comment-form-row">
+                <div class="comment-avatar"><?= mb_substr(htmlspecialchars($loginUsername, ENT_QUOTES, 'UTF-8'), 0, 1) ?></div>
+                <form id="comment-form" class="comment-form" data-spot-id="<?= (int)$spot['id'] ?>">
+                  <textarea id="comment-message" placeholder="コメントを追加..." maxlength="300" required></textarea>
+                  <p id="comment-error" class="auth-error"></p>
+                  <button type="submit">コメントする</button>
+                </form>
+              </div>
+            <?php else: ?>
+              <p class="empty"><a href="login.php">ログイン</a>するとコメントできます</p>
+            <?php endif; ?>
 
             <ul id="comment-list" class="comment-list">
               <?php if (empty($comments)): ?>
@@ -171,6 +182,7 @@ $relatedSpots = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="comment-body">
                       <div class="comment-meta">
                         <?= htmlspecialchars($comment['username'], ENT_QUOTES, 'UTF-8') ?>さん
+                        <span class="comment-time"><?= htmlspecialchars($comment['created_at'], ENT_QUOTES, 'UTF-8') ?></span>
                       </div>
                       <div class="comment-message"><?= htmlspecialchars($comment['message'], ENT_QUOTES, 'UTF-8') ?></div>
                     </div>
@@ -185,7 +197,9 @@ $relatedSpots = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($relatedSpots as $rv): ?>
                   <li class="related-item">
                     <a href="show.php?id=<?= (int)$rv['id'] ?>" style="display:flex; gap:10px; text-decoration:none; color:inherit;">
-                      <div class="related-thumb">📍</div>
+                      <div class="related-thumb">
+                        <img class="thumb-img" src="uploads/<?= htmlspecialchars($rv['file_name'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($rv['title'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+                      </div>
                       <div class="related-info">
                         <div class="video-title"><?= htmlspecialchars($rv['title'], ENT_QUOTES, 'UTF-8') ?></div>
                         <div class="video-meta"><span class="author"><?= htmlspecialchars($rv['username'], ENT_QUOTES, 'UTF-8') ?></span></div>

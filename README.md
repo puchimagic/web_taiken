@@ -5,30 +5,61 @@ PHP + SQLite + HTML/CSS/JS で作った「知る人ぞ知る旅行スポット�
 ## ページ構成
 
 - `login.php` — ログイン／新規登録ページ
-- `index.php` — ホーム（投稿されたスポットの一覧・タグ絞り込み）ページ
-- `show.php?id=...` — スポット詳細ページ（写真・位置情報・タグ・コメント一覧・コメント投稿）
+- `index.php` — ホーム（投稿されたスポットの一覧・キーワード検索・タグ絞り込み）ページ
+- `show.php?id=...` — スポット詳細ページ（写真・地図・タグ・コメント・「行ってみたい」「参考になった」リアクション）
 - `upload.php` — スポット投稿ページ（画像アップロード・現在地取得・タグ入力）
+- `recommended.php` — おすすめ（コメント数が多い順）ページ
+- `history.php` — 閲覧履歴ページ
+- `mine.php` — 自分が投稿したスポット一覧ページ
+- `user.php?name=...` — 指定ユーザーの投稿一覧ページ
+- `account.php` — アカウント設定ページ（ユーザー名・パスワード・住所などのプロフィール編集）
 
 ## 構成
 
 - `public/` — Webサーバーの公開ルート（PHP Server拡張はここを開いて起動する）
   - `login.php`, `login.js` — ログイン・新規登録
-  - `auth.php` — ログイン・新規登録・ログアウトAPI
-  - `index.php`, `index.js` — スポット一覧・タグ絞り込み
-  - `show.php`, `show.js` — スポット詳細・コメント
+  - `auth.php` — ログイン・新規登録・ログアウト・プロフィール更新API
+  - `index.php`, `index.js` — スポット一覧・キーワード検索・タグ絞り込み
+  - `show.php`, `show.js` — スポット詳細・コメント・地図表示・リアクション
   - `comments.php` — コメント投稿API
+  - `reactions.php` — 「行ってみたい」「参考になった」リアクションのトグルAPI
   - `upload.php`, `upload.js` — スポット投稿フォーム（現在地取得を含む）
   - `spots.php` — スポット投稿（画像アップロード）API
   - `geocode.php` — 緯度経度から住所を取得する逆ジオコーディングAPI（OpenStreetMap Nominatimを利用）
-  - `partials/` — 共通のトップバー・サイドバー
+  - `recommended.php` — おすすめ一覧
+  - `history.php` — 閲覧履歴一覧
+  - `mine.php` — 自分の投稿一覧
+  - `user.php` — 指定ユーザーの投稿一覧
+  - `account.php`, `account.js` — アカウント設定（プロフィール編集）
+  - `postal_lookup.php` — 郵便番号から住所を検索するAPI（日本郵便の郵便番号データを利用）
+  - `partials/` — 共通のトップバー・サイドバー・スポットカードなど
   - `uploads/` — アップロードされた画像ファイルの保存先
   - `style.css`
-- `src/db.php` — SQLite接続・テーブル初期化
+- `src/db.php` — SQLite接続・テーブル初期化・簡易マイグレーション
 - `db/board.sqlite` — SQLiteデータベース本体（初回アクセス時に自動生成）
+- `db/import/` — 郵便番号データの取り込みスクリプトと元データ（後述）
 
 ## 位置情報機能について
 
-投稿フォームの「現在地を取得」ボタンは、ブラウザのGeolocation APIを使って緯度・経度を取得します（PCブラウザでも動作しますが、初回はブラウザの位置情報利用の許可が必要です）。取得した緯度・経度は `geocode.php` 経由で外部の住所検索API（OpenStreetMap Nominatim）に渡され、住所テキストに変換されて自動入力されます。
+投稿フォームの「現在地を取得」ボタンは、ブラウザのGeolocation APIを使って緯度・経度を取得します（PCブラウザでも動作しますが、初回はブラウザの位置情報利用の許可が必要です）。取得した緯度・経度は `geocode.php` 経由で外部の住所検索API（OpenStreetMap Nominatim）に渡され、住所テキストに変換されて自動入力されます。スポット詳細ページの地図はGoogle Mapsの埋め込み表示です。
+
+## アカウント設定の住所検索について
+
+`account.php` の「郵便番号」欄に7桁の郵便番号を入力して「住所を検索」ボタンを押すと、都道府県・市区町村が自動入力されます。この検索は外部APIではなく、`db/board.sqlite` 内の `postal_codes` テーブル（日本郵便の郵便番号データを取り込んだもの、約12万件）をSQLiteで検索して実現しています。
+
+`postal_codes` テーブルは `db/board.sqlite` を初めて作る（＝そのファイルが存在しない）タイミングで自動的に空のテーブルとして用意されますが、中身のデータは別途インポートが必要です。
+
+### 郵便番号データのインポート手順
+
+1. [日本郵便 郵便番号データダウンロード（UTF-8版）](https://www.post.japanpost.jp/zipcode/dl/utf-zip.html) から「全国一括」のZIPファイルをダウンロードする
+2. 解凍して出てきた `utf_ken_all.csv` を `db/import/` に置く
+3. プロジェクトのルートで以下を実行する
+
+```
+php db/import/import_postal_codes.php
+```
+
+「取り込み完了: 124513件」のように表示されれば成功です。データは `db/board.sqlite` に保存されるため、CSVファイル自体はコミット対象外（`.gitignore`）にしています。データ量が大きいCSVファイルは、表計算ソフトで開くとフリーズすることがあるので注意してください。
 
 ## 動かし方（VSCode拡張 PHP Server）
 
