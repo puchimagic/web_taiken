@@ -27,11 +27,14 @@ $latitude = $_POST['latitude'] ?? null;
 $longitude = $_POST['longitude'] ?? null;
 $tagsInput = trim((string)($_POST['tags'] ?? ''));
 
+// 体験用：/* と */ を外すと、タイトルが空欄のまま投稿できなくなります
+/*
 if ($title === '') {
     http_response_code(400);
     echo json_encode(['error' => 'タイトルは必須です']);
     exit;
 }
+*/
 
 if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
     http_response_code(400);

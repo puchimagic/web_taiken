@@ -28,7 +28,7 @@ $loginUsername = $_SESSION['username'];
 
       <form id="upload-form" class="upload-form">
         <label>タイトル</label>
-        <input type="text" id="title" name="title" placeholder="例：地元の人しか知らない絶景カフェ" maxlength="100" required>
+        <input type="text" id="title" name="title" placeholder="例：地元の人しか知らない絶景カフェ" maxlength="100">
 
         <label>説明</label>
         <textarea id="description" name="description" placeholder="どんな場所か、行き方のコツなど（任意）"></textarea>

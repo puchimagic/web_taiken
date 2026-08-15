@@ -30,14 +30,11 @@ if ($spotId <= 0) {
     exit;
 }
 
-// 体験用：/* と */ を外すと、空欄のコメントを投稿できなくなります
-/*
 if ($message === '') {
     http_response_code(400);
     echo json_encode(['error' => 'コメントを入力してください']);
     exit;
 }
-*/
 
 $stmt = $pdo->prepare('INSERT INTO comments (spot_id, user_id, message) VALUES (:spot_id, :user_id, :message)');
 $stmt->execute(['spot_id' => $spotId, 'user_id' => $currentUserId, 'message' => $message]);
