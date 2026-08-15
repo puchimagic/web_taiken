@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 rem 接続が切れてPHPサーバーだけ再起動したいときに使うbat。
-rem setup-win.bat の5番目のステップ（PHPサーバー起動）と同じ処理。
+rem Webプロセットアップ.bat の5番目のステップ（PHPサーバー起動）と同じ処理。
 rem 実行内容はすべて %LOG_FILE% にも記録される（トラブル時の調査用）。
 
 set HOST=127.0.0.1
@@ -10,7 +10,7 @@ set PORT=8000
 set DOCROOT=%~dp0public
 set LOG_FILE=%~dp0web_taiken_start_log.txt
 
-echo ==== start-win.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
+echo ==== Webプロサーバー起動.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
 
 call :find_php
 if errorlevel 1 (

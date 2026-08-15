@@ -4,13 +4,13 @@ setlocal enabledelayedexpansion
 rem 体験授業の準備用bat。デスクトップに配置してダブルクリックすると、
 rem 1) デスクトップにリポジトリをclone
 rem 2) VSCodeにPHP Server拡張機能が無ければインストール
-rem 3) スライド(pptx)をデスクトップにコピー
+rem 3) スライド(pptx)とクリーンアップ用bat(Webプロクリーン.bat)をデスクトップにコピー
 rem 4) VSCodeでプロジェクトフォルダを開く
 rem 5) PHPサーバーを起動する
 rem をまとめて行う。
 rem
 rem 接続が切れてサーバーだけ再起動したい場合は、cloneされたフォルダ内の
-rem start-win.bat を直接実行すればよい（このbatの5番目の処理と同じ内容）。
+rem Webプロサーバー起動.bat を直接実行すればよい（このbatの5番目の処理と同じ内容）。
 rem
 rem 実行内容はすべて %LOG_FILE% にも記録される（トラブル時の調査用）。
 
@@ -29,7 +29,7 @@ call set "DESKTOP_DIR=%DESKTOP_DIR%"
 set TARGET_DIR=%DESKTOP_DIR%\web_taiken
 set LOG_FILE=%DESKTOP_DIR%\web_taiken_setup_log.txt
 
-echo ==== setup-win.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
+echo ==== Webプロセットアップ.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
 
 call :log "==== 1/5: リポジトリを取得します ===="
 where git >nul 2>nul
@@ -69,13 +69,21 @@ if errorlevel 1 (
 )
 
 call :log ""
-call :log "==== 3/5: スライドをデスクトップにコピーします ===="
+call :log "==== 3/5: スライドとクリーンアップ用batをデスクトップに配置します ===="
 set SLIDE_NAME=Webプログラミング体験_資料.pptx
 if exist "%TARGET_DIR%\%SLIDE_NAME%" (
     copy /Y "%TARGET_DIR%\%SLIDE_NAME%" "%DESKTOP_DIR%\%SLIDE_NAME%" >nul
     call :log "デスクトップに「%SLIDE_NAME%」を配置しました。"
 ) else (
     call :log "警告: 「%SLIDE_NAME%」が見つかりませんでした。スキップします。"
+)
+
+set CLEANUP_BAT_NAME=Webプロクリーン.bat
+if exist "%TARGET_DIR%\%CLEANUP_BAT_NAME%" (
+    copy /Y "%TARGET_DIR%\%CLEANUP_BAT_NAME%" "%DESKTOP_DIR%\%CLEANUP_BAT_NAME%" >nul
+    call :log "デスクトップに「%CLEANUP_BAT_NAME%」を配置しました。"
+) else (
+    call :log "警告: 「%CLEANUP_BAT_NAME%」が見つかりませんでした。スキップします。"
 )
 
 call :log ""
