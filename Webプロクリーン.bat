@@ -57,15 +57,18 @@ if errorlevel 1 (
     call :log "VSCode（Code.exe）を終了します。"
     taskkill /IM Code.exe /F >> "%LOG_FILE%" 2>&1
 )
+rem ブラウザは taskkill /F（強制終了）だとクラッシュ扱いになり、次回起動時に
+rem 「ページを復元しますか？」という確認が出てしまう。/F無し（通常のウィンドウ
+rem クローズ要求）にして、正常終了として閉じるようにする。
 tasklist /FI "IMAGENAME eq msedge.exe" 2>nul | find /I "msedge.exe" >nul
 if not errorlevel 1 (
     call :log "Microsoft Edge（msedge.exe）を終了します。"
-    taskkill /IM msedge.exe /F >> "%LOG_FILE%" 2>&1
+    taskkill /IM msedge.exe >> "%LOG_FILE%" 2>&1
 )
 tasklist /FI "IMAGENAME eq chrome.exe" 2>nul | find /I "chrome.exe" >nul
 if not errorlevel 1 (
     call :log "Google Chrome（chrome.exe）を終了します。"
-    taskkill /IM chrome.exe /F >> "%LOG_FILE%" 2>&1
+    taskkill /IM chrome.exe >> "%LOG_FILE%" 2>&1
 )
 
 call :log ""
