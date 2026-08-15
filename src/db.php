@@ -219,6 +219,17 @@ function import_postal_codes_csv(PDO $pdo): void
     fclose($fh);
 }
 
+// 郵便番号（7桁）から都道府県・市区町村・町域を検索する。
+// postal_codesテーブル（124,513件）をpostal_code列のインデックスで検索するため、一瞬で結果が返る。
+// 該当する郵便番号がなければnullを返す。
+function find_postal_address(PDO $pdo, string $postalCode): ?array
+{
+    $stmt = $pdo->prepare('SELECT prefecture, city, town FROM postal_codes WHERE postal_code = :code LIMIT 1');
+    $stmt->execute(['code' => $postalCode]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result !== false ? $result : null;
+}
+
 function create_postal_codes_table(PDO $pdo): void
 {
     $pdo->exec(

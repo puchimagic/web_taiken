@@ -21,9 +21,9 @@ if (strlen($postalCode) !== 7) {
     exit;
 }
 
-$stmt = $pdo->prepare('SELECT prefecture, city, town FROM postal_codes WHERE postal_code = :code LIMIT 1');
-$stmt->execute(['code' => $postalCode]);
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
+// 体験用：/* と */ を外すと、郵便番号から住所を検索する find_postal_address() 関数が呼び出され、住所検索が有効になります
+/*
+$result = find_postal_address($pdo, $postalCode);
 
 if (!$result) {
     http_response_code(404);
@@ -36,3 +36,8 @@ echo json_encode([
     'city' => $result['city'],
     'town' => $result['town'],
 ]);
+exit;
+*/
+
+http_response_code(500);
+echo json_encode(['error' => '住所検索はまだ準備中です']);
