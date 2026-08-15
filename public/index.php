@@ -151,6 +151,5 @@ require __DIR__ . '/partials/spot_tags.php';
     </div>
   </div>
 
-  <script src="index.js"></script>
 </body>
 </html>

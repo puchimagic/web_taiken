@@ -20,3 +20,4 @@
     <?php endif; ?>
   </div>
 </div>
+<script src="partials/topbar.js"></script>

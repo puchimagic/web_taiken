@@ -51,7 +51,8 @@ $prefectures = $pdo->query(
         <label>郵便番号</label>
         <div class="location-row">
           <input type="text" id="account-postal-code" name="postal_code" value="<?= htmlspecialchars($profile['postal_code'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="1000001" maxlength="8" inputmode="numeric" style="flex:1; min-width:160px;">
-          <button type="button" id="postal-lookup-btn" class="btn-ghost">住所を検索</button>
+          <!-- 体験用：この文字を分かりやすい表示に書き換えてみよう（例：「住所を検索」） -->
+          <button type="button" id="postal-lookup-btn" class="btn-ghost">ボタン</button>
         </div>
         <p id="postal-lookup-status" class="geo-status"></p>
 
@@ -78,7 +79,6 @@ $prefectures = $pdo->query(
     </div>
   </div>
 
-  <script src="index.js"></script>
   <script src="account.js"></script>
 </body>
 </html>
