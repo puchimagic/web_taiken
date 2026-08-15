@@ -50,19 +50,18 @@ $stmt = $pdo->prepare('SELECT tag FROM spot_tags WHERE spot_id = :spot_id ORDER 
 $stmt->execute(['spot_id' => $spotId]);
 $tags = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-// 体験用：WHERE句に comments.spot_id = :spot_id という条件がないため、
-// このスポットのコメントだけでなく、他のスポットに投稿されたコメントも
-// すべて混ざって表示されてしまう。「どの投稿へのコメントか」を区別するには
-// spot_id カラムで絞り込む必要がある、という体験用にあえてコメントアウトしている。
-// /* */ を外すときは、下の execute() の spot_id も一緒に外すこと。
+// 体験用：SELECT列に comments.message が入っていないため、
+// ユーザー名・投稿日時は表示されるのにコメント本文だけが空欄になってしまう。
+// 「コメントの中身」を表示するには message カラムが必要、という体験用に
+// あえて message をコメントアウトしている。
 $stmt = $pdo->prepare(
-    'SELECT comments.id, comments.message, comments.created_at, users.username
+    'SELECT comments.id, /* comments.message, */ comments.created_at, users.username
      FROM comments
      JOIN users ON users.id = comments.user_id
-     /* WHERE comments.spot_id = :spot_id */
+     WHERE comments.spot_id = :spot_id
      ORDER BY comments.created_at ASC, comments.id ASC'
 );
-$stmt->execute([/* 'spot_id' => $spotId */]);
+$stmt->execute(['spot_id' => $spotId]);
 $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $stmt = $pdo->prepare(
@@ -189,7 +188,7 @@ $relatedSpots = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?= htmlspecialchars($comment['username'], ENT_QUOTES, 'UTF-8') ?>さん
                         <span class="comment-time"><?= htmlspecialchars($comment['created_at'], ENT_QUOTES, 'UTF-8') ?></span>
                       </div>
-                      <div class="comment-message"><?= htmlspecialchars($comment['message'], ENT_QUOTES, 'UTF-8') ?></div>
+                      <div class="comment-message"><?= htmlspecialchars($comment['message'] ?? '', ENT_QUOTES, 'UTF-8') ?></div>
                     </div>
                   </li>
                 <?php endforeach; ?>
