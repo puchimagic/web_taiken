@@ -33,6 +33,7 @@ function get_db(): PDO
     // 繰り返すと無視できない負荷になるため、既存DBがあればスキップする。
     if ($isNewDatabase) {
         init_schema($pdo);
+        import_postal_codes_csv($pdo);
         seed_test_users($pdo);
         seed_sample_authors($pdo);
         seed_spots_from_json($pdo);
@@ -107,6 +108,7 @@ function migrate_schema(PDO $pdo): void
     }
 
     create_postal_codes_table($pdo);
+    import_postal_codes_csv($pdo);
     create_reactions_table($pdo);
     backfill_missing_profiles($pdo);
 }
@@ -150,6 +152,71 @@ function create_reactions_table(PDO $pdo): void
             FOREIGN KEY (spot_id) REFERENCES spots(id)
         )"
     );
+}
+
+// 日本郵便の全国一括CSV（UTF-8版、db/import/utf_ken_all.csv）をpostal_codesテーブルに取り込む。
+// CSVが無い場合（開発機でインポート手順を踏んでいない等）は何もせず抜ける。
+// postal_codesに既にデータがある場合も何もしない（毎リクエストでの再インポートを避けるため）。
+function import_postal_codes_csv(PDO $pdo): void
+{
+    $existingCount = (int)$pdo->query('SELECT COUNT(*) FROM postal_codes')->fetchColumn();
+    if ($existingCount > 0) {
+        return;
+    }
+
+    // 通常はdb/import/直下。ただし体験授業当日のWebプロセットアップ.batは、
+    // db/import/（開発用ファイル）を丸ごと削除する前にCSVだけdb/直下へ退避する
+    // ため、そちらも探す。
+    $candidatePaths = [
+        __DIR__ . '/../db/import/utf_ken_all.csv',
+        __DIR__ . '/../db/utf_ken_all.csv',
+    ];
+    $csvPath = null;
+    foreach ($candidatePaths as $candidate) {
+        if (file_exists($candidate)) {
+            $csvPath = $candidate;
+            break;
+        }
+    }
+    if ($csvPath === null) {
+        return;
+    }
+
+    $fh = fopen($csvPath, 'r');
+    if ($fh === false) {
+        return;
+    }
+
+    $insert = $pdo->prepare(
+        'INSERT INTO postal_codes (postal_code, prefecture, city, town) VALUES (:postal_code, :prefecture, :city, :town)'
+    );
+
+    $pdo->beginTransaction();
+    // 列: 0=団体コード 1=旧郵便番号 2=郵便番号 3-5=カナ 6=都道府県 7=市区町村 8=町域
+    while (($row = fgetcsv($fh, 0, ',', '"', '\\')) !== false) {
+        $postalCode = $row[2] ?? '';
+        $prefecture = $row[6] ?? '';
+        $city = $row[7] ?? '';
+        $town = $row[8] ?? '';
+
+        if ($postalCode === '' || $prefecture === '') {
+            continue;
+        }
+
+        // 「以下に掲載がない場合」は町域なしとして扱う
+        if ($town === '以下に掲載がない場合') {
+            $town = '';
+        }
+
+        $insert->execute([
+            'postal_code' => $postalCode,
+            'prefecture' => $prefecture,
+            'city' => $city,
+            'town' => $town,
+        ]);
+    }
+    $pdo->commit();
+    fclose($fh);
 }
 
 function create_postal_codes_table(PDO $pdo): void

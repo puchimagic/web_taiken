@@ -123,6 +123,13 @@ for %%F in (
     if exist "%TARGET_DIR%\%%~F" del /f /q "%TARGET_DIR%\%%~F"
 )
 if exist "%TARGET_DIR%\scripts" rd /s /q "%TARGET_DIR%\scripts"
+rem db\import は郵便番号CSV（utf_ken_all.csv）以外は開発用ファイルなので、
+rem CSVだけ db\ 直下へ退避してから import フォルダごと削除する。
+rem CSVは初回PHPアクセス時（PHPサーバー起動後）にsrc/db.phpが自動で
+rem postal_codesテーブルへ取り込むため、db\ 直下に残しておく必要がある。
+if exist "%TARGET_DIR%\db\import\utf_ken_all.csv" (
+    move /y "%TARGET_DIR%\db\import\utf_ken_all.csv" "%TARGET_DIR%\db\utf_ken_all.csv" >nul
+)
 if exist "%TARGET_DIR%\db\import" rd /s /q "%TARGET_DIR%\db\import"
 
 call :log ""

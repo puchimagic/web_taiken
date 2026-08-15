@@ -1,5 +1,6 @@
-db/import/*.csv
 db/import/*.zip
+db/board.sqlite
+db/utf_ken_all.csv
 public/uploads/*
 !public/uploads/.gitkeep
 2024*.pptx

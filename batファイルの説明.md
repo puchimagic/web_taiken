@@ -21,6 +21,13 @@
      残すのはスライド(pptx)、`public/`・`src/`・`db/`（`import/`以外）・`画像/`（アプリの動作に必要）、
      `Webプロサーバー起動.bat`（サーバー再起動用）・`Webプロクリーン.bat`（体験授業の最後にPCを
      片付けたいときに手動実行する用）のみ
+   - ただし `db/import/utf_ken_all.csv`（郵便番号データ、日本郵便の全国一括CSV）だけは
+     `db/import/` 削除の直前に `db/` 直下へ退避してから削除する。このCSVは
+     `src/db.php` が初回PHPアクセス時（＝手順4でPHPサーバーを起動した直後の
+     最初のリクエスト時）に自動で読み込んで `postal_codes` テーブルへ取り込む
+     ために必要（`db/import/` を丸ごと削除するタイミングの方がPHPサーバー
+     起動より先に来るため、退避しないとアカウント設定の郵便番号検索機能が
+     空のまま動かなくなる）
 2. **VSCode拡張機能「PHP Server」「SQLite Viewer」を確認・インストール**
    - `code` コマンドの有無を確認（無ければエラーで停止）
    - 拡張機能 `brapifra.phpserver`・`qwtel.sqlite-viewer`（`db/board.sqlite` をVSCode上でダブルクリックしてテーブル閲覧できるようにする。ネイティブの`sqlite3`コマンド等への依存が無く、体験授業の使い捨て環境に向く）が、後述の専用extensions-dir（`%VSCODE_EXTENSIONS%`）にそれぞれ入っていなければ `code --extensions-dir "%VSCODE_EXTENSIONS%" --install-extension` でインストール

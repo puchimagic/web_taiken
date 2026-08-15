@@ -36,8 +36,8 @@ PHP + SQLite + HTML/CSS/JS で作った「知る人ぞ知る旅行スポット�
   - `uploads/` — アップロードされた画像ファイルの保存先
   - `style.css`
 - `src/db.php` — SQLite接続・テーブル初期化・簡易マイグレーション
-- `db/board.sqlite` — SQLiteデータベース本体（初回アクセス時に自動生成）
-- `db/import/` — 郵便番号データの取り込みスクリプトと元データ（後述）
+- `db/board.sqlite` — SQLiteデータベース本体（初回アクセス時に自動生成、`.gitignore`対象）
+- `db/import/` — 郵便番号データの元データ（`utf_ken_all.csv`）と手動再取り込みスクリプト（後述）
 
 ## 位置情報機能について
 
@@ -47,19 +47,21 @@ PHP + SQLite + HTML/CSS/JS で作った「知る人ぞ知る旅行スポット�
 
 `account.php` の「郵便番号」欄に7桁の郵便番号を入力して「住所を検索」ボタンを押すと、都道府県・市区町村が自動入力されます。この検索は外部APIではなく、`db/board.sqlite` 内の `postal_codes` テーブル（日本郵便の郵便番号データを取り込んだもの、約12万件）をSQLiteで検索して実現しています。
 
-`postal_codes` テーブルは `db/board.sqlite` を初めて作る（＝そのファイルが存在しない）タイミングで自動的に空のテーブルとして用意されますが、中身のデータは別途インポートが必要です。
+郵便番号の元データ（`db/import/utf_ken_all.csv`）はリポジトリにコミットされており、`db/board.sqlite` を初めて作る（＝そのファイルが存在しない）タイミングで `src/db.php` の `import_postal_codes_csv()` が自動的にこのCSVを読み込んで `postal_codes` テーブルへ取り込みます。追加の手動操作は不要です。
 
-### 郵便番号データのインポート手順
+### 郵便番号データを手動で更新したい場合
+
+日本郵便のデータが更新された場合など、CSVを差し替えて再取り込みしたいときは以下を行います。
 
 1. [日本郵便 郵便番号データダウンロード（UTF-8版）](https://www.post.japanpost.jp/zipcode/dl/utf-zip.html) から「全国一括」のZIPファイルをダウンロードする
-2. 解凍して出てきた `utf_ken_all.csv` を `db/import/` に置く
+2. 解凍して出てきた `utf_ken_all.csv` で `db/import/utf_ken_all.csv` を上書きする
 3. プロジェクトのルートで以下を実行する
 
 ```
 php db/import/import_postal_codes.php
 ```
 
-「取り込み完了: 124513件」のように表示されれば成功です。データは `db/board.sqlite` に保存されるため、CSVファイル自体はコミット対象外（`.gitignore`）にしています。データ量が大きいCSVファイルは、表計算ソフトで開くとフリーズすることがあるので注意してください。
+「取り込み完了: 124513件」のように表示されれば成功です。データ量が大きいCSVファイルは、表計算ソフトで開くとフリーズすることがあるので注意してください。
 
 ## 動かし方（VSCode拡張 PHP Server）
 
