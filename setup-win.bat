@@ -4,15 +4,19 @@ setlocal
 rem 体験授業の準備用bat。デスクトップに配置してダブルクリックすると、
 rem 1) デスクトップにリポジトリをclone
 rem 2) VSCodeにPHP Server拡張機能が無ければインストール
-rem 3) VSCodeでプロジェクトフォルダを開く
-rem 4) スライド(pptx)をデスクトップにコピー
+rem 3) スライド(pptx)をデスクトップにコピー
+rem 4) VSCodeでプロジェクトフォルダを開く
+rem 5) PHPサーバーを起動する
 rem をまとめて行う。
+rem
+rem 接続が切れてサーバーだけ再起動したい場合は、cloneされたフォルダ内の
+rem start-win.bat を直接実行すればよい（このbatの5番目の処理と同じ内容）。
 
 set REPO_URL=https://github.com/puchimagic/web_taiken.git
 set TARGET_DIR=%USERPROFILE%\Desktop\web_taiken
 set EXTENSION_ID=brapifra.phpserver
 
-echo ==== 1/4: リポジトリを取得します ====
+echo ==== 1/5: リポジトリを取得します ====
 where git >nul 2>nul
 if errorlevel 1 (
     echo エラー: "git" コマンドが見つかりません。Gitをインストールし、PATHに追加してください。
@@ -32,7 +36,7 @@ if exist "%TARGET_DIR%" (
 )
 
 echo.
-echo ==== 2/4: VSCode拡張機能 "PHP Server" を確認します ====
+echo ==== 2/5: VSCode拡張機能 "PHP Server" を確認します ====
 where code >nul 2>nul
 if errorlevel 1 (
     echo 警告: "code" コマンドが見つからないため、拡張機能の自動インストールをスキップします。
@@ -48,7 +52,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo ==== 3/4: スライドをデスクトップにコピーします ====
+echo ==== 3/5: スライドをデスクトップにコピーします ====
 set SLIDE_NAME=Webプログラミング体験_資料.pptx
 if exist "%TARGET_DIR%\%SLIDE_NAME%" (
     copy /Y "%TARGET_DIR%\%SLIDE_NAME%" "%USERPROFILE%\Desktop\%SLIDE_NAME%" >nul
@@ -58,7 +62,7 @@ if exist "%TARGET_DIR%\%SLIDE_NAME%" (
 )
 
 echo.
-echo ==== 4/4: VSCodeでプロジェクトを開きます ====
+echo ==== 4/5: VSCodeでプロジェクトを開きます ====
 if exist "%TARGET_DIR%" (
     where code >nul 2>nul
     if errorlevel 1 (
@@ -70,6 +74,17 @@ if exist "%TARGET_DIR%" (
 )
 
 echo.
-echo 準備が完了しました。サイトを起動するときは、開いたフォルダ内の start-win.bat を実行してください。
+echo ==== 5/5: PHPサーバーを起動します ====
+where php >nul 2>nul
+if errorlevel 1 (
+    echo エラー: "php" コマンドが見つかりません。PHPをインストールし、PATHに追加してください。
+    pause
+    exit /b 1
+)
+
+echo http://127.0.0.1:8000/login.php をブラウザで開いてください。
+echo 停止するには Ctrl+C を押してください。
+php -d upload_max_filesize=200M -d post_max_size=200M -S 127.0.0.1:8000 -t "%TARGET_DIR%\public"
+
 pause
 endlocal
