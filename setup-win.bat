@@ -1,128 +1,132 @@
 @echo off
 setlocal enabledelayedexpansion
 
-rem ä½“é¨“æŽˆæ¥­ã®æº–å‚™ç”¨batã€‚ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã«é…ç½®ã—ã¦ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨ã€
-rem 1) ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã«ãƒªãƒã‚¸ãƒˆãƒªã‚’clone
-rem 2) VSCodeã«PHP Serveræ‹¡å¼µæ©Ÿèƒ½ãŒç„¡ã‘ã‚Œã°ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
-rem 3) ã‚¹ãƒ©ã‚¤ãƒ‰(pptx)ã‚’ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã«ã‚³ãƒ”ãƒ¼
-rem 4) VSCodeã§ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã‚’é–‹ã
-rem 5) PHPã‚µãƒ¼ãƒãƒ¼ã‚’èµ·å‹•ã™ã‚‹
-rem ã‚’ã¾ã¨ã‚ã¦è¡Œã†ã€‚
+rem ‘ÌŒ±Žö‹Æ‚Ì€”õ—pbatBƒfƒXƒNƒgƒbƒv‚É”z’u‚µ‚Äƒ_ƒuƒ‹ƒNƒŠƒbƒN‚·‚é‚ÆA
+rem 1) ƒfƒXƒNƒgƒbƒv‚ÉƒŠƒ|ƒWƒgƒŠ‚ðclone
+rem 2) VSCode‚ÉPHP ServerŠg’£‹@”\‚ª–³‚¯‚ê‚ÎƒCƒ“ƒXƒg[ƒ‹
+rem 3) ƒXƒ‰ƒCƒh(pptx)‚ðƒfƒXƒNƒgƒbƒv‚ÉƒRƒs[
+rem 4) VSCode‚ÅƒvƒƒWƒFƒNƒgƒtƒHƒ‹ƒ_‚ðŠJ‚­
+rem 5) PHPƒT[ƒo[‚ð‹N“®‚·‚é
+rem ‚ð‚Ü‚Æ‚ß‚Äs‚¤B
 rem
-rem æŽ¥ç¶šãŒåˆ‡ã‚Œã¦ã‚µãƒ¼ãƒãƒ¼ã ã‘å†èµ·å‹•ã—ãŸã„å ´åˆã¯ã€cloneã•ã‚ŒãŸãƒ•ã‚©ãƒ«ãƒ€å†…ã®
-rem start-win.bat ã‚’ç›´æŽ¥å®Ÿè¡Œã™ã‚Œã°ã‚ˆã„ï¼ˆã“ã®batã®5ç•ªç›®ã®å‡¦ç†ã¨åŒã˜å†…å®¹ï¼‰ã€‚
+rem Ú‘±‚ªØ‚ê‚ÄƒT[ƒo[‚¾‚¯Ä‹N“®‚µ‚½‚¢ê‡‚ÍAclone‚³‚ê‚½ƒtƒHƒ‹ƒ_“à‚Ì
+rem start-win.bat ‚ð’¼ÚŽÀs‚·‚ê‚Î‚æ‚¢i‚±‚Ìbat‚Ì5”Ô–Ú‚Ìˆ—‚Æ“¯‚¶“à—ejB
 rem
-rem å®Ÿè¡Œå†…å®¹ã¯ã™ã¹ã¦ %LOG_FILE% ã«ã‚‚è¨˜éŒ²ã•ã‚Œã‚‹ï¼ˆãƒˆãƒ©ãƒ–ãƒ«æ™‚ã®èª¿æŸ»ç”¨ï¼‰ã€‚
+rem ŽÀs“à—e‚Í‚·‚×‚Ä %LOG_FILE% ‚É‚à‹L˜^‚³‚ê‚éiƒgƒ‰ƒuƒ‹Žž‚Ì’²¸—pjB
 
 set REPO_URL=https://github.com/puchimagic/web_taiken.git
 set TARGET_DIR=%USERPROFILE%\Desktop\web_taiken
 set EXTENSION_ID=brapifra.phpserver
 set LOG_FILE=%USERPROFILE%\Desktop\web_taiken_setup_log.txt
 
-echo ==== setup-win.bat é–‹å§‹ %DATE% %TIME% ==== > "%LOG_FILE%"
+echo ==== setup-win.bat ŠJŽn %DATE% %TIME% ==== > "%LOG_FILE%"
 
-call :log "==== 1/5: ãƒªãƒã‚¸ãƒˆãƒªã‚’å–å¾—ã—ã¾ã™ ===="
+call :log "==== 1/5: ƒŠƒ|ƒWƒgƒŠ‚ðŽæ“¾‚µ‚Ü‚· ===="
 where git >nul 2>nul
 if errorlevel 1 (
-    call :log "ã‚¨ãƒ©ãƒ¼: \"git\" ã‚³ãƒžãƒ³ãƒ‰ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚Gitã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã€PATHã«è¿½åŠ ã—ã¦ãã ã•ã„ã€‚"
-    call :pause_and_exit 1
+    call :log "ƒGƒ‰[: ugitvƒRƒ}ƒ“ƒh‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñBGit‚ðƒCƒ“ƒXƒg[ƒ‹‚µAPATH‚É’Ç‰Á‚µ‚Ä‚­‚¾‚³‚¢B"
+    set "EXIT_CODE=1"
+    goto :pause_and_exit
 )
 
 if exist "%TARGET_DIR%" (
-    call :log "ãƒ•ã‚©ãƒ«ãƒ€ \"%TARGET_DIR%\" ã¯ã™ã§ã«å­˜åœ¨ã™ã‚‹ãŸã‚ã€cloneã‚’ã‚¹ã‚­ãƒƒãƒ—ã—ã¾ã™ã€‚"
+    call :log "ƒtƒHƒ‹ƒ_ u%TARGET_DIR%v‚Í‚·‚Å‚É‘¶Ý‚·‚é‚½‚ßAclone‚ðƒXƒLƒbƒv‚µ‚Ü‚·B"
 ) else (
     call :log "git clone %REPO_URL% %TARGET_DIR%"
     git clone "%REPO_URL%" "%TARGET_DIR%" >> "%LOG_FILE%" 2>&1
     if errorlevel 1 (
-        call :log "ã‚¨ãƒ©ãƒ¼: git clone ã«å¤±æ•—ã—ã¾ã—ãŸã€‚è©³ç´°ã¯ %LOG_FILE% ã‚’ç¢ºèªã—ã¦ãã ã•ã„ã€‚"
-        call :pause_and_exit 1
+        call :log "ƒGƒ‰[: git clone ‚ÉŽ¸”s‚µ‚Ü‚µ‚½BÚ×‚Í %LOG_FILE% ‚ðŠm”F‚µ‚Ä‚­‚¾‚³‚¢B"
+        set "EXIT_CODE=1"
+        goto :pause_and_exit
     )
 )
 
 call :log ""
-call :log "==== 2/5: VSCodeæ‹¡å¼µæ©Ÿèƒ½ \"PHP Server\" ã‚’ç¢ºèªã—ã¾ã™ ===="
+call :log "==== 2/5: VSCodeŠg’£‹@”\uPHP Serverv‚ðŠm”F‚µ‚Ü‚· ===="
 where code >nul 2>nul
 if errorlevel 1 (
-    call :log "ã‚¨ãƒ©ãƒ¼: \"code\" ã‚³ãƒžãƒ³ãƒ‰ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚VSCodeãŒã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã•ã‚Œã¦ã„ã‚‹ã‹ç¢ºèªã—ã¦ãã ã•ã„ã€‚"
-    call :pause_and_exit 1
+    call :log "ƒGƒ‰[: ucodevƒRƒ}ƒ“ƒh‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñBVSCode‚ªƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ä‚¢‚é‚©Šm”F‚µ‚Ä‚­‚¾‚³‚¢B"
+    set "EXIT_CODE=1"
+    goto :pause_and_exit
 )
 
-code --list-extensions | findstr /I /C:"%EXTENSION_ID%" >nul
+call code --list-extensions | findstr /I /C:"%EXTENSION_ID%" >nul
 if errorlevel 1 (
-    call :log "\"PHP Server\" æ‹¡å¼µæ©Ÿèƒ½ã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¾ã™..."
-    code --install-extension %EXTENSION_ID% >> "%LOG_FILE%" 2>&1
+    call :log "uPHP ServervŠg’£‹@”\‚ðƒCƒ“ƒXƒg[ƒ‹‚µ‚Ü‚·..."
+    call code --install-extension %EXTENSION_ID% >> "%LOG_FILE%" 2>&1
 ) else (
-    call :log "\"PHP Server\" æ‹¡å¼µæ©Ÿèƒ½ã¯æ—¢ã«ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã•ã‚Œã¦ã„ã¾ã™ã€‚"
+    call :log "uPHP ServervŠg’£‹@”\‚ÍŠù‚ÉƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ä‚¢‚Ü‚·B"
 )
 
 call :log ""
-call :log "==== 3/5: ã‚¹ãƒ©ã‚¤ãƒ‰ã‚’ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã«ã‚³ãƒ”ãƒ¼ã—ã¾ã™ ===="
-set SLIDE_NAME=Webãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚°ä½“é¨“_è³‡æ–™.pptx
+call :log "==== 3/5: ƒXƒ‰ƒCƒh‚ðƒfƒXƒNƒgƒbƒv‚ÉƒRƒs[‚µ‚Ü‚· ===="
+set SLIDE_NAME=WebƒvƒƒOƒ‰ƒ~ƒ“ƒO‘ÌŒ±_Ž‘—¿.pptx
 if exist "%TARGET_DIR%\%SLIDE_NAME%" (
     copy /Y "%TARGET_DIR%\%SLIDE_NAME%" "%USERPROFILE%\Desktop\%SLIDE_NAME%" >nul
-    call :log "ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã« \"%SLIDE_NAME%\" ã‚’é…ç½®ã—ã¾ã—ãŸã€‚"
+    call :log "ƒfƒXƒNƒgƒbƒv‚Éu%SLIDE_NAME%v‚ð”z’u‚µ‚Ü‚µ‚½B"
 ) else (
-    call :log "è­¦å‘Š: \"%SLIDE_NAME%\" ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸã€‚ã‚¹ã‚­ãƒƒãƒ—ã—ã¾ã™ã€‚"
+    call :log "Œx: u%SLIDE_NAME%v‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½BƒXƒLƒbƒv‚µ‚Ü‚·B"
 )
 
 call :log ""
-call :log "==== 4/5: VSCodeã§ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’é–‹ãã¾ã™ ===="
-code "%TARGET_DIR%"
+call :log "==== 4/5: VSCode‚ÅƒvƒƒWƒFƒNƒg‚ðŠJ‚«‚Ü‚· ===="
+call code "%TARGET_DIR%"
 
 call :log ""
-call :log "==== 5/5: PHPã‚µãƒ¼ãƒãƒ¼ã‚’èµ·å‹•ã—ã¾ã™ ===="
+call :log "==== 5/5: PHPƒT[ƒo[‚ð‹N“®‚µ‚Ü‚· ===="
 call :find_php
 if errorlevel 1 (
-    call :log "ã‚¨ãƒ©ãƒ¼: \"php\" ã‚³ãƒžãƒ³ãƒ‰ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚PHPã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¦ãã ã•ã„ã€‚"
-    call :pause_and_exit 1
+    call :log "ƒGƒ‰[: uphpvƒRƒ}ƒ“ƒh‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñBPHP‚ðƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‚­‚¾‚³‚¢B"
+    set "EXIT_CODE=1"
+    goto :pause_and_exit
 )
 
-call :log "http://127.0.0.1:8000/login.php ã‚’ãƒ–ãƒ©ã‚¦ã‚¶ã§é–‹ã„ã¦ãã ã•ã„ã€‚"
-call :log "åœæ­¢ã™ã‚‹ã«ã¯ Ctrl+C ã‚’æŠ¼ã—ã¦ãã ã•ã„ã€‚"
-echo PHPã‚µãƒ¼ãƒãƒ¼ã‚’èµ·å‹•ã—ã¾ã—ãŸ >> "%LOG_FILE%"
+call :log "http://127.0.0.1:8000/login.php ‚ðƒuƒ‰ƒEƒU‚ÅŠJ‚¢‚Ä‚­‚¾‚³‚¢B"
+call :log "’âŽ~‚·‚é‚É‚Í Ctrl+C ‚ð‰Ÿ‚µ‚Ä‚­‚¾‚³‚¢B"
+echo PHPƒT[ƒo[‚ð‹N“®‚µ‚Ü‚µ‚½ >> "%LOG_FILE%"
 php -d upload_max_filesize=200M -d post_max_size=200M -S 127.0.0.1:8000 -t "%TARGET_DIR%\public"
 
-call :pause_and_exit 0
+set "EXIT_CODE=0"
+goto :pause_and_exit
 
 rem ---------------------------------------------------------
-rem ç”»é¢è¡¨ç¤ºã¨ãƒ­ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®è¨˜éŒ²ã‚’åŒæ™‚ã«è¡Œã†ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³ã€‚
-rem å¼•æ•°ã¯ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒˆã§å›²ã‚“ã§æ¸¡ã™ï¼ˆç©ºè¡Œã‚’å‡ºã—ãŸã„å ´åˆã¯ ""ï¼‰ã€‚
+rem ‰æ–Ê•\Ž¦‚ÆƒƒOƒtƒ@ƒCƒ‹‚Ö‚Ì‹L˜^‚ð“¯Žž‚És‚¤ƒTƒuƒ‹[ƒ`ƒ“B
+rem ˆø”‚Íƒ_ƒuƒ‹ƒNƒH[ƒg‚ÅˆÍ‚ñ‚Å“n‚·i‹ós‚ðo‚µ‚½‚¢ê‡‚Í ""jB
 rem ---------------------------------------------------------
 :log
-echo %~1
-echo %~1 >> "%LOG_FILE%"
+echo(%~1
+echo(%~1 >> "%LOG_FILE%"
 exit /b 0
 
 rem ---------------------------------------------------------
-rem ãƒ­ã‚°ã‚’ä¿å­˜ã—ãŸæ—¨ã‚’è¡¨ç¤ºã—ã¦pauseã—ã€æŒ‡å®šã—ãŸçµ‚äº†ã‚³ãƒ¼ãƒ‰ã§çµ‚äº†ã™ã‚‹ã€‚
+rem ƒƒO‚ð•Û‘¶‚µ‚½Ž|‚ð•\Ž¦‚µ‚Äpause‚µAŽw’è‚µ‚½I—¹ƒR[ƒh‚ÅI—¹‚·‚éB
 rem ---------------------------------------------------------
 :pause_and_exit
 echo.
-echo ãƒ­ã‚°ã‚’ "%LOG_FILE%" ã«ä¿å­˜ã—ã¾ã—ãŸã€‚
+echo ƒƒO‚ð "%LOG_FILE%" ‚É•Û‘¶‚µ‚Ü‚µ‚½B
 pause
-endlocal
-exit /b %~1
+endlocal & exit /b %EXIT_CODE%
 
 rem ---------------------------------------------------------
-rem PHPã‚³ãƒžãƒ³ãƒ‰ã®æ¤œå‡ºã€‚PATHã«ãªã‘ã‚Œã°ã‚ˆãã‚ã‚‹ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«å…ˆã‚’
-rem æŽ¢ã—ã€è¦‹ã¤ã‹ã‚Œã°ã“ã®batå†…ã®PATHã¨ã€Œãƒ¦ãƒ¼ã‚¶ãƒ¼ç’°å¢ƒå¤‰æ•°PATHã€
-rem ï¼ˆã‚·ã‚¹ãƒ†ãƒ PATHã¯è§¦ã‚‰ãªã„ï¼‰ã®ä¸¡æ–¹ã«è¿½åŠ ã™ã‚‹ã€‚
-rem æ¬¡å›žä»¥é™ã¯where phpã§ç›´æŽ¥è¦‹ã¤ã‹ã‚‹ã‚ˆã†ã«ãªã‚‹ã€‚
+rem PHPƒRƒ}ƒ“ƒh‚ÌŒŸoBPATH‚É‚È‚¯‚ê‚Î‚æ‚­‚ ‚éƒCƒ“ƒXƒg[ƒ‹æ‚ð
+rem ’T‚µAŒ©‚Â‚©‚ê‚Î‚±‚Ìbat“à‚ÌPATH‚Æuƒ†[ƒU[ŠÂ‹«•Ï”PATHv
+rem iƒVƒXƒeƒ€PATH‚ÍG‚ç‚È‚¢j‚Ì—¼•û‚É’Ç‰Á‚·‚éB
+rem ŽŸ‰ñˆÈ~‚Íwhere php‚Å’¼ÚŒ©‚Â‚©‚é‚æ‚¤‚É‚È‚éB
 rem ---------------------------------------------------------
 :find_php
 where php >nul 2>nul
 if not errorlevel 1 exit /b 0
 
-call :log "\"php\" ã‚³ãƒžãƒ³ãƒ‰ãŒè¦‹ã¤ã‹ã‚‰ãªã„ãŸã‚ã€ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«å…ˆã‚’æŽ¢ã—ã¾ã™..."
+call :log "uphpvƒRƒ}ƒ“ƒh‚ªŒ©‚Â‚©‚ç‚È‚¢‚½‚ßAƒCƒ“ƒXƒg[ƒ‹æ‚ð’T‚µ‚Ü‚·..."
 
 set PHP_CANDIDATES=C:\php;C:\xampp\php;%LOCALAPPDATA%\Programs\php
 
 for %%D in (%PHP_CANDIDATES%) do (
     if exist "%%D\php.exe" (
-        call :log "PHPã‚’ç™ºè¦‹ã—ã¾ã—ãŸ: %%D"
+        call :log "PHP‚ð”­Œ©‚µ‚Ü‚µ‚½: %%D"
         set "PATH=%%D;%PATH%"
 
-        rem ãƒ¦ãƒ¼ã‚¶ãƒ¼ç’°å¢ƒå¤‰æ•°PATHã®ã¿ã‚’èª­ã¿å–ã£ã¦è¿½è¨˜ã™ã‚‹ï¼ˆã‚·ã‚¹ãƒ†ãƒ PATHã«ã¯è§¦ã‚Œãªã„ï¼‰
+        rem ƒ†[ƒU[ŠÂ‹«•Ï”PATH‚Ì‚Ý‚ð“Ç‚ÝŽæ‚Á‚Ä’Ç‹L‚·‚éiƒVƒXƒeƒ€PATH‚É‚ÍG‚ê‚È‚¢j
         set "USER_PATH="
         for /f "usebackq tokens=2,*" %%A in (`reg query "HKCU\Environment" /v Path 2^>nul`) do set "USER_PATH=%%B"
         echo !USER_PATH! | findstr /I /C:"%%D" >nul
@@ -137,5 +141,5 @@ for %%D in (%PHP_CANDIDATES%) do (
     )
 )
 
-call :log "PHPãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸã€‚C:\php ã‚„ C:\xampp\php ãªã©ã«é…ç½®ã—ã¦ãã ã•ã„ã€‚"
+call :log "PHP‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½BC:\php ‚â C:\xampp\php ‚È‚Ç‚É”z’u‚µ‚Ä‚­‚¾‚³‚¢B"
 exit /b 1
