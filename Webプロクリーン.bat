@@ -2,7 +2,9 @@
 setlocal enabledelayedexpansion
 
 rem 体験授業終了後、各PCを元の状態に戻すためのクリーンアップ用bat。
-rem Webプロセットアップ.bat の「3/5」で自動的にデスクトップへコピーされる。
+rem プロジェクトフォルダ内に残しておき、デスクトップには自動配置しない。体験授業の
+rem 最後にPCへの痕跡をゼロにしたい場合、VSCodeのエクスプローラーやターミナルから
+rem 手動で実行する想定。
 rem 1) ポート8000で起動中のPHPサーバーがあれば停止する
 rem 2) VSCode(Code.exe)が起動していれば終了する
 rem 3) ブラウザ(Microsoft Edge / Google Chrome)が起動していれば終了する

@@ -6,17 +6,17 @@ rem 1) 実プロジェクト一式（%APP_BASE%\project、OneDriveと同期されない場所）に
 rem    既存のリポジトリがあれば削除してから、改めてclone
 rem    （.gitフォルダ・READMEなど体験授業に不要な開発用ファイルは取得後に削除する）
 rem 2) VSCodeにPHP Server拡張機能が無ければインストール
-rem 3) クリーンアップ用bat(Webプロクリーン.bat)をデスクトップに配置
-rem 4) VSCodeでプロジェクト専用プロファイルを使ってフォルダを開く（毎回まっさらな画面になる）
-rem 5) PHPサーバーを起動する
+rem 3) VSCodeでプロジェクト専用プロファイルを使ってフォルダを開く（毎回まっさらな画面になる）
+rem 4) PHPサーバーを起動する
 rem をまとめて行う。
 rem
-rem スライド(pptx)やサーバー起動用bat(Webプロサーバー起動.bat)はデスクトップには
-rem コピーしない。プロジェクトフォルダの中にあるものをそのまま使う。
-rem 体験授業終了後は、デスクトップに配置される Webプロクリーン.bat を実行すれば、
-rem 開いたVSCode・ブラウザ・サーバーを終了し、作られたファイルをすべて削除できる。
+rem スライド(pptx)やサーバー起動用bat(Webプロサーバー起動.bat)、クリーンアップ用
+rem bat(Webプロクリーン.bat)はデスクトップにはコピーしない。プロジェクトフォルダの
+rem 中にあるものをそのまま使う（生徒の入れ替わりはこのbatの再実行だけで完結し、
+rem 既存のVSCode・PHPサーバーは自動で終了・削除されるため、クリーンアップ用batは
+rem 体験授業の最後にPCへの痕跡をゼロにしたい場合にのみ手動で使う想定）。
 rem これにより、このbatを実行したデスクトップに最終的に残るのは
-rem Webプロセットアップ.bat と Webプロクリーン.bat の2つだけになる。
+rem Webプロセットアップ.bat 1つだけになる。
 rem
 rem 実行内容はすべて %LOG_FILE% にも記録される（トラブル時の調査用）。
 
@@ -28,8 +28,8 @@ rem 見えているデスクトップが %USERPROFILE%\Desktop ではなく OneDrive 配下に
 rem 移動していることがある。%USERPROFILE%\Desktop 決め打ちだとユーザーから
 rem 見えない場所にファイルが作られてしまうため、レジストリから実際のデスクトップの
 rem 場所を取得する（取得できない場合は %USERPROFILE%\Desktop にフォールバック）。
-rem これはWebプロクリーン.batの配置先を決めるためだけに使う（プロジェクト本体は
-rem デスクトップには置かない。下記参照）。
+rem これは過去バージョンがデスクトップに残したファイルを掃除するためだけに使う
+rem （プロジェクト本体はデスクトップには置かない。下記参照）。
 set "DESKTOP_DIR=%USERPROFILE%\Desktop"
 for /f "usebackq tokens=2,*" %%A in (`reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop 2^>nul`) do set "DESKTOP_DIR=%%B"
 call set "DESKTOP_DIR=%DESKTOP_DIR%"
@@ -50,13 +50,14 @@ rem 過去バージョンがデスクトップに残したプロジェクト関連ファイル・ログ
 rem （現在は使用しない）があれば削除しておく。
 del /f /q "%DESKTOP_DIR%\Webプログラミング体験_資料.pptx" >nul 2>nul
 del /f /q "%DESKTOP_DIR%\Webプロサーバー起動.bat" >nul 2>nul
+del /f /q "%DESKTOP_DIR%\Webプロクリーン.bat" >nul 2>nul
 del /f /q "%DESKTOP_DIR%\web_taiken_cleanup_log.txt" >nul 2>nul
 del /f /q "%DESKTOP_DIR%\web_taiken_setup_log.txt" >nul 2>nul
 del /f /q "%DESKTOP_DIR%\web_taiken_start_log.txt" >nul 2>nul
 
 echo ==== Webプロセットアップ.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
 
-call :log "==== 1/5: リポジトリを取得します ===="
+call :log "==== 1/4: リポジトリを取得します ===="
 where git >nul 2>nul
 if errorlevel 1 (
     call :log "エラー: 「git」コマンドが見つかりません。Gitをインストールし、PATHに追加してください。"
@@ -109,7 +110,8 @@ if exist "%TARGET_DIR%\README.md" (
 rem 上記以外にも、体験授業の実施に直接関係ない開発用ドキュメント・
 rem スクリプト類は取得後にできるだけ削除しておく。残すのはスライド(pptx)、
 rem public・src・db（import以外）・画像（アプリの動作に必要）、
-rem Webプロサーバー起動.bat（サーバー再起動用）のみ。
+rem Webプロサーバー起動.bat（サーバー再起動用）・Webプロクリーン.bat
+rem （体験授業の最後にPCを片付けたいときに手動実行する用）のみ。
 for %%F in (
     "CLAUDE.md"
     "batファイルの説明.md"
@@ -123,7 +125,7 @@ if exist "%TARGET_DIR%\scripts" rd /s /q "%TARGET_DIR%\scripts"
 if exist "%TARGET_DIR%\db\import" rd /s /q "%TARGET_DIR%\db\import"
 
 call :log ""
-call :log "==== 2/5: VSCode拡張機能「PHP Server」を確認します ===="
+call :log "==== 2/4: VSCode拡張機能「PHP Server」を確認します ===="
 where code >nul 2>nul
 if errorlevel 1 (
     call :log "エラー: 「code」コマンドが見つかりません。VSCodeがインストールされているか確認してください。"
@@ -140,18 +142,7 @@ if errorlevel 1 (
 )
 
 call :log ""
-call :log "==== 3/5: クリーンアップ用batをデスクトップに配置します ===="
-set CLEANUP_BAT_NAME=Webプロクリーン.bat
-if exist "%TARGET_DIR%\%CLEANUP_BAT_NAME%" (
-    copy /Y "%TARGET_DIR%\%CLEANUP_BAT_NAME%" "%DESKTOP_DIR%\%CLEANUP_BAT_NAME%" >nul
-    del /f /q "%TARGET_DIR%\%CLEANUP_BAT_NAME%"
-    call :log "デスクトップに「%CLEANUP_BAT_NAME%」を配置しました。"
-) else (
-    call :log "警告: 「%CLEANUP_BAT_NAME%」が見つかりませんでした。スキップします。"
-)
-
-call :log ""
-call :log "==== 4/5: VSCodeでプロジェクトを開きます ===="
+call :log "==== 3/4: VSCodeでプロジェクトを開きます ===="
 rem 普段使っているVSCodeのプロファイル（%APPDATA%\Code）をそのまま使うと、
 rem 前回このPCで開いていたときのサイドバー開閉状態などのレイアウト記憶や、
 rem この端末に個人的に入れている拡張機能がそのまま引き継がれてしまう。
@@ -173,7 +164,7 @@ md "%VSCODE_USER_DATA%\User" >nul 2>nul
 start "" /max code --disable-workspace-trust --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"
 
 call :log ""
-call :log "==== 5/5: PHPサーバーを起動します ===="
+call :log "==== 4/4: PHPサーバーを起動します ===="
 call :find_php
 if errorlevel 1 (
     call :log "エラー: 「php」コマンドが見つかりません。PHPをインストールしてください。"
