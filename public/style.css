@@ -12,6 +12,7 @@ html {
   /* 体験用：好きな色に書き換えてみよう（例：#1d4e6b、#2e7d4f など） */
   --main-color: #b5551f;
   --main-color-hover: #96461a;
+  /* 体験用：ページ全体の背景色。好きな色に書き換えてみよう（例：#eef3f6、#f2f6ee など） */
   --bg: #f6f1e6;
   --surface: #fffdf8;
   --surface-2: #efe6d3;

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
@@ -6,6 +7,11 @@ from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.oxml.ns import qn
 import copy
+from PIL import Image
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+IMG_DIR = os.path.join(BASE_DIR, "パワポ用画像")
+PROFILE_DIR = os.path.join(BASE_DIR, "自己紹介画像")
 
 # ---- サイトのデザイントークン（public/style.css 準拠） ----
 MAIN = RGBColor(0xB5, 0x55, 0x1F)       # --main-color テラコッタ
@@ -192,10 +198,19 @@ def step_badge(slide, l, t, num, label):
     run.font.name = FONT_SANS
 
 
-def code_chip(slide, l, t, w, h, text):
+def code_chip(slide, l, t, w, h, text, line_no=None):
+    """ファイル名チップ。line_no（例："53行目" "25-40行目"）を指定すると右肩に行番号バッジを添える"""
     c = rect(slide, l, t, w, h, fill=INK, radius=0.15)
     textbox(slide, l, t, w, h, text, size=13, color=RGBColor(0xF7, 0xE9, 0xDC), bold=False,
             align=PP_ALIGN.CENTER, font="Courier New", anchor=MSO_ANCHOR.MIDDLE)
+    if line_no:
+        bw = Inches(0.35 + len(line_no) * 0.1)
+        bh = Inches(0.32)
+        bx = Emu(l + w - bw + Inches(0.12))
+        by = Emu(t - bh / 2)
+        pill(slide, bx, by, bw, bh, fill=MAIN)
+        textbox(slide, bx, by, bw, bh, line_no, size=10.5, color=CREAM, bold=True,
+                align=PP_ALIGN.CENTER, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
     return c
 
 
@@ -213,6 +228,30 @@ def tag_badge(slide, l, t, w, h, text):
     textbox(slide, l, t, w, h, text, size=12, color=MAIN, bold=False, align=PP_ALIGN.CENTER,
             font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
     return c
+
+
+def screenshot(slide, path, l, t, max_w, max_h, caption=None, label=None, label_color=SUB, border=BORDER, frame=True, pad=Pt(4)):
+    """スクリーンショットを枠付きカードで配置し、任意でラベル・キャプションを添える"""
+    im = Image.open(path)
+    iw, ih = im.size
+    ratio = min(max_w / iw, max_h / ih)
+    w = Emu(int(iw * ratio))
+    h = Emu(int(ih * ratio))
+    x = Emu(int(l + (max_w - w) / 2))
+    y = t
+    if label:
+        textbox(slide, l, Emu(t - Inches(0.34)), max_w, Inches(0.3), label, size=11.5,
+                color=label_color, bold=True, font=FONT_SANS)
+        y = t
+    if frame:
+        rect(slide, Emu(x - pad), Emu(y - pad), Emu(w + pad * 2), Emu(h + pad * 2),
+             fill=SURFACE, line=border, line_w=Pt(1), radius=0.04)
+    slide.shapes.add_picture(path, x, y, width=w, height=h)
+    bottom = Emu(y + h)
+    if caption:
+        textbox(slide, l, Emu(bottom + Inches(0.12)), max_w, Inches(0.35), caption, size=11,
+                color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS)
+    return bottom
 
 
 def bullet_block(slide, l, t, w, h, lines, size=13.5, color=INK, gap=0.42, bold_first=False, marker="●"):
@@ -270,7 +309,60 @@ for t_ in tools:
     tag_badge(s, x, Inches(6.3), w, Inches(0.42), t_)
     x = Emu(x + w + Inches(0.18))
 
-footer(s, 1)
+footer(s, 1, total=17)
+
+# ============================================================
+# スライド 1.5: 自己紹介（曽根先生・2026年版）
+# ============================================================
+s = add_slide()
+set_bg(s)
+kicker(s, "自己紹介")
+title(s, "曽根　大智　(Sone Daichi)")
+
+img_path = os.path.join(PROFILE_DIR, "曽根先生_2026_実習授業.png")
+screenshot(s, img_path, Inches(7.55), Inches(1.9), Inches(4.25), Inches(4.6),
+           caption="高等専修学校勤務時：実習授業での一コマ")
+
+card(s, Inches(0.5), Inches(1.9), Inches(6.7), Inches(4.6))
+textbox(s, Inches(0.85), Inches(2.15), Inches(6.0), Inches(0.4),
+        "大阪情報コンピュータ専門学校 講師", size=14, bold=True, color=MAIN, font=FONT_SANS)
+bullet_block(s, Inches(0.85), Inches(2.7), Inches(6.05), Inches(3.5),
+             ["今年3月まで大阪情報コンピュータ高等専修学校\n（OICのグループ校）に勤務",
+              "高校生に情報系の授業を教えていた",
+              "実は高等専修学校のパンフレットにも\n実習授業の一コマがちらっと掲載されている"],
+             size=14.5, gap=0.5)
+
+footer(s, 2, total=17)
+
+# ============================================================
+# スライド 1.6: 自己紹介（厨子先生・2024年版・予備）
+# ============================================================
+s = add_slide()
+set_bg(s)
+kicker(s, "自己紹介（予備）")
+title(s, "厨子　直人　(Zushi, Naoto)")
+
+img_path = os.path.join(PROFILE_DIR, "厨子先生_2024_杖を持った写真_conv.jpg")
+screenshot(s, img_path, Inches(8.35), Inches(1.9), Inches(3.45), Inches(4.6))
+
+card(s, Inches(0.5), Inches(1.9), Inches(7.5), Inches(2.55))
+textbox(s, Inches(0.85), Inches(2.12), Inches(6.9), Inches(0.4),
+        "経歴", size=14, bold=True, color=MAIN, font=FONT_SANS)
+bullet_block(s, Inches(0.85), Inches(2.6), Inches(6.9), Inches(1.75),
+             ["(株)Sky、大阪府四條畷市役所などに所属。NTT西日本などで\nプロジェクトマネジメント・情報セキュリティ・アーキテクトとして従事",
+              "日本で初めての予測変換機能を実装した経歴を持つ",
+              "コンピュータ専門誌（「I/O」など）で記事を執筆"],
+             size=13)
+
+card(s, Inches(0.5), Inches(4.65), Inches(7.5), Inches(1.85))
+textbox(s, Inches(0.85), Inches(4.87), Inches(6.9), Inches(0.4),
+        "本校での担当授業", size=14, bold=True, color=MAIN, font=FONT_SANS)
+bullet_block(s, Inches(0.85), Inches(5.3), Inches(6.9), Inches(1.15),
+             ["IT基礎科目／プログラミング（1年生）、システム設計各種（1〜3年生）",
+              "基本情報／応用情報対策講座、AIに関する授業、クラス担任"],
+             size=13)
+
+footer(s, 3, total=17)
 
 # ============================================================
 # スライド 2: 今日やること（アジェンダ）
@@ -294,7 +386,8 @@ items = [
 
 col_w = Inches(3.9)
 row_h = Inches(1.55)
-start_x = Inches(0.5)
+grid_w = Emu(col_w * 3 + Inches(0.18) * 2)
+start_x = Emu((SLIDE_W - grid_w) // 2)
 start_y = Inches(2.05)
 gap_x = Inches(0.18)
 gap_y = Inches(0.2)
@@ -311,7 +404,7 @@ for i, (num, ttl, desc) in enumerate(items):
     textbox(s, Emu(x + Inches(0.22)), Emu(y + Inches(0.78)), Emu(col_w - Inches(0.4)), Inches(0.7),
             desc, size=11.5, color=SUB, font=FONT_SANS, line_spacing=1.25)
 
-footer(s, 2)
+footer(s, 4, total=17)
 
 # ============================================================
 # スライド 3: プログラミングって何？（料理の比喩）
@@ -335,7 +428,7 @@ n = len(steps)
 total_w = Inches(11.3)
 box_w = Inches(1.95)
 gap = Emu((total_w - box_w * n) // (n - 1))
-x = Inches(0.5)
+x = Emu((SLIDE_W - total_w) // 2)
 y = Inches(2.35)
 box_h = Inches(1.5)
 
@@ -355,7 +448,7 @@ textbox(s, Inches(3.85), Inches(4.35), Inches(5.6), Inches(0.55),
         "今日は「実装」「テスト」の部分を体験します", size=14.5, color=CREAM, bold=True,
         align=PP_ALIGN.CENTER, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
 
-footer(s, 3)
+footer(s, 5, total=17)
 
 # ============================================================
 # スライド 4: 表の顔・裏の顔（ラーメン比喩）
@@ -369,7 +462,7 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
         size=14, color=SUB, font=FONT_SANS)
 
 # 左カード：カップラーメン
-lx, ly, lw, lh = Inches(0.5), Inches(2.1), Inches(5.55), Inches(4.5)
+lx, ly, lw, lh = Inches(1.0), Inches(2.1), Inches(5.55), Inches(4.5)
 card(s, lx, ly, lw, lh)
 rect(s, lx, ly, lw, Inches(0.1), fill=STAMP)
 textbox(s, Emu(lx + Inches(0.35)), Emu(ly + Inches(0.3)), Emu(lw - Inches(0.7)), Inches(0.45),
@@ -381,7 +474,7 @@ bullet_block(s, Emu(lx + Inches(0.35)), Emu(ly + Inches(1.5)), Emu(lw - Inches(0
              size=13)
 
 # 右カード：ラーメン屋
-rx, ry, rw, rh = Inches(6.28), Inches(2.1), Inches(5.55), Inches(4.5)
+rx, ry, rw, rh = Inches(6.78), Inches(2.1), Inches(5.55), Inches(4.5)
 card(s, rx, ry, rw, rh, fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
 rect(s, rx, ry, rw, Inches(0.1), fill=MAIN)
 textbox(s, Emu(rx + Inches(0.35)), Emu(ry + Inches(0.3)), Emu(rw - Inches(0.7)), Inches(0.45),
@@ -396,41 +489,30 @@ textbox(s, Inches(0.5), Inches(6.75), Inches(11.3), Inches(0.4),
         "今日は、この「厨房エリア（バックエンド）」を覗いてみましょう！",
         size=13.5, color=MAIN, bold=True, align=PP_ALIGN.CENTER, font=FONT_SANS)
 
-footer(s, 4)
+footer(s, 6, total=17)
 
 # ============================================================
-# スライド 5: サイトを起動してみよう
+# スライド 5: 目の前の画面を見てみよう
 # ============================================================
 s = add_slide()
 set_bg(s)
 kicker(s, "STEP 0 → 1")
-title(s, "サイトを起動してみよう")
+title(s, "目の前の画面を見てみよう")
+textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
+        "VSCodeとブラウザは、すでに開いた状態からスタートします",
+        size=14, color=SUB, font=FONT_SANS)
 
-card(s, Inches(0.5), Inches(1.85), Inches(11.3), Inches(1.15))
-textbox(s, Inches(0.85), Inches(2.05), Inches(2.2), Inches(0.75),
-        "起動方法", size=14, color=MAIN, bold=True, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
-code_chip(s, Inches(3.1), Inches(2.15), Inches(3.3), Inches(0.55), "start-mac.sh")
-textbox(s, Inches(6.55), Inches(2.15), Inches(0.6), Inches(0.55), "/", size=16, color=SUB,
-        align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-code_chip(s, Inches(7.2), Inches(2.15), Inches(3.9), Inches(0.55), "start-win.bat")
+bullet_block(s, Inches(0.85), Inches(2.35), Inches(5.4), Inches(3.2),
+             ["ブラウザに表示されているのが「キミの旅」のトップ画面",
+              "VSCodeにはプロジェクトのファイル一式がすでに開いている",
+              "エディタでコードを直して保存 → ブラウザを再読み込み、\nの繰り返しで進めていく"],
+             size=14, gap=0.5)
 
-bullet_block(s, Inches(0.85), Inches(3.35), Inches(5.4), Inches(3.2),
-             ["ダブルクリック（または実行）するだけでサイトが起動", "ブラウザで表示されたURLを開く", "VSCodeとPHPさえ入っていれば準備完了"],
-             size=14)
+rx, ry, rw, rh = Inches(6.55), Inches(2.15), Inches(5.25), Inches(4.4)
+screenshot(s, os.path.join(IMG_DIR, "01_トップ画面.png"), rx, ry, rw, rh,
+           caption="トップ画面（一覧・検索）")
 
-rx, ry, rw, rh = Inches(6.55), Inches(3.35), Inches(5.25), Inches(3.2)
-card(s, rx, ry, rw, rh, fill=SURFACE2)
-textbox(s, Emu(rx + Inches(0.3)), Emu(ry + Inches(0.25)), Emu(rw - Inches(0.6)), Inches(0.4),
-        "今日たどる画面の流れ", size=13.5, bold=True, color=INK, font=FONT_SANS)
-flow = ["ログイン画面", "新規登録画面", "会員登録 → ログイン", "投稿ページ（スポット投稿）", "ホーム画面（一覧・検索）"]
-fy = ry + Inches(0.85)
-for i, f in enumerate(flow):
-    step_badge(s, Emu(rx + Inches(0.3)), Emu(fy), i + 1, "")
-    textbox(s, Emu(rx + Inches(0.85)), Emu(fy + Inches(0.02)), Emu(rw - Inches(1.1)), Inches(0.4),
-            f, size=12.5, color=INK, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
-    fy = Emu(fy + Inches(0.44))
-
-footer(s, 5)
+footer(s, 7, total=17)
 
 # ============================================================
 # スライド 6: ボタンの文字を変えてみよう
@@ -439,76 +521,60 @@ s = add_slide()
 set_bg(s)
 kicker(s, "STEP 1")
 title(s, "ボタンの文字を変えてみよう")
-textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
+textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
         "投稿ボタンの表示が分かりにくい…テキストエディタで直接直してみよう",
-        size=14, color=SUB, font=FONT_SANS)
+        size=13.5, color=SUB, font=FONT_SANS)
+code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "login.php", line_no="53行目")
 
-card(s, Inches(0.5), Inches(2.05), Inches(11.3), Inches(1.75))
-code_chip(s, Inches(0.85), Inches(2.35), Inches(2.7), Inches(0.5), "upload.php")
-textbox(s, Inches(3.75), Inches(2.35), Inches(7.7), Inches(0.5),
-        "HTML内のボタンの文言を書き換える", size=15, color=INK, bold=True, font=FONT_SANS,
-        anchor=MSO_ANCHOR.MIDDLE)
-textbox(s, Inches(0.85), Inches(3.0), Inches(10.6), Inches(0.6),
-        "コードを保存して、ブラウザを再読み込みするだけ。画面の表示がその場で変わることを確認しよう。",
-        size=13, color=SUB, font=FONT_SANS)
+# Before/After（郵便番号欄〜ボタンにズームしたスクリーンショット）
+screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正前_ボタン文言_ズーム.png"), Inches(0.9), Inches(2.25),
+           Inches(11.5), Inches(1.95), label="BEFORE：「ボタン」のまま", label_color=SUB)
 
-# Before/After
-bx, by, bw, bh = Inches(0.85), Inches(4.1), Inches(5.0), Inches(2.0)
-card(s, bx, by, bw, bh, fill=SURFACE2)
-textbox(s, Emu(bx + Inches(0.25)), Emu(by + Inches(0.2)), Emu(bw - Inches(0.5)), Inches(0.35),
-        "BEFORE", size=12, color=SUB, bold=True, font=FONT_SANS)
-pill(s, Emu(bx + Inches(0.25)), Emu(by + Inches(0.75)), Inches(2.4), Inches(0.6), fill=BORDER)
-textbox(s, Emu(bx + Inches(0.25)), Emu(by + Inches(0.75)), Inches(2.4), Inches(0.6),
-        "ボタン", size=14, color=INK, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, font=FONT_SANS)
+screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正後_住所を検索_ズーム.png"), Inches(0.9), Inches(4.75),
+           Inches(11.5), Inches(1.95), label="AFTER：「住所を検索」に変更", label_color=MAIN, border=MAIN)
 
-arrow(s, Inches(6.0), Inches(4.85), Inches(0.85), Inches(0.5), fill=MAIN)
-
-ax, ay, aw, ah = Inches(7.0), Inches(4.1), Inches(5.0), Inches(2.0)
-card(s, ax, ay, aw, ah, fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
-textbox(s, Emu(ax + Inches(0.25)), Emu(ay + Inches(0.2)), Emu(aw - Inches(0.5)), Inches(0.35),
-        "AFTER", size=12, color=MAIN, bold=True, font=FONT_SANS)
-pill(s, Emu(ax + Inches(0.25)), Emu(ay + Inches(0.75)), Inches(2.4), Inches(0.6), fill=MAIN)
-textbox(s, Emu(ax + Inches(0.25)), Emu(ay + Inches(0.75)), Inches(2.4), Inches(0.6),
-        "投稿する", size=14, color=CREAM, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, font=FONT_SANS)
-
-footer(s, 6)
+footer(s, 8, total=17)
 
 # ============================================================
-# スライド 7: コメントアウトって何？
+# スライド 7: コメントアウトを外して住所検索を有効化
 # ============================================================
 s = add_slide()
 set_bg(s)
 kicker(s, "STEP 1")
-title(s, "コメントアウトって何？")
+title(s, "コメントアウトを外してみよう")
 textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
-        "コメントを投稿してみよう…あれ、投稿できない！",
+        "ボタンを押しても、まだ住所は出てこない…postal_lookup.php を覗いてみよう",
         size=14, color=SUB, font=FONT_SANS)
 
-card(s, Inches(0.5), Inches(2.05), Inches(11.3), Inches(1.7))
-code_chip(s, Inches(0.85), Inches(2.35), Inches(3.2), Inches(0.5), "comments.php")
-textbox(s, Inches(4.25), Inches(2.35), Inches(7.2), Inches(0.5),
-        "先頭に付いている // を外してみよう", size=15, color=INK, bold=True, font=FONT_SANS,
+code_chip(s, Inches(0.5), Inches(2.2), Inches(3.4), Inches(0.5), "postal_lookup.php", line_no="25-40行目")
+textbox(s, Inches(4.1), Inches(2.2), Inches(2.7), Inches(0.5),
+        "/* */ を外そう", size=14.5, color=INK, bold=True, font=FONT_SANS,
         anchor=MSO_ANCHOR.MIDDLE)
-textbox(s, Inches(0.85), Inches(3.0), Inches(10.6), Inches(0.6),
-        "たった2文字を消すだけで、投稿できなかったコメントが投稿できるようになる。",
-        size=13, color=SUB, font=FONT_SANS)
 
 # コードブロック風
-codebox = rect(s, Inches(0.85), Inches(4.05), Inches(11.0), Inches(1.55), fill=INK, radius=0.06)
+codebox = rect(s, Inches(0.5), Inches(2.9), Inches(6.15), Inches(1.7), fill=INK, radius=0.06)
 tf = codebox.text_frame
 tf.word_wrap = True
-tf.margin_left = Inches(0.3); tf.margin_top = Inches(0.22); tf.margin_right = Inches(0.3)
+tf.margin_left = Inches(0.28); tf.margin_top = Inches(0.18); tf.margin_right = Inches(0.2)
 p1 = tf.paragraphs[0]
-p1.line_spacing = 1.4
-r1 = p1.add_run(); r1.text = "// この行の後ろは、実行されるときに無視されます"
-r1.font.name = "Courier New"; r1.font.size = Pt(14); r1.font.color.rgb = RGBColor(0x9A, 0x9A, 0x8A)
-p2 = tf.add_paragraph(); p2.line_spacing = 1.4
-r2 = p2.add_run(); r2.text = 'echo "Hello, World!";  '
-r2.font.name = "Courier New"; r2.font.size = Pt(14); r2.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
-r2b = p2.add_run(); r2b.text = "// ← ここから先はコメント（無視される）"
-r2b.font.name = "Courier New"; r2b.font.size = Pt(13); r2b.font.color.rgb = RGBColor(0x9A, 0x9A, 0x8A)
+p1.line_spacing = 1.3
+r1 = p1.add_run(); r1.text = "/*  ← ここから"
+r1.font.name = "Courier New"; r1.font.size = Pt(12.5); r1.font.color.rgb = RGBColor(0x9A, 0x9A, 0x8A)
+p2 = tf.add_paragraph(); p2.line_spacing = 1.3
+r2 = p2.add_run(); r2.text = "find_postal_address($pdo, ...);"
+r2.font.name = "Courier New"; r2.font.size = Pt(13); r2.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
+p3 = tf.add_paragraph(); p3.line_spacing = 1.3
+r3 = p3.add_run(); r3.text = "*/  ← ここまでを無効化している"
+r3.font.name = "Courier New"; r3.font.size = Pt(12.5); r3.font.color.rgb = RGBColor(0x9A, 0x9A, 0x8A)
 
-footer(s, 7)
+textbox(s, Inches(0.5), Inches(4.8), Inches(6.15), Inches(1.1),
+        "「/* と */ で囲まれた部分は実行時に無視される」\nこの2文字を外すだけで、住所検索の関数呼び出しが有効になる。",
+        size=13, color=SUB, font=FONT_SANS, line_spacing=1.35)
+
+screenshot(s, os.path.join(IMG_DIR, "07_郵便番号検索_実行結果_ズーム.png"), Inches(6.95), Inches(1.95),
+           Inches(5.85), Inches(5.0), label="有効化後：郵便番号から住所を自動入力", label_color=MAIN, border=MAIN)
+
+footer(s, 9, total=17)
 
 # ============================================================
 # スライド 8: APIってなに？（現在地→住所）
@@ -521,37 +587,40 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
         "「📍 現在地を取得」ボタンを押すと、住所が自動で入力される仕組みを見てみよう",
         size=14, color=SUB, font=FONT_SANS)
 
-# フロー図：4ステップ
+# フロー図：4ステップ（コンパクト）
 flow_items = [
-    ("📍", "ブラウザが\n現在地(緯度・経度)を取得"),
-    ("🖥", "サーバー(geocode.php)が\n外部APIに問い合わせ"),
+    ("📍", "現在地(緯度・経度)を取得"),
+    ("🖥", "geocode.phpが外部APIへ問い合わせ"),
     ("🌏", "外部の住所検索API\n(OpenStreetMap)"),
-    ("📝", "住所が\n自動入力される"),
+    ("📝", "住所が自動入力される"),
 ]
 n = len(flow_items)
-box_w = Inches(2.55)
+box_w = Inches(2.6)
 total_w = Inches(11.3)
 gap = Emu((total_w - box_w * n) // (n - 1))
 x = Inches(0.5)
-y = Inches(2.4)
-box_h = Inches(2.1)
+y = Inches(2.0)
+box_h = Inches(1.0)
 
 for i, (emoji, label) in enumerate(flow_items):
     fill = RGBColor(0xF7, 0xE9, 0xDC) if i == 2 else SURFACE
     line = MAIN if i == 2 else BORDER
     card(s, x, y, box_w, box_h, fill=fill, line=line)
-    textbox(s, x, Emu(y + Inches(0.25)), box_w, Inches(0.7), emoji, size=32, align=PP_ALIGN.CENTER, font=FONT_SANS)
-    textbox(s, Emu(x + Inches(0.15)), Emu(y + Inches(1.05)), Emu(box_w - Inches(0.3)), Inches(0.95),
-            label, size=12, color=INK, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.25)
+    textbox(s, x, Emu(y + Inches(0.1)), Inches(0.65), Emu(box_h - Inches(0.2)), emoji, size=22,
+            align=PP_ALIGN.CENTER, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
+    textbox(s, Emu(x + Inches(0.6)), y, Emu(box_w - Inches(0.7)), box_h,
+            label, size=10.5, color=INK, align=PP_ALIGN.LEFT, font=FONT_SANS, line_spacing=1.15,
+            anchor=MSO_ANCHOR.MIDDLE)
     if i < n - 1:
-        arrow(s, Emu(x + box_w + Inches(0.04)), Emu(y + box_h/2 - Inches(0.15)), Emu(gap - Inches(0.08)), Inches(0.3))
+        arrow(s, Emu(x + box_w + Inches(0.04)), Emu(y + box_h/2 - Inches(0.12)), Emu(gap - Inches(0.08)), Inches(0.24))
     x = Emu(x + box_w + gap)
 
-textbox(s, Inches(0.5), Inches(4.85), Inches(11.3), Inches(0.9),
-        "「URLを叩けばデータが返ってくる」——これが外部API（Application Programming Interface）の仕組み。\nブラウザの機能とサーバーの機能が連携して、1つの機能をつくっています。",
-        size=13.5, color=SUB, font=FONT_SANS, line_spacing=1.4, align=PP_ALIGN.CENTER)
+screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押す前_ズーム.png"), Inches(0.9), Inches(3.45),
+           Inches(11.5), Inches(1.5), label="押す前", label_color=SUB)
+screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押した後_ズーム.png"), Inches(0.9), Inches(5.45),
+           Inches(11.5), Inches(1.5), label="押した後：住所が自動入力される", label_color=MAIN, border=MAIN)
 
-footer(s, 8)
+footer(s, 10, total=17)
 
 # ============================================================
 # スライド 9: 裏側で起きていること（関数の考え方）
@@ -601,45 +670,43 @@ textbox(s, Inches(1.15), Inches(5.35), Inches(11.0), Inches(0.7),
         "「機能をひとつのまとまりとして作っておき、必要なときに呼び出す」——これが関数の考え方。\n機能をつくることも、プログラマーの大事な仕事の一つです。",
         13.5, color=INK, font=FONT_SANS, line_spacing=1.35)
 
-footer(s, 9)
+footer(s, 11, total=17)
 
 # ============================================================
-# スライド 10: コメント投稿を有効化しよう（1章の続き、実演の締め）
-# — 実際は STEP1 スライド7で扱うため、ここではデータベースSTEP3へ
+# スライド 10: データベースって何？（comments.message を有効化）
 # ============================================================
 s = add_slide()
 set_bg(s)
 kicker(s, "STEP 3")
 title(s, "データベースって何？")
-textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
-        "投稿やコメントの情報は、どうやって保存されているんだろう？",
-        size=14, color=SUB, font=FONT_SANS)
+textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
+        "コメントは投稿できたのに、本文だけがどれも空欄になっている…",
+        size=13.5, color=SUB, font=FONT_SANS)
+code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "show.php", line_no="58行目")
 
-# 左：説明
-card(s, Inches(0.5), Inches(2.05), Inches(5.6), Inches(4.5))
-textbox(s, Inches(0.85), Inches(2.3), Inches(5.0), Inches(0.4),
-        "考えてみよう", size=14, bold=True, color=MAIN, font=FONT_SANS)
-textbox(s, Inches(0.85), Inches(2.75), Inches(5.0), Inches(0.6),
-        "「コメント」を特定するには、どんな情報が必要そう？",
-        size=13.5, color=INK, font=FONT_SANS, line_spacing=1.3)
+# 左：Before/After（コメント表示、横並びで大きめ）
+screenshot(s, os.path.join(IMG_DIR, "03_コメント欄_修正前_本文空欄.png"), Inches(0.5), Inches(2.15),
+           Inches(2.9), Inches(2.55), label="BEFORE：本文が空欄", label_color=SUB)
+screenshot(s, os.path.join(IMG_DIR, "03_コメント欄_修正後_本文表示.png"), Inches(3.65), Inches(2.15),
+           Inches(2.9), Inches(2.55), label="AFTER：本文が表示される", label_color=MAIN, border=MAIN)
 
-bullet_block(s, Inches(0.85), Inches(3.55), Inches(5.0), Inches(2.7),
-             ["データを整理して扱いやすくすることも\nプログラマーの大事な仕事", "タグ検索も、データベースへの問い合わせ（SQL）で\n欲しい情報だけを取り出している", "AI時代になるほど、この考え方はますます重要"],
-             size=13)
-
-# 右：コメントに必要な情報カード
-rx = Inches(6.4)
-card(s, rx, Inches(2.05), Inches(6.4), Inches(4.5), fill=SURFACE2)
-textbox(s, Emu(rx + Inches(0.35)), Inches(2.3), Inches(5.7), Inches(0.4),
-        "コメントに必要な情報", size=14, bold=True, color=INK, font=FONT_SANS)
-
+# 左下：考えてみよう
+card(s, Inches(0.5), Inches(5.15), Inches(6.05), Inches(1.4))
+textbox(s, Inches(0.8), Inches(5.32), Inches(5.5), Inches(0.35),
+        "考えてみよう：「コメント」を特定するにはどんな情報が必要？", size=12.5, bold=True, color=MAIN, font=FONT_SANS)
 fields = ["コメントID", "投稿されたスポット", "投稿日時", "コメント本文", "投稿したユーザー"]
-fy = Inches(2.85)
+fx = Inches(0.8)
 for f in fields:
-    tag_badge(s, Emu(rx + Inches(0.35)), fy, Inches(5.7), Inches(0.6), f)
-    fy = Emu(fy + Inches(0.72))
+    w = Inches(0.35 + len(f) * 0.155)
+    tag_badge(s, fx, Inches(5.78), w, Inches(0.5), f)
+    fx = Emu(fx + w + Inches(0.12))
 
-footer(s, 10)
+# 右：DBビューア画像
+rx = Inches(6.8)
+screenshot(s, os.path.join(IMG_DIR, "08_DBテーブルの中身_comments_ズーム.png"), rx, Inches(2.5),
+           Inches(6.0), Inches(4.6), label="comments テーブルの中身（VSCode）", label_color=SUB, pad=Pt(16))
+
+footer(s, 12, total=17)
 
 # ============================================================
 # スライド 11: 入力チェックを追加しよう
@@ -648,45 +715,38 @@ s = add_slide()
 set_bg(s)
 kicker(s, "STEP 4")
 title(s, "入力チェックを追加しよう")
-textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
-        "コメント欄が空白のままでも、投稿できてしまう…",
-        size=14, color=SUB, font=FONT_SANS)
+textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
+        "タイトル欄が空白のままでも投稿できてしまう…一覧の一番上を見てみよう",
+        size=13.5, color=SUB, font=FONT_SANS)
+code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "spots.php", line_no="31-37行目")
 
-# 現状カード
+screenshot(s, os.path.join(IMG_DIR, "05_タイトル空欄カード_ズーム.png"), Inches(1.4), Inches(2.0),
+           Inches(10.5), Inches(3.15), label="😮 左のカードだけタイトルが空欄（右は比較用）", label_color=MAIN, border=MAIN)
+
+# 対応方針（画像の下に横並び）
 lx = Inches(0.5)
-card(s, lx, Inches(2.1), Inches(5.55), Inches(2.1), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
-textbox(s, Emu(lx + Inches(0.3)), Inches(2.3), Inches(5.0), Inches(0.4), "😮 今の状態",
-        size=15, bold=True, color=MAIN, font=FONT_SANS)
-bullet_block(s, Emu(lx + Inches(0.3)), Inches(2.85), Inches(4.9), Inches(1.3),
-             ["空欄のまま投稿ボタンを押しても通ってしまう", "実際のシステムでは入力漏れチェックが必須"], size=13)
+card(s, lx, Inches(5.5), Inches(5.6), Inches(1.55))
+textbox(s, Emu(lx + Inches(0.3)), Inches(5.65), Inches(5.0), Inches(0.35), "✅ やること",
+        size=14, bold=True, color=INK, font=FONT_SANS)
+bullet_block(s, Emu(lx + Inches(0.3)), Inches(6.05), Inches(5.0), Inches(0.9),
+             ["spots.php のif文（/* */ でコメントアウト）を有効化する"], size=12, gap=0.4)
 
-# 対応方針カード
-rx = Inches(6.28)
-card(s, rx, Inches(2.1), Inches(5.55), Inches(2.1))
-textbox(s, Emu(rx + Inches(0.3)), Inches(2.3), Inches(5.0), Inches(0.4), "✅ やること",
-        size=15, bold=True, color=INK, font=FONT_SANS)
-bullet_block(s, Emu(rx + Inches(0.3)), Inches(2.85), Inches(4.9), Inches(1.3),
-             ["comments.php に短いコードを追加", "if文で「空文字かどうか」をチェックする"], size=13)
-
-codebox = rect(s, Inches(0.5), Inches(4.5), Inches(11.3), Inches(1.55), fill=INK, radius=0.06)
+rx = Inches(6.3)
+codebox = rect(s, rx, Inches(5.5), Inches(6.5), Inches(1.55), fill=INK, radius=0.06)
 tf = codebox.text_frame
 tf.word_wrap = True
-tf.margin_left = Inches(0.3); tf.margin_top = Inches(0.25)
-p1 = tf.paragraphs[0]; p1.line_spacing = 1.4
-r1 = p1.add_run(); r1.text = "if ($message === '') {"
-r1.font.name = "Courier New"; r1.font.size = Pt(15); r1.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
-p2 = tf.add_paragraph(); p2.line_spacing = 1.4
-r2 = p2.add_run(); r2.text = '    // コメントが空のときは投稿を止める'
-r2.font.name = "Courier New"; r2.font.size = Pt(14); r2.font.color.rgb = RGBColor(0x9A, 0x9A, 0x8A)
-p3 = tf.add_paragraph(); p3.line_spacing = 1.4
+tf.margin_left = Inches(0.3); tf.margin_top = Inches(0.18)
+p1 = tf.paragraphs[0]; p1.line_spacing = 1.3
+r1 = p1.add_run(); r1.text = "if ($title === '') {"
+r1.font.name = "Courier New"; r1.font.size = Pt(13); r1.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
+p2 = tf.add_paragraph(); p2.line_spacing = 1.3
+r2 = p2.add_run(); r2.text = '    // タイトルが空なら止める'
+r2.font.name = "Courier New"; r2.font.size = Pt(12); r2.font.color.rgb = RGBColor(0x9A, 0x9A, 0x8A)
+p3 = tf.add_paragraph(); p3.line_spacing = 1.3
 r3 = p3.add_run(); r3.text = "}"
-r3.font.name = "Courier New"; r3.font.size = Pt(15); r3.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
+r3.font.name = "Courier New"; r3.font.size = Pt(13); r3.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
 
-textbox(s, Inches(0.5), Inches(6.28), Inches(11.3), Inches(0.5),
-        "難しそうに見えて、実は実際のシステムでもよく使われる基本的な機能です。",
-        size=12.5, color=SUB, font=FONT_SANS, align=PP_ALIGN.CENTER)
-
-footer(s, 11)
+footer(s, 13, total=17)
 
 # ============================================================
 # スライド 12: アレンジ課題
@@ -695,28 +755,22 @@ s = add_slide()
 set_bg(s)
 kicker(s, "STEP 5")
 title(s, "自由にアレンジしてみよう")
-textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
-        "「言われた通り」じゃなく、自分で考えて直してみよう（任意・発展）",
-        size=14, color=SUB, font=FONT_SANS)
+textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
+        "例：ページ全体の背景色を変えてみる（style.css の --bg）",
+        size=13.5, color=SUB, font=FONT_SANS)
+code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "style.css", line_no="13-16行目")
 
-card(s, Inches(0.5), Inches(2.15), Inches(11.3), Inches(2.0))
-textbox(s, Inches(0.85), Inches(2.4), Inches(10.6), Inches(0.4),
-        "例：コメントの表示を変えてみる", size=15, bold=True, color=MAIN, font=FONT_SANS)
+screenshot(s, os.path.join(IMG_DIR, "06_テーマカラー_修正前_オレンジ.png"), Inches(0.4), Inches(2.0),
+           Inches(5.7), Inches(4.2), label="BEFORE：ベージュの背景", label_color=SUB)
+arrow(s, Inches(6.15), Inches(3.85), Inches(0.85), Inches(0.5), fill=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "06_テーマカラー_修正後_ブルー.png"), Inches(7.2), Inches(2.0),
+           Inches(5.7), Inches(4.2), label="AFTER：好きな色に変更", label_color=MAIN, border=MAIN)
 
-bx, by, bw, bh = Inches(1.0), Inches(3.0), Inches(4.0), Inches(0.9)
-pill(s, bx, by, bw, bh, fill=SURFACE2)
-textbox(s, bx, by, bw, bh, "「ジョンさん」", size=15, color=INK, align=PP_ALIGN.CENTER,
-        anchor=MSO_ANCHOR.MIDDLE, font=FONT_SANS)
-arrow(s, Inches(5.2), Emu(by + Inches(0.2)), Inches(1.0), Inches(0.5), fill=MAIN)
-pill(s, Inches(6.4), by, bw, bh, fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
-textbox(s, Inches(6.4), by, bw, bh, "「ジョン様」", size=15, color=MAIN, bold=True, align=PP_ALIGN.CENTER,
-        anchor=MSO_ANCHOR.MIDDLE, font=FONT_SANS)
+bullet_block(s, Inches(0.85), Inches(6.55), Inches(11.6), Inches(0.4),
+             ["--bg や --main-color を書き換えるだけで、画面全体の印象が変わる"],
+             size=12)
 
-bullet_block(s, Inches(0.85), Inches(4.6), Inches(10.6), Inches(1.4),
-             ["タグの表示を変えてみる", "コメント表示の文言を工夫してみる（「さん」→「様」など）", "他にも気になった部分は自由に触ってみよう"],
-             size=14)
-
-footer(s, 12)
+footer(s, 14, total=17)
 
 # ============================================================
 # スライド 13: 体験の流れ（振り返り）
@@ -742,7 +796,8 @@ col_w = Inches(5.55)
 row_h = Inches(1.0)
 gap_x = Inches(0.2)
 gap_y = Inches(0.12)
-start_x = Inches(0.5)
+grid_w = Emu(col_w * col_n + gap_x)
+start_x = Emu((SLIDE_W - grid_w) // 2)
 start_y = Inches(1.85)
 
 for i, f in enumerate(flow):
@@ -755,7 +810,7 @@ for i, f in enumerate(flow):
     textbox(s, Emu(x + Inches(0.85)), y, Emu(col_w - Inches(1.1)), row_h,
             f, size=13.5, color=INK, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.15)
 
-footer(s, 13)
+footer(s, 15, total=17)
 
 # ============================================================
 # スライド 14: まとめ
@@ -772,20 +827,22 @@ pairs = [
     ("空欄チェックを追加する", "→ バリデーション（入力チェック）"),
     ("表示をアレンジする", "→ 使いやすさ・見た目の工夫"),
 ]
+row_w = Inches(11.3)
+row_x = Emu((SLIDE_W - row_w) // 2)
 y = Inches(1.95)
 for left, right in pairs:
-    card(s, Inches(0.5), y, Inches(11.3), Inches(0.75))
-    textbox(s, Inches(0.85), y, Inches(6.3), Inches(0.75), left, size=14, color=INK,
+    card(s, row_x, y, row_w, Inches(0.75))
+    textbox(s, Emu(row_x + Inches(0.35)), y, Inches(6.3), Inches(0.75), left, size=14, color=INK,
             anchor=MSO_ANCHOR.MIDDLE, font=FONT_SANS)
-    textbox(s, Inches(7.3), y, Inches(4.3), Inches(0.75), right, size=14, color=MAIN, bold=True,
+    textbox(s, Emu(row_x + Inches(6.8)), y, Inches(4.3), Inches(0.75), right, size=14, color=MAIN, bold=True,
             anchor=MSO_ANCHOR.MIDDLE, font=FONT_SANS)
     y = Emu(y + Inches(0.85))
 
-textbox(s, Inches(0.5), Inches(6.35), Inches(11.3), Inches(0.5),
+textbox(s, row_x, Inches(6.35), row_w, Inches(0.5),
         "小さな修正をして、動かして、確認する。この繰り返しが、実際の開発でも基本の流れです。",
         13.5, color=SUB, font=FONT_SANS, align=PP_ALIGN.CENTER)
 
-footer(s, 14)
+footer(s, 16, total=17)
 
 # ============================================================
 # スライド 15: 締め
@@ -800,8 +857,6 @@ c2 = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(10.5), Inches(-2), Inches(4.5), I
 c2.fill.solid(); c2.fill.fore_color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
 c2.line.fill.background(); c2.shadow.inherit = False
 
-brand_dot(s, Inches(5.87), Inches(1.6), Inches(0.55))
-
 textbox(s, Inches(1.0), Inches(2.75), Inches(11.33), Inches(1.0),
         "小さな修正の積み重ねが、", size=28, color=INK, bold=True, align=PP_ALIGN.CENTER, font=FONT_SERIF)
 textbox(s, Inches(1.0), Inches(3.4), Inches(11.33), Inches(1.0),
@@ -812,7 +867,7 @@ line = rect(s, Inches(5.87), Inches(4.5), Inches(1.6), Pt(3), fill=MAIN)
 textbox(s, Inches(1.0), Inches(4.85), Inches(11.33), Inches(0.6),
         "ご参加ありがとうございました", size=16, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS)
 
-footer(s, 15)
+footer(s, 17, total=17)
 
 out_path = "/Users/shoyabushita/Desktop/web_taiken/Webプログラミング体験_資料.pptx"
 prs.save(out_path)
