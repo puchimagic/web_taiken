@@ -198,20 +198,37 @@ def step_badge(slide, l, t, num, label):
     run.font.name = FONT_SANS
 
 
-def code_chip(slide, l, t, w, h, text, line_no=None):
-    """ファイル名チップ。line_no（例："53行目" "25-40行目"）を指定すると右肩に行番号バッジを添える"""
+def code_chip(slide, l, t, w, h, text):
+    """ファイル名だけを表示するチップ"""
     c = rect(slide, l, t, w, h, fill=INK, radius=0.15)
     textbox(slide, l, t, w, h, text, size=13, color=RGBColor(0xF7, 0xE9, 0xDC), bold=False,
             align=PP_ALIGN.CENTER, font="Courier New", anchor=MSO_ANCHOR.MIDDLE)
-    if line_no:
-        bw = Inches(0.35 + len(line_no) * 0.1)
-        bh = Inches(0.32)
-        bx = Emu(l + w - bw + Inches(0.12))
-        by = Emu(t - bh / 2)
-        pill(slide, bx, by, bw, bh, fill=MAIN)
-        textbox(slide, bx, by, bw, bh, line_no, size=10.5, color=CREAM, bold=True,
-                align=PP_ALIGN.CENTER, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
     return c
+
+
+CODE_DIM = RGBColor(0x9A, 0x9A, 0x8A)
+CODE_TEXT = RGBColor(0xF7, 0xE9, 0xDC)
+GUTTER_BG = RGBColor(0x14, 0x11, 0x0C)
+GUTTER_TEXT = RGBColor(0xFF, 0xFF, 0xFF)
+
+
+def code_block(slide, l, t, w, h, lines, code_size=12.5, gutter_w=Inches(0.55)):
+    """行番号ガター付きのコードブロック。
+    lines: [(行番号 or None, テキスト, 強調するか)] のリスト。行番号Noneなら空欄行として詰める。
+    """
+    rect(slide, l, t, w, h, fill=INK, radius=0.06)
+    rect(slide, l, t, gutter_w, h, fill=GUTTER_BG, radius=0)
+    # 角の丸みを合わせるため、ガター右端の直線部分だけ再度重ねて角を隠す簡易対応は不要
+    # (rectは矩形なのでガターは左側面のみでOK。radius=0で四角のまま重ねる)
+    line_h = Emu(int(h / len(lines)))
+    for i, (num, text, emphasize) in enumerate(lines):
+        y = Emu(t + line_h * i)
+        if num is not None:
+            textbox(slide, l, y, Emu(gutter_w - Inches(0.12)), line_h, str(num), size=code_size - 1,
+                    color=GUTTER_TEXT, align=PP_ALIGN.RIGHT, font="Courier New", anchor=MSO_ANCHOR.MIDDLE)
+        textbox(slide, Emu(l + gutter_w + Inches(0.18)), y, Emu(w - gutter_w - Inches(0.3)), line_h,
+                text, size=code_size, color=(CODE_TEXT if emphasize else CODE_DIM),
+                font="Courier New", anchor=MSO_ANCHOR.MIDDLE)
 
 
 def arrow(slide, l, t, w, h, fill=STAMP):
@@ -240,9 +257,11 @@ def screenshot(slide, path, l, t, max_w, max_h, caption=None, label=None, label_
     x = Emu(int(l + (max_w - w) / 2))
     y = t
     if label:
-        textbox(slide, l, Emu(t - Inches(0.34)), max_w, Inches(0.3), label, size=11.5,
-                color=label_color, bold=True, font=FONT_SANS)
-        y = t
+        label_h = Inches(0.3)
+        label_gap = Inches(0.06)
+        label_bottom = Emu(y - pad - label_gap)
+        textbox(slide, l, Emu(label_bottom - label_h), max_w, label_h, label, size=11.5,
+                color=label_color, bold=True, font=FONT_SANS, anchor=MSO_ANCHOR.BOTTOM)
     if frame:
         rect(slide, Emu(x - pad), Emu(y - pad), Emu(w + pad * 2), Emu(h + pad * 2),
              fill=SURFACE, line=border, line_w=Pt(1), radius=0.04)
@@ -522,16 +541,19 @@ set_bg(s)
 kicker(s, "STEP 1")
 title(s, "ボタンの文字を変えてみよう")
 textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
-        "投稿ボタンの表示が分かりにくい…テキストエディタで直接直してみよう",
+        "投稿ボタンの表示が分かりにくい…",
         size=13.5, color=SUB, font=FONT_SANS)
-code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "login.php", line_no="53行目")
+code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "login.php")
+
+code_block(s, Inches(0.5), Inches(1.85), Inches(11.3), Inches(0.5),
+           [(53, '<button ... class="btn-ghost">ボタン</button>', True)])
 
 # Before/After（郵便番号欄〜ボタンにズームしたスクリーンショット）
-screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正前_ボタン文言_ズーム.png"), Inches(0.9), Inches(2.25),
-           Inches(11.5), Inches(1.95), label="BEFORE：「ボタン」のまま", label_color=SUB)
+screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正前_ボタン文言_ズーム.png"), Inches(0.9), Inches(2.95),
+           Inches(11.5), Inches(1.7), label="BEFORE：「ボタン」のまま", label_color=SUB)
 
-screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正後_住所を検索_ズーム.png"), Inches(0.9), Inches(4.75),
-           Inches(11.5), Inches(1.95), label="AFTER：「住所を検索」に変更", label_color=MAIN, border=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正後_住所を検索_ズーム.png"), Inches(0.9), Inches(5.25),
+           Inches(11.5), Inches(1.6), label="AFTER：「住所を検索」に変更", label_color=MAIN, border=MAIN)
 
 footer(s, 8, total=17)
 
@@ -543,36 +565,26 @@ set_bg(s)
 kicker(s, "STEP 1")
 title(s, "コメントアウトを外してみよう")
 textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
-        "ボタンを押しても、まだ住所は出てこない…postal_lookup.php を覗いてみよう",
+        "ボタンを押しても、まだ住所は出てこない",
         size=14, color=SUB, font=FONT_SANS)
 
-code_chip(s, Inches(0.5), Inches(2.2), Inches(3.4), Inches(0.5), "postal_lookup.php", line_no="25-40行目")
-textbox(s, Inches(4.1), Inches(2.2), Inches(2.7), Inches(0.5),
+code_chip(s, Inches(0.5), Inches(2.0), Inches(3.4), Inches(0.5), "postal_lookup.php")
+textbox(s, Inches(4.1), Inches(2.0), Inches(2.7), Inches(0.5),
         "/* */ を外そう", size=14.5, color=INK, bold=True, font=FONT_SANS,
         anchor=MSO_ANCHOR.MIDDLE)
 
-# コードブロック風
-codebox = rect(s, Inches(0.5), Inches(2.9), Inches(6.15), Inches(1.7), fill=INK, radius=0.06)
-tf = codebox.text_frame
-tf.word_wrap = True
-tf.margin_left = Inches(0.28); tf.margin_top = Inches(0.18); tf.margin_right = Inches(0.2)
-p1 = tf.paragraphs[0]
-p1.line_spacing = 1.3
-r1 = p1.add_run(); r1.text = "/*  ← ここから"
-r1.font.name = "Courier New"; r1.font.size = Pt(12.5); r1.font.color.rgb = RGBColor(0x9A, 0x9A, 0x8A)
-p2 = tf.add_paragraph(); p2.line_spacing = 1.3
-r2 = p2.add_run(); r2.text = "find_postal_address($pdo, ...);"
-r2.font.name = "Courier New"; r2.font.size = Pt(13); r2.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
-p3 = tf.add_paragraph(); p3.line_spacing = 1.3
-r3 = p3.add_run(); r3.text = "*/  ← ここまでを無効化している"
-r3.font.name = "Courier New"; r3.font.size = Pt(12.5); r3.font.color.rgb = RGBColor(0x9A, 0x9A, 0x8A)
+code_block(s, Inches(0.5), Inches(2.65), Inches(6.15), Inches(1.65), [
+    (25, "/*  ← ここから", False),
+    (26, "find_postal_address($pdo, ...);", True),
+    (40, "*/  ← ここまでを無効化している", False),
+])
 
-textbox(s, Inches(0.5), Inches(4.8), Inches(6.15), Inches(1.1),
+textbox(s, Inches(0.5), Inches(4.65), Inches(6.15), Inches(1.1),
         "「/* と */ で囲まれた部分は実行時に無視される」\nこの2文字を外すだけで、住所検索の関数呼び出しが有効になる。",
         size=13, color=SUB, font=FONT_SANS, line_spacing=1.35)
 
-screenshot(s, os.path.join(IMG_DIR, "07_郵便番号検索_実行結果_ズーム.png"), Inches(6.95), Inches(1.95),
-           Inches(5.85), Inches(5.0), label="有効化後：郵便番号から住所を自動入力", label_color=MAIN, border=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "07_郵便番号検索_実行結果_ズーム.png"), Inches(6.95), Inches(2.3),
+           Inches(5.85), Inches(4.65), label="有効化後：郵便番号から住所を自動入力", label_color=MAIN, border=MAIN)
 
 footer(s, 9, total=17)
 
@@ -598,7 +610,7 @@ n = len(flow_items)
 box_w = Inches(2.6)
 total_w = Inches(11.3)
 gap = Emu((total_w - box_w * n) // (n - 1))
-x = Inches(0.5)
+x = Emu((SLIDE_W - total_w) // 2)
 y = Inches(2.0)
 box_h = Inches(1.0)
 
@@ -680,31 +692,42 @@ set_bg(s)
 kicker(s, "STEP 3")
 title(s, "データベースって何？")
 textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
-        "コメントは投稿できたのに、本文だけがどれも空欄になっている…",
+        "コメントは投稿できたのに、本文だけがどれも空欄になっている",
         size=13.5, color=SUB, font=FONT_SANS)
-code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "show.php", line_no="58行目")
+code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "show.php")
 
-# 左：Before/After（コメント表示、横並びで大きめ）
-screenshot(s, os.path.join(IMG_DIR, "03_コメント欄_修正前_本文空欄.png"), Inches(0.5), Inches(2.15),
-           Inches(2.9), Inches(2.55), label="BEFORE：本文が空欄", label_color=SUB)
-screenshot(s, os.path.join(IMG_DIR, "03_コメント欄_修正後_本文表示.png"), Inches(3.65), Inches(2.15),
-           Inches(2.9), Inches(2.55), label="AFTER：本文が表示される", label_color=MAIN, border=MAIN)
+# 左カラム：Before/After（コメント表示）
+screenshot(s, os.path.join(IMG_DIR, "03_コメント欄_修正前_本文空欄.png"), Inches(0.5), Inches(2.0),
+           Inches(2.9), Inches(1.9), label="BEFORE：本文が空欄", label_color=SUB)
+screenshot(s, os.path.join(IMG_DIR, "03_コメント欄_修正後_本文表示.png"), Inches(3.65), Inches(2.0),
+           Inches(2.9), Inches(1.9), label="AFTER：本文が表示される", label_color=MAIN, border=MAIN)
 
-# 左下：考えてみよう
-card(s, Inches(0.5), Inches(5.15), Inches(6.05), Inches(1.4))
-textbox(s, Inches(0.8), Inches(5.32), Inches(5.5), Inches(0.35),
-        "考えてみよう：「コメント」を特定するにはどんな情報が必要？", size=12.5, bold=True, color=MAIN, font=FONT_SANS)
+# 左カラム下：考えてみよう
+card(s, Inches(0.5), Inches(4.35), Inches(6.05), Inches(2.3))
+textbox(s, Inches(0.8), Inches(4.55), Inches(5.5), Inches(0.6),
+        "考えてみよう：「コメント」を特定するには\nどんな情報が必要？", size=12.5, bold=True, color=MAIN,
+        font=FONT_SANS, line_spacing=1.3)
 fields = ["コメントID", "投稿されたスポット", "投稿日時", "コメント本文", "投稿したユーザー"]
 fx = Inches(0.8)
-for f in fields:
+fy = Inches(5.35)
+for i, f in enumerate(fields):
     w = Inches(0.35 + len(f) * 0.155)
-    tag_badge(s, fx, Inches(5.78), w, Inches(0.5), f)
+    if i == 3:
+        fx = Inches(0.8)
+        fy = Emu(fy + Inches(0.62))
+    tag_badge(s, fx, fy, w, Inches(0.5), f)
     fx = Emu(fx + w + Inches(0.12))
 
-# 右：DBビューア画像
+# 右カラム：DBビューア画像 + 該当コード
 rx = Inches(6.8)
-screenshot(s, os.path.join(IMG_DIR, "08_DBテーブルの中身_comments_ズーム.png"), rx, Inches(2.5),
-           Inches(6.0), Inches(4.6), label="comments テーブルの中身（VSCode）", label_color=SUB, pad=Pt(16))
+screenshot(s, os.path.join(IMG_DIR, "08_DBテーブルの中身_comments_ズーム.png"), rx, Inches(2.35),
+           Inches(6.0), Inches(2.15), label="comments テーブルの中身（VSCode）", label_color=SUB, pad=Pt(16))
+
+code_block(s, rx, Inches(5.0), Inches(6.0), Inches(1.85), [
+    (57, "$stmt = $pdo->prepare(", False),
+    (58, "  'SELECT comments.id,", False),
+    (None, "   /* comments.message, */ ...'", True),
+])
 
 footer(s, 12, total=17)
 
@@ -716,35 +739,27 @@ set_bg(s)
 kicker(s, "STEP 4")
 title(s, "入力チェックを追加しよう")
 textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
-        "タイトル欄が空白のままでも投稿できてしまう…一覧の一番上を見てみよう",
+        "タイトル欄が空白のままでも投稿できてしまう",
         size=13.5, color=SUB, font=FONT_SANS)
-code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "spots.php", line_no="31-37行目")
+code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "spots.php")
 
-screenshot(s, os.path.join(IMG_DIR, "05_タイトル空欄カード_ズーム.png"), Inches(1.4), Inches(2.0),
-           Inches(10.5), Inches(3.15), label="😮 左のカードだけタイトルが空欄（右は比較用）", label_color=MAIN, border=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "05_タイトル空欄カード_ズーム.png"), Inches(1.4), Inches(2.15),
+           Inches(10.5), Inches(3.0), label="😮 左のカードだけタイトルが空欄（右は比較用）", label_color=MAIN, border=MAIN)
 
 # 対応方針（画像の下に横並び）
 lx = Inches(0.5)
-card(s, lx, Inches(5.5), Inches(5.6), Inches(1.55))
-textbox(s, Emu(lx + Inches(0.3)), Inches(5.65), Inches(5.0), Inches(0.35), "✅ やること",
-        size=14, bold=True, color=INK, font=FONT_SANS)
-bullet_block(s, Emu(lx + Inches(0.3)), Inches(6.05), Inches(5.0), Inches(0.9),
-             ["spots.php のif文（/* */ でコメントアウト）を有効化する"], size=12, gap=0.4)
+card(s, lx, Inches(5.45), Inches(5.6), Inches(1.4))
+textbox(s, Emu(lx + Inches(0.3)), Inches(5.58), Inches(5.0), Inches(0.35), "✅ やること", size=14,
+        bold=True, color=INK, font=FONT_SANS)
+bullet_block(s, Emu(lx + Inches(0.3)), Inches(5.95), Inches(5.0), Inches(0.85),
+             ["if文（/* */ でコメントアウト）を有効化する"], size=12, gap=0.4)
 
 rx = Inches(6.3)
-codebox = rect(s, rx, Inches(5.5), Inches(6.5), Inches(1.55), fill=INK, radius=0.06)
-tf = codebox.text_frame
-tf.word_wrap = True
-tf.margin_left = Inches(0.3); tf.margin_top = Inches(0.18)
-p1 = tf.paragraphs[0]; p1.line_spacing = 1.3
-r1 = p1.add_run(); r1.text = "if ($title === '') {"
-r1.font.name = "Courier New"; r1.font.size = Pt(13); r1.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
-p2 = tf.add_paragraph(); p2.line_spacing = 1.3
-r2 = p2.add_run(); r2.text = '    // タイトルが空なら止める'
-r2.font.name = "Courier New"; r2.font.size = Pt(12); r2.font.color.rgb = RGBColor(0x9A, 0x9A, 0x8A)
-p3 = tf.add_paragraph(); p3.line_spacing = 1.3
-r3 = p3.add_run(); r3.text = "}"
-r3.font.name = "Courier New"; r3.font.size = Pt(13); r3.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
+code_block(s, rx, Inches(5.45), Inches(6.5), Inches(1.4), [
+    (32, "if ($title === '') {", True),
+    (33, "    // タイトルが空なら止める", False),
+    (36, "}", True),
+])
 
 footer(s, 13, total=17)
 
@@ -756,19 +771,21 @@ set_bg(s)
 kicker(s, "STEP 5")
 title(s, "自由にアレンジしてみよう")
 textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
-        "例：ページ全体の背景色を変えてみる（style.css の --bg）",
+        "例：ページ全体の背景色を変えてみる",
         size=13.5, color=SUB, font=FONT_SANS)
-code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "style.css", line_no="13-16行目")
+code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "style.css")
 
-screenshot(s, os.path.join(IMG_DIR, "06_テーマカラー_修正前_オレンジ.png"), Inches(0.4), Inches(2.0),
-           Inches(5.7), Inches(4.2), label="BEFORE：ベージュの背景", label_color=SUB)
-arrow(s, Inches(6.15), Inches(3.85), Inches(0.85), Inches(0.5), fill=MAIN)
-screenshot(s, os.path.join(IMG_DIR, "06_テーマカラー_修正後_ブルー.png"), Inches(7.2), Inches(2.0),
-           Inches(5.7), Inches(4.2), label="AFTER：好きな色に変更", label_color=MAIN, border=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "06_テーマカラー_修正前_オレンジ.png"), Inches(0.4), Inches(2.2),
+           Inches(5.7), Inches(3.2), label="BEFORE：ベージュの背景", label_color=SUB)
+arrow(s, Inches(6.15), Inches(3.55), Inches(0.85), Inches(0.5), fill=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "06_テーマカラー_修正後_ブルー.png"), Inches(7.2), Inches(2.2),
+           Inches(5.7), Inches(3.2), label="AFTER：好きな色に変更", label_color=MAIN, border=MAIN)
 
-bullet_block(s, Inches(0.85), Inches(6.55), Inches(11.6), Inches(0.4),
-             ["--bg や --main-color を書き換えるだけで、画面全体の印象が変わる"],
-             size=12)
+code_block(s, Inches(0.5), Inches(5.75), Inches(11.3), Inches(1.05), [
+    (13, "--main-color: #b5551f;", False),
+    (14, "--main-color-hover: #96461a;", False),
+    (16, "--bg: #f6f1e6;", True),
+])
 
 footer(s, 14, total=17)
 
