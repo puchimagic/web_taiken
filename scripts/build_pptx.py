@@ -336,7 +336,8 @@ footer(s, 1, total=21)
 s = add_slide()
 set_bg(s)
 kicker(s, "自己紹介")
-title(s, "曽根　大智　(Sone Daichi)")
+textbox(s, Inches(0.5), Inches(0.95), Inches(11.5), Inches(0.8),
+        "曽根　大智　(Sone Daichi)", size=28, color=INK, bold=True, font=FONT_SERIF)
 
 img_path = os.path.join(PROFILE_DIR, "曽根先生_2026_実習授業.png")
 screenshot(s, img_path, Inches(7.55), Inches(1.9), Inches(4.25), Inches(4.6),
@@ -358,8 +359,9 @@ footer(s, 2, total=21)
 # ============================================================
 s = add_slide()
 set_bg(s)
-kicker(s, "自己紹介（予備）")
-title(s, "厨子　直人　(Zushi, Naoto)")
+kicker(s, "自己紹介")
+textbox(s, Inches(0.5), Inches(0.95), Inches(11.5), Inches(0.8),
+        "厨子　直人　(Zushi, Naoto)", size=28, color=INK, bold=True, font=FONT_SERIF)
 
 img_path = os.path.join(PROFILE_DIR, "厨子先生_2024_杖を持った写真_conv.jpg")
 screenshot(s, img_path, Inches(8.35), Inches(1.9), Inches(3.45), Inches(4.6))
@@ -407,7 +409,7 @@ col_w = Inches(3.9)
 row_h = Inches(1.55)
 grid_w = Emu(col_w * 3 + Inches(0.18) * 2)
 start_x = Emu((SLIDE_W - grid_w) // 2)
-start_y = Inches(2.05)
+start_y = Inches(2.8)
 gap_x = Inches(0.18)
 gap_y = Inches(0.2)
 
@@ -448,7 +450,7 @@ total_w = Inches(11.3)
 box_w = Inches(1.95)
 gap = Emu((total_w - box_w * n) // (n - 1))
 x = Emu((SLIDE_W - total_w) // 2)
-y = Inches(2.35)
+y = Inches(3.3)
 box_h = Inches(1.5)
 
 for i, (top_label, bottom_label) in enumerate(steps):
@@ -462,8 +464,8 @@ for i, (top_label, bottom_label) in enumerate(steps):
         arrow(s, Emu(x + box_w + Inches(0.04)), Emu(y + Inches(0.6)), Emu(gap - Inches(0.08)), Inches(0.3))
     x = Emu(x + box_w + gap)
 
-badge = pill(s, Inches(3.85), Inches(4.35), Inches(5.6), Inches(0.55), fill=MAIN)
-textbox(s, Inches(3.85), Inches(4.35), Inches(5.6), Inches(0.55),
+badge = pill(s, Inches(3.85), Inches(5.3), Inches(5.6), Inches(0.55), fill=MAIN)
+textbox(s, Inches(3.85), Inches(5.3), Inches(5.6), Inches(0.55),
         "今日は「実装」「テスト」の部分を体験します", size=14.5, color=CREAM, bold=True,
         align=PP_ALIGN.CENTER, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
 
@@ -483,7 +485,6 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
 # 左カード：カップラーメン
 lx, ly, lw, lh = Inches(1.0), Inches(2.1), Inches(5.55), Inches(4.5)
 card(s, lx, ly, lw, lh)
-rect(s, lx, ly, lw, Inches(0.1), fill=STAMP)
 textbox(s, Emu(lx + Inches(0.35)), Emu(ly + Inches(0.3)), Emu(lw - Inches(0.7)), Inches(0.45),
         "🍜 表の顔だけ＝カップラーメン", size=17, color=INK, bold=True, font=FONT_SANS)
 textbox(s, Emu(lx + Inches(0.35)), Emu(ly + Inches(0.85)), Emu(lw - Inches(0.7)), Inches(0.4),
@@ -495,7 +496,6 @@ bullet_block(s, Emu(lx + Inches(0.35)), Emu(ly + Inches(1.5)), Emu(lw - Inches(0
 # 右カード：ラーメン屋
 rx, ry, rw, rh = Inches(6.78), Inches(2.1), Inches(5.55), Inches(4.5)
 card(s, rx, ry, rw, rh, fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
-rect(s, rx, ry, rw, Inches(0.1), fill=MAIN)
 textbox(s, Emu(rx + Inches(0.35)), Emu(ry + Inches(0.3)), Emu(rw - Inches(0.7)), Inches(0.45),
         "🍜 裏の顔まで＝ラーメン屋さん", size=17, color=INK, bold=True, font=FONT_SANS)
 textbox(s, Emu(rx + Inches(0.35)), Emu(ry + Inches(0.85)), Emu(rw - Inches(0.7)), Inches(0.4),
@@ -521,13 +521,13 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
         "VSCodeとブラウザは、すでに開いた状態からスタートします",
         size=14, color=SUB, font=FONT_SANS)
 
-bullet_block(s, Inches(0.85), Inches(2.35), Inches(5.4), Inches(3.2),
+bullet_block(s, Inches(0.5), Inches(2.35), Inches(6.1), Inches(3.2),
              ["ブラウザに表示されているのが「キミの旅」のトップ画面",
               "VSCodeにはプロジェクトのファイル一式がすでに開いている",
-              "エディタでコードを直して保存 → ブラウザを再読み込み、\nの繰り返しで進めていく"],
+              "エディタでコードを直して保存\n→ ブラウザを再読み込み、の繰り返しで進めていく"],
              size=14, gap=0.5)
 
-rx, ry, rw, rh = Inches(6.55), Inches(2.15), Inches(5.25), Inches(4.4)
+rx, ry, rw, rh = Inches(6.95), Inches(2.15), Inches(5.85), Inches(4.4)
 screenshot(s, os.path.join(IMG_DIR, "01_トップ画面.png"), rx, ry, rw, rh,
            caption="トップ画面（一覧・検索）")
 
@@ -1012,23 +1012,22 @@ footer(s, 20, total=21)
 # ============================================================
 s = add_slide()
 set_bg(s, BG)
-c1 = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(-2.2), Inches(4.5), Inches(5), Inches(5))
+c1 = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(-2), Inches(-2), Inches(5), Inches(5))
 c1.fill.solid(); c1.fill.fore_color.rgb = RGBColor(0xEF, 0xE6, 0xD3)
 c1.line.fill.background(); c1.shadow.inherit = False
 
-c2 = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(10.5), Inches(-2), Inches(4.5), Inches(4.5))
+c2 = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(10.8), Inches(4.8), Inches(4.2), Inches(4.2))
 c2.fill.solid(); c2.fill.fore_color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
 c2.line.fill.background(); c2.shadow.inherit = False
 
-textbox(s, Inches(1.0), Inches(2.75), Inches(11.33), Inches(1.0),
-        "小さな修正の積み重ねが、", size=28, color=INK, bold=True, align=PP_ALIGN.CENTER, font=FONT_SERIF)
-textbox(s, Inches(1.0), Inches(3.4), Inches(11.33), Inches(1.0),
-        "Webアプリを動かす力になる。", size=28, color=MAIN, bold=True, align=PP_ALIGN.CENTER, font=FONT_SERIF)
+textbox(s, Inches(1.0), Inches(3.0), Inches(11.33), Inches(1.0),
+        "ご参加ありがとうございました", size=30, color=INK, bold=True, align=PP_ALIGN.CENTER, font=FONT_SERIF)
 
-line = rect(s, Inches(5.87), Inches(4.5), Inches(1.6), Pt(3), fill=MAIN)
+line = rect(s, Inches(5.87), Inches(4.1), Inches(1.6), Pt(3), fill=MAIN)
 
-textbox(s, Inches(1.0), Inches(4.85), Inches(11.33), Inches(0.6),
-        "ご参加ありがとうございました", size=16, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS)
+textbox(s, Inches(1.0), Inches(4.4), Inches(11.33), Inches(1.1),
+        "この教室にはもう戻ってきませんので、忘れ物にご注意ください。\nこのあとはスタッフの案内にしたがって移動をお願いします。",
+        size=15, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.5)
 
 footer(s, 21, total=21)
 
