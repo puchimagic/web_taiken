@@ -109,7 +109,8 @@ if exist "%TARGET_DIR%\README.md" (
 )
 
 rem 上記以外にも、体験授業の実施に直接関係ない開発用ドキュメント・
-rem スクリプト類は取得後にできるだけ削除しておく。残すのはスライド(pptx)、
+rem スクリプト類・自己紹介画像（次回pptx作成用の講師写真、体験授業では不要）は
+rem 取得後にできるだけ削除しておく。残すのはスライド(pptx)、
 rem public・src・db（import以外）・画像（アプリの動作に必要）、
 rem Webプロサーバー起動.bat（サーバー再起動用）・Webプロクリーン.bat
 rem （体験授業の最後にPCを片付けたいときに手動実行する用）のみ。
@@ -123,6 +124,7 @@ for %%F in (
     if exist "%TARGET_DIR%\%%~F" del /f /q "%TARGET_DIR%\%%~F"
 )
 if exist "%TARGET_DIR%\scripts" rd /s /q "%TARGET_DIR%\scripts"
+if exist "%TARGET_DIR%\自己紹介画像" rd /s /q "%TARGET_DIR%\自己紹介画像"
 rem db\import は郵便番号CSV（utf_ken_all.csv）以外は開発用ファイルなので、
 rem CSVだけ db\ 直下へ退避してから import フォルダごと削除する。
 rem CSVは初回PHPアクセス時（PHPサーバー起動後）にsrc/db.phpが自動で
