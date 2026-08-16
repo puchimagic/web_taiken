@@ -763,24 +763,23 @@ textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
 code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "show.php")
 
 screenshot(s, os.path.join(IMG_DIR, "08_DBテーブルの中身_comments_ズーム.png"), Inches(2.66), Inches(2.4),
-           Inches(8.0), Inches(2.9), label="comments テーブルの中身（VSCode）", label_color=SUB, pad=Pt(16))
+           Inches(8.0), Inches(2.9), label="comments テーブルの中身（db/board.sqlite・VSCode）", label_color=SUB, pad=Pt(16))
 
 fields = ["コメントID", "投稿されたスポット", "投稿したユーザー", "コメント本文", "投稿日時"]
 total_fw = sum(Inches(0.35 + len(f) * 0.16) for f in fields) + Inches(0.15) * (len(fields) - 1)
 fx = Emu((SLIDE_W - total_fw) // 2)
-fy = Inches(5.75)
+fy = Inches(5.65)
 for f in fields:
     w = Inches(0.35 + len(f) * 0.16)
-    tag_badge(s, fx, fy, w, Inches(0.45), f)
+    tag_badge(s, fx, fy, w, Inches(0.4), f)
     fx = Emu(fx + w + Inches(0.15))
 
-# SQL文についてさらっと触れる
-code_block(s, Inches(0.5), Inches(6.45), Inches(9.3), Inches(0.55), [
-    (None, "SELECT * FROM comments WHERE spot_id = 12", True),
-])
-textbox(s, Inches(9.95), Inches(6.45), Inches(2.85), Inches(0.55),
-        "この「SELECT〜」がSQL文\n（データベースへの問い合わせ文）",
-        size=10.5, color=SUB, font=FONT_SANS, line_spacing=1.25, anchor=MSO_ANCHOR.MIDDLE)
+# SQL文についてさらっと触れる（show.php の実際のSQL文）
+textbox(s, Inches(0.5), Inches(6.2), Inches(9), Inches(0.25),
+        "これがデータベースへの問い合わせ文＝SQL文", size=11, bold=True, color=MAIN, font=FONT_SANS)
+code_block(s, Inches(0.5), Inches(6.48), Inches(12.3), Inches(0.5), [
+    (58, "SELECT comments.id, /* comments.message, */ ... WHERE comments.spot_id = :spot_id", True),
+], code_size=10.5)
 
 footer(s, 14, total=21)
 
