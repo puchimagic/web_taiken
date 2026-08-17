@@ -8,7 +8,7 @@ rem    i.gitƒtƒHƒ‹ƒ_EREADME‚È‚Ç‘ÌŒ±Žö‹Æ‚É•s—v‚ÈŠJ”­—pƒtƒ@ƒCƒ‹‚ÍŽæ“¾Œã‚Éíœ‚·‚
 rem 2) VSCode‚ÉPHP ServerESQLite ViewerEJapanese Language PackŠg’£‹@”\‚ª
 rem    –³‚¯‚ê‚ÎƒCƒ“ƒXƒg[ƒ‹
 rem 3) VSCode‚ÅƒvƒƒWƒFƒNƒgê—pƒvƒƒtƒ@ƒCƒ‹i–¾‚é‚¢ƒe[ƒ}E“ú–{ŒêUIj‚ð
-rem    Žg‚Á‚ÄƒtƒHƒ‹ƒ_‚ðŠJ‚­i–ˆ‰ñ‚Ü‚Á‚³‚ç‚È‰æ–Ê‚É‚È‚éj
+rem    Žg‚Á‚ÄƒtƒHƒ‹ƒ_‚ðŠJ‚«AƒEƒBƒ“ƒhƒE‚ðÅ‘å‰»‚·‚éi–ˆ‰ñ‚Ü‚Á‚³‚ç‚È‰æ–Ê‚É‚È‚éj
 rem 4) PHPƒT[ƒo[‚ð‹N“®‚·‚é
 rem ‚ð‚Ü‚Æ‚ß‚Äs‚¤B
 rem
@@ -213,6 +213,25 @@ rem isettings.json‚Ìdisplay.language‚Å‚Í‚È‚­argv.json‚Ìlocale€–Ú‚ª•K—vjB
 
 call :log "VSCode‚ð‹N“®‚µ‚Ü‚·..."
 call code --disable-workspace-trust --new-window --locale ja --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"
+
+rem VSCode‚É‚ÍƒEƒBƒ“ƒhƒE‚ðÅ‘å‰»‚µ‚½ó‘Ô‚Å‹N“®‚·‚éŒöŽ®ƒtƒ‰ƒO‚ª–³‚­A
+rem settings.json‚Ìwindow.newWindowDimensionsi"maximized"j‚àA•Û‘¶Ï‚Ý‚Ì
+rem ƒEƒBƒ“ƒhƒEó‘Ô‚ª–³‚¢ê—pƒvƒƒtƒ@ƒCƒ‹‚ÌÅ‰‚ÌƒEƒBƒ“ƒhƒE‚É‚ÍŒø‚©‚È‚¢
+rem iVSCode–{‘Ì‚ÌŠù’m‚ÌŽd—ljB‚»‚Ì‚½‚ßA‹N“®Œã‚ÉƒEƒBƒ“ƒhƒE‚ªŽÀÛ‚É
+rem •\Ž¦‚³‚ê‚é‚Ü‚Å­‚µ‘Ò‚Á‚Ä‚©‚çAPowerShell‚ÅCode.exe‚ÌƒƒCƒ“ƒEƒBƒ“ƒhƒE‚ð
+rem ’T‚µ‚ÄŽè“®‚ÅÅ‘å‰»‚·‚éiƒ^ƒCƒgƒ‹ƒo[Eƒ^ƒXƒNƒo[‚ÍŽc‚é’Êí‚ÌÅ‘å‰»B
+rem F11‚Ì‚æ‚¤‚È^‚Ìƒtƒ‹ƒXƒNƒŠ[ƒ“‚Å‚Í‚È‚¢jBcmd.exe‚ÍƒoƒbƒNƒXƒ‰ƒbƒVƒ…‚É
+rem ‚æ‚éˆø—p•„ƒGƒXƒP[ƒv‚ðƒTƒ|[ƒg‚µ‚È‚¢‚½‚ßA•¡ŽG‚Èˆø—p•„‚ðŠÜ‚Þ
+rem PowerShellƒRƒ}ƒ“ƒh‚Í’¼Ú--Command‚É–„‚ßž‚Ü‚¸Aˆê’U.ps1ƒtƒ@ƒCƒ‹‚É
+rem ‘‚«o‚µ‚Ä‚©‚ç--File‚ÅŒÄ‚Ño‚·i>>‚É‚æ‚é1s‚¸‚Â‚Ì’Ç‹L‚ÅAcmd.exe‘¤‚Ì
+rem ˆø—p•„‰ðŽß‚ÉˆêØˆË‘¶‚µ‚È‚¢Œ`‚É‚µ‚Ä‚¢‚éjB
+type nul > "%APP_BASE%\maximize_vscode.ps1"
+echo $sig = 'using System;using System.Runtime.InteropServices;public class NativeMax{[DllImport("user32.dll")]public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);}' >> "%APP_BASE%\maximize_vscode.ps1"
+echo Add-Type -TypeDefinition $sig >> "%APP_BASE%\maximize_vscode.ps1"
+echo $p = Get-Process -Name Code -ErrorAction SilentlyContinue ^| Where-Object { $_.MainWindowHandle -ne 0 } ^| Select-Object -First 1 >> "%APP_BASE%\maximize_vscode.ps1"
+echo if ($p) { [NativeMax]::ShowWindowAsync($p.MainWindowHandle, 3) ^| Out-Null } >> "%APP_BASE%\maximize_vscode.ps1"
+timeout /t 3 /nobreak >nul
+powershell -NoProfile -ExecutionPolicy Bypass -File "%APP_BASE%\maximize_vscode.ps1" >> "%LOG_FILE%" 2>&1
 
 call :log ""
 call :log "==== 4/4: PHPƒT[ƒo[‚ð‹N“®‚µ‚Ü‚· ===="
