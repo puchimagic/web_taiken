@@ -395,11 +395,13 @@ h1 {
 }
 
 .tab-btn.active {
+  background: none;
   color: var(--ink);
   border-bottom: 2px solid var(--main-color);
 }
 
-.tab-btn:hover:not(.active) {
+.tab-btn:hover {
+  background: var(--surface-2);
   color: var(--ink);
 }
 

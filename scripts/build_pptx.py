@@ -240,6 +240,15 @@ def arrow(slide, l, t, w, h, fill=STAMP):
     return sp
 
 
+def down_arrow(slide, l, t, w, h, fill=STAMP):
+    sp = slide.shapes.add_shape(MSO_SHAPE.DOWN_ARROW, l, t, w, h)
+    sp.fill.solid()
+    sp.fill.fore_color.rgb = fill
+    sp.line.fill.background()
+    sp.shadow.inherit = False
+    return sp
+
+
 def tag_badge(slide, l, t, w, h, text):
     c = pill(slide, l, t, w, h, fill=TAGBG, line=TAGBORDER, line_w=Pt(0.75))
     textbox(slide, l, t, w, h, text, size=12, color=MAIN, bold=False, align=PP_ALIGN.CENTER,
@@ -247,7 +256,7 @@ def tag_badge(slide, l, t, w, h, text):
     return c
 
 
-def screenshot(slide, path, l, t, max_w, max_h, caption=None, label=None, label_color=SUB, border=BORDER, frame=True, pad=Pt(4)):
+def screenshot(slide, path, l, t, max_w, max_h, caption=None, label=None, label_color=SUB, border=BORDER, frame=True, pad=Pt(4), return_geometry=False):
     """スクリーンショットを枠付きカードで配置し、任意でラベル・キャプションを添える"""
     im = Image.open(path)
     iw, ih = im.size
@@ -270,7 +279,31 @@ def screenshot(slide, path, l, t, max_w, max_h, caption=None, label=None, label_
     if caption:
         textbox(slide, l, Emu(bottom + Inches(0.12)), max_w, Inches(0.35), caption, size=11,
                 color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS)
+    if return_geometry:
+        return {"x": x, "y": y, "w": w, "h": h, "iw": iw, "ih": ih}
     return bottom
+
+
+def highlight_box(slide, geom, box_px, color=RGBColor(0xE0, 0x3B, 0x2E), line_w=Pt(2.25)):
+    """screenshot()のreturn_geometryで得た配置情報を使い、元画像のpx座標(box_px=(x0,y0,x1,y1))を
+    スライド上のハイライト矩形として重ねる"""
+    x0, y0, x1, y1 = box_px
+    ratio_x = geom["w"] / geom["iw"]
+    ratio_y = geom["h"] / geom["ih"]
+    l = Emu(int(geom["x"] + x0 * ratio_x))
+    t = Emu(int(geom["y"] + y0 * ratio_y))
+    w = Emu(int((x1 - x0) * ratio_x))
+    h = Emu(int((y1 - y0) * ratio_y))
+    sp = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, l, t, w, h)
+    try:
+        sp.adjustments[0] = 0.25
+    except Exception:
+        pass
+    sp.fill.background()
+    sp.line.color.rgb = color
+    sp.line.width = line_w
+    sp.shadow.inherit = False
+    return sp
 
 
 def bullet_block(slide, l, t, w, h, lines, size=13.5, color=INK, gap=0.42, bold_first=False, marker="●"):
@@ -328,7 +361,7 @@ for t_ in tools:
     tag_badge(s, x, Inches(6.3), w, Inches(0.42), t_)
     x = Emu(x + w + Inches(0.18))
 
-footer(s, 1, total=23)
+footer(s, 1, total=24)
 
 # ============================================================
 # スライド 1.5: 自己紹介（曽根先生・2026年版）
@@ -352,7 +385,7 @@ bullet_block(s, Inches(0.85), Inches(2.7), Inches(6.05), Inches(3.5),
               "実は高等専修学校のパンフレットにも\n実習授業の一コマがちらっと掲載されている"],
              size=14.5, gap=0.5)
 
-footer(s, 2, total=23)
+footer(s, 2, total=24)
 
 # ============================================================
 # スライド 1.6: 自己紹介（厨子先生・2024年版・予備）
@@ -383,7 +416,7 @@ bullet_block(s, Inches(0.85), Inches(5.3), Inches(6.9), Inches(1.15),
               "基本情報／応用情報対策講座、AIに関する授業、クラス担任"],
              size=13)
 
-footer(s, 3, total=23)
+footer(s, 3, total=24)
 
 # ============================================================
 # スライド 2: 今日やること（アジェンダ）
@@ -425,7 +458,7 @@ for i, (num, ttl, desc) in enumerate(items):
     textbox(s, Emu(x + Inches(0.22)), Emu(y + Inches(0.78)), Emu(col_w - Inches(0.4)), Inches(0.7),
             desc, size=11.5, color=SUB, font=FONT_SANS, line_spacing=1.25)
 
-footer(s, 4, total=23)
+footer(s, 4, total=24)
 
 # ============================================================
 # スライド 3: プログラミングって何？（料理の比喩）
@@ -469,7 +502,7 @@ textbox(s, Inches(3.85), Inches(5.3), Inches(5.6), Inches(0.55),
         "今日は「実装」「テスト」の部分を体験します", size=14.5, color=CREAM, bold=True,
         align=PP_ALIGN.CENTER, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
 
-footer(s, 5, total=23)
+footer(s, 5, total=24)
 
 # ============================================================
 # スライド 4: 表の顔・裏の顔（ラーメン比喩）
@@ -508,7 +541,7 @@ textbox(s, Inches(0.5), Inches(6.75), Inches(11.3), Inches(0.4),
         "今日は、この「厨房エリア（バックエンド）」を覗いてみましょう！",
         size=13.5, color=MAIN, bold=True, align=PP_ALIGN.CENTER, font=FONT_SANS)
 
-footer(s, 6, total=23)
+footer(s, 6, total=24)
 
 # ============================================================
 # スライド 4.5: これから使うエディタ（VSCode）
@@ -530,7 +563,7 @@ bullet_block(s, Inches(0.5), Inches(2.35), Inches(5.7), Inches(4.0),
 screenshot(s, os.path.join(IMG_DIR, "00_VSCodeファイル構成_ズーム.png"), Inches(6.55), Inches(1.95),
            Inches(6.3), Inches(4.85), label="エクスプローラー：ファイルをダブルクリックで開く", label_color=MAIN, border=MAIN)
 
-footer(s, 7, total=23)
+footer(s, 7, total=24)
 
 # ============================================================
 # スライド 4.6: ウィンドウの切り替え方（Alt + Tab）
@@ -563,7 +596,7 @@ screenshot(s, os.path.join(IMG_DIR, "00_VSCodeファイル構成.png"), Inches(0
 screenshot(s, os.path.join(IMG_DIR, "01_トップ画面.png"), Emu(Inches(0.5) + half_w + gap), img_top,
            half_w, img_h, label="② ブラウザ", label_color=MAIN, border=MAIN)
 
-footer(s, 8, total=23)
+footer(s, 8, total=24)
 
 # ============================================================
 # スライド 5: 目の前の画面を見てみよう
@@ -585,7 +618,42 @@ rx, ry, rw, rh = Inches(6.95), Inches(2.15), Inches(5.85), Inches(4.4)
 screenshot(s, os.path.join(IMG_DIR, "01_トップ画面.png"), rx, ry, rw, rh,
            caption="トップ画面（一覧・検索）")
 
-footer(s, 9, total=23)
+footer(s, 9, total=24)
+
+# ============================================================
+# スライド 5.5: 新規登録フォームまでの画面遷移
+# ============================================================
+s = add_slide()
+set_bg(s)
+kicker(s, "STEP 0 → 1")
+title(s, "新規登録フォームまで進んでみよう")
+textbox(s, Inches(0.5), Inches(1.35), Inches(11.3), Inches(0.5),
+        "画面右上の「ログイン」ボタンを押して、「新規登録」タブに切り替えよう",
+        size=14, color=SUB, font=FONT_SANS)
+
+# click_box: 元画像px座標(x0,y0,x1,y1)で「次に押す」要素を囲む
+row_top = Inches(2.15)
+card2_w = Inches(4.3)
+card2_h = Inches(4.5)
+card2_x = Inches(1.5)
+
+card3_w = Inches(3.0)
+card3_h = Inches(4.5)
+card3_x = Inches(7.3)
+
+geom2 = screenshot(s, os.path.join(IMG_DIR, "11_ログイン画面_フォーム.png"), card2_x, row_top, card2_w, card2_h,
+                    label="① 「新規登録」タブを押す", label_color=MAIN, border=MAIN, return_geometry=True)
+highlight_box(s, geom2, (210, 125, 390, 177))
+
+arrow_x = Emu(card2_x + card2_w + Inches(0.35))
+arrow_y = Emu(row_top + card2_h / 2 - Inches(0.12))
+arrow_w = Emu(int(card3_x - arrow_x - Inches(0.35)))
+arrow(s, arrow_x, arrow_y, arrow_w, Inches(0.24))
+
+screenshot(s, os.path.join(IMG_DIR, "12_新規登録画面_フォーム.png"), card3_x, row_top, card3_w, card3_h,
+           label="② 新規登録フォームが開く", label_color=MAIN, border=MAIN)
+
+footer(s, 10, total=24)
 
 # ============================================================
 # スライド 6: ボタンの文字を変えてみよう
@@ -609,7 +677,7 @@ screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正前_ボタン文言_�
 screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正後_住所を検索_ズーム.png"), Inches(0.9), Inches(5.25),
            Inches(11.5), Inches(1.6), label="AFTER：「住所を検索」に変更", label_color=MAIN, border=MAIN)
 
-footer(s, 10, total=23)
+footer(s, 11, total=24)
 
 # ============================================================
 # スライド 7: コメントアウトを外して住所検索を有効化
@@ -640,7 +708,7 @@ textbox(s, Inches(0.5), Inches(4.65), Inches(6.15), Inches(1.1),
 screenshot(s, os.path.join(IMG_DIR, "07_郵便番号検索_実行結果_ズーム.png"), Inches(6.95), Inches(2.3),
            Inches(5.85), Inches(4.65), label="有効化後：郵便番号から住所を自動入力", label_color=MAIN, border=MAIN)
 
-footer(s, 11, total=23)
+footer(s, 12, total=24)
 
 # ============================================================
 # スライド 7.5: 裏側で起きていること（関数の考え方）
@@ -690,7 +758,7 @@ textbox(s, Inches(1.15), Inches(5.35), Inches(11.0), Inches(0.7),
         "「機能をひとつのまとまりとして作っておき、必要なときに呼び出す」——これが関数の考え方。\n機能をつくることも、プログラマーの大事な仕事の一つです。",
         13.5, color=INK, font=FONT_SANS, line_spacing=1.35)
 
-footer(s, 12, total=23)
+footer(s, 13, total=24)
 
 # ============================================================
 # スライド 8: APIってなに？（現在地→住所）
@@ -736,7 +804,7 @@ screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押す前_ズーム.png"
 screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押した後_ズーム.png"), Inches(0.9), Inches(5.45),
            Inches(11.5), Inches(1.5), label="押した後：住所が自動入力される", label_color=MAIN, border=MAIN)
 
-footer(s, 13, total=23)
+footer(s, 14, total=24)
 
 # ============================================================
 # スライド 8.5: 郵便番号検索 vs 現在地取得（関数とAPIの比較）
@@ -777,7 +845,7 @@ textbox(s, Inches(1.15), Inches(5.15), Inches(11.0), Inches(1.0),
         "「値を渡す → 誰か（何か）が調べる → 答えが返ってくる」という形はまったく同じ。\n「API」という言葉はどちらの場所にも使えるが、実際に「APIを使う」というときは\nたいてい後者（＝Web API、インターネットの向こう）を指すことが多い。",
         13, color=INK, font=FONT_SANS, line_spacing=1.4)
 
-footer(s, 14, total=23)
+footer(s, 15, total=24)
 
 # ============================================================
 # スライド 10: データベースって何？（comments.message を有効化）
@@ -802,7 +870,7 @@ textbox(s, Inches(1.2), Inches(5.65), Inches(10.9), Inches(0.7),
         "考えてみよう：「どのコメントか」を特定して正しく表示するには、どんな情報が必要そう？",
         size=15, bold=True, color=MAIN, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
 
-footer(s, 15, total=23)
+footer(s, 16, total=24)
 
 # ============================================================
 # スライド 10.5: データベースって何？（comments テーブルを覗く）
@@ -835,7 +903,7 @@ code_block(s, Inches(0.5), Inches(6.48), Inches(12.3), Inches(0.5), [
     (58, "SELECT comments.id, /* comments.message, */ ... WHERE comments.spot_id = :spot_id", True),
 ], code_size=10.5)
 
-footer(s, 16, total=23)
+footer(s, 17, total=24)
 
 # ============================================================
 # スライド 11: 入力チェックを追加しよう
@@ -865,7 +933,7 @@ code_block(s, rx, Inches(6.15), Inches(6.5), Inches(0.85), [
     (32, "if ($title === '') {", True),
 ])
 
-footer(s, 17, total=23)
+footer(s, 18, total=24)
 
 # ============================================================
 # スライド 11.5: 発展トーク（サニタイズ・SQLインジェクション）
@@ -917,7 +985,7 @@ textbox(s, Inches(0.5), Inches(6.15), Inches(12.3), Inches(0.7),
         "見出しタグ・本文タグなど、タグの種類ごとに「ブラウザがどう表示するか」が決まっている",
         size=14.5, bold=True, color=INK, font=FONT_SANS)
 
-footer(s, 18, total=23)
+footer(s, 19, total=24)
 
 # ============================================================
 # スライド 11.6: 発展トーク（サニタイズ・SQLインジェクション）
@@ -956,7 +1024,7 @@ textbox(s, Inches(1.15), Inches(5.68), Inches(11.0), Inches(1.05),
         "同じ考え方で、SQL文をそのまま実行できてしまうと、\nパスワードなどが盗まれる「SQLインジェクション」という攻撃もある。\n興味を持った人は、次回オープンキャンパスの「ホワイトハッカー体験」もチェック。",
         size=13.5, color=INK, font=FONT_SANS, line_spacing=1.4)
 
-footer(s, 19, total=23)
+footer(s, 20, total=24)
 
 # ============================================================
 # スライド 12: アレンジ課題
@@ -987,7 +1055,7 @@ textbox(s, Inches(1.15), Inches(6.28), Inches(11.0), Inches(0.65),
         "ここまでは「Webプログラマー」の仕事。配色を工夫するのは「Webデザイナー」の仕事の入口。\n興味がある人は、次回オープンキャンパスの「Webデザイン体験」もチェックしてみよう。",
         size=12.5, color=INK, font=FONT_SANS, line_spacing=1.3)
 
-footer(s, 20, total=23)
+footer(s, 21, total=24)
 
 # ============================================================
 # スライド 13: 体験の流れ（振り返り）
@@ -1027,7 +1095,7 @@ for i, f in enumerate(flow):
     textbox(s, Emu(x + Inches(0.85)), y, Emu(col_w - Inches(1.1)), row_h,
             f, size=13.5, color=INK, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.15)
 
-footer(s, 21, total=23)
+footer(s, 22, total=24)
 
 # ============================================================
 # スライド 14: まとめ
@@ -1059,7 +1127,7 @@ textbox(s, row_x, Inches(6.35), row_w, Inches(0.5),
         "小さな修正をして、動かして、確認する。この繰り返しが、実際の開発でも基本の流れです。",
         13.5, color=SUB, font=FONT_SANS, align=PP_ALIGN.CENTER)
 
-footer(s, 22, total=23)
+footer(s, 23, total=24)
 
 # ============================================================
 # スライド 15: 締め
@@ -1083,7 +1151,7 @@ textbox(s, Inches(1.0), Inches(4.4), Inches(11.33), Inches(1.1),
         "この教室にはもう戻ってきませんので、忘れ物にご注意ください。\nこのあとはスタッフの案内にしたがって移動をお願いします。",
         size=15, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.5)
 
-footer(s, 23, total=23)
+footer(s, 24, total=24)
 
 out_path = "/Users/shoyabushita/Desktop/web_taiken/Webプログラミング体験_資料.pptx"
 prs.save(out_path)
