@@ -5,8 +5,10 @@ rem 体験授業の準備用bat。デスクトップに配置してダブルクリックすると、
 rem 1) 実プロジェクト一式（%APP_BASE%\project、OneDriveと同期されない場所）に
 rem    既存のリポジトリがあれば削除してから、改めてclone
 rem    （.gitフォルダ・READMEなど体験授業に不要な開発用ファイルは取得後に削除する）
-rem 2) VSCodeにPHP Server拡張機能・SQLite Viewer拡張機能が無ければインストール
-rem 3) VSCodeでプロジェクト専用プロファイルを使ってフォルダを開く（毎回まっさらな画面になる）
+rem 2) VSCodeにPHP Server・SQLite Viewer・Japanese Language Pack拡張機能が
+rem    無ければインストール
+rem 3) VSCodeでプロジェクト専用プロファイル（明るいテーマ・日本語UI）を
+rem    使ってフォルダを開く（毎回まっさらな画面になる）
 rem 4) PHPサーバーを起動する
 rem をまとめて行う。
 rem
@@ -23,17 +25,7 @@ rem 実行内容はすべて %LOG_FILE% にも記録される（トラブル時の調査用）。
 set REPO_URL=https://github.com/puchimagic/web_taiken.git
 set EXTENSION_ID=brapifra.phpserver
 set SQLITE_EXTENSION_ID=qwtel.sqlite-viewer
-
-rem OneDriveの「デスクトップと同期」が有効な環境では、実際にエクスプローラーで
-rem 見えているデスクトップが %USERPROFILE%\Desktop ではなく OneDrive 配下に
-rem 移動していることがある。%USERPROFILE%\Desktop 決め打ちだとユーザーから
-rem 見えない場所にファイルが作られてしまうため、レジストリから実際のデスクトップの
-rem 場所を取得する（取得できない場合は %USERPROFILE%\Desktop にフォールバック）。
-rem これは過去バージョンがデスクトップに残したファイルを掃除するためだけに使う
-rem （プロジェクト本体はデスクトップには置かない。下記参照）。
-set "DESKTOP_DIR=%USERPROFILE%\Desktop"
-for /f "usebackq tokens=2,*" %%A in (`reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop 2^>nul`) do set "DESKTOP_DIR=%%B"
-call set "DESKTOP_DIR=%DESKTOP_DIR%"
+set JA_LANGUAGE_PACK_ID=ms-ceintl.vscode-language-pack-ja
 
 rem プロジェクト本体・VSCode専用プロファイル・実行ログはすべて %LOCALAPPDATA%
 rem （OneDriveと同期されない場所）にまとめる。デスクトップ（OneDriveの
@@ -46,15 +38,6 @@ set VSCODE_USER_DATA=%APP_BASE%\vscode_data
 set VSCODE_EXTENSIONS=%APP_BASE%\vscode_extensions
 set LOG_FILE=%APP_BASE%\web_taiken_setup_log.txt
 if not exist "%APP_BASE%" md "%APP_BASE%" >nul 2>nul
-
-rem 過去バージョンがデスクトップに残したプロジェクト関連ファイル・ログ
-rem （現在は使用しない）があれば削除しておく。
-del /f /q "%DESKTOP_DIR%\Webプログラミング体験_資料.pptx" >nul 2>nul
-del /f /q "%DESKTOP_DIR%\Webプロサーバー起動.bat" >nul 2>nul
-del /f /q "%DESKTOP_DIR%\Webプロクリーン.bat" >nul 2>nul
-del /f /q "%DESKTOP_DIR%\web_taiken_cleanup_log.txt" >nul 2>nul
-del /f /q "%DESKTOP_DIR%\web_taiken_setup_log.txt" >nul 2>nul
-del /f /q "%DESKTOP_DIR%\web_taiken_start_log.txt" >nul 2>nul
 
 echo ==== Webプロセットアップ.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
 
@@ -114,17 +97,20 @@ if exist "%TARGET_DIR%\README.md" (
 
 rem 上記以外にも、体験授業の実施に直接関係ない開発用ドキュメント・
 rem スクリプト類・自己紹介画像（次回pptx作成用の講師写真）・パワポ用画像
-rem （説明資料作成用のスクリーンショット、いずれも体験授業では不要）は
+rem （説明資料作成用のスクリーンショット、いずれも体験授業では不要）、
+rem mac版のセットアップ・サーバー起動・クリーンアップ用sh（このPCでは使わない）は
 rem 取得後にできるだけ削除しておく。残すのはスライド(pptx)、
 rem public・src・db（import以外）・画像（アプリの動作に必要）、
 rem Webプロサーバー起動.bat（サーバー再起動用）・Webプロクリーン.bat
 rem （体験授業の最後にPCを片付けたいときに手動実行する用）のみ。
 for %%F in (
     "CLAUDE.md"
-    "batファイルの説明.md"
     "体験内容.md"
     ".gitignore"
     "Webプロセットアップ.bat"
+    "Webプロセットアップ.sh"
+    "Webプロサーバー起動.sh"
+    "Webプロクリーン.sh"
 ) do (
     if exist "%TARGET_DIR%\%%~F" del /f /q "%TARGET_DIR%\%%~F"
 )
@@ -165,6 +151,14 @@ if errorlevel 1 (
     call :log "「SQLite Viewer」拡張機能は既にインストールされています。"
 )
 
+call code --extensions-dir "%VSCODE_EXTENSIONS%" --list-extensions | findstr /I /C:"%JA_LANGUAGE_PACK_ID%" >nul
+if errorlevel 1 (
+    call :log "「Japanese Language Pack」拡張機能をインストールします..."
+    call code --extensions-dir "%VSCODE_EXTENSIONS%" --install-extension %JA_LANGUAGE_PACK_ID% >> "%LOG_FILE%" 2>&1
+) else (
+    call :log "「Japanese Language Pack」拡張機能は既にインストールされています。"
+)
+
 call :log ""
 call :log "==== 3/4: VSCodeでプロジェクトを開きます ===="
 rem 普段使っているVSCodeのプロファイル（%APPDATA%\Code）をそのまま使うと、
@@ -181,11 +175,45 @@ md "%VSCODE_USER_DATA%\User" >nul 2>nul
     echo   "workbench.startupEditor": "none",
     echo   "workbench.welcomePage.walkthroughs.openOnInstall": false,
     echo   "workbench.secondarySideBar.defaultVisibility": "hidden",
-    echo   "chat.commandCenter.enabled": false
+    echo   "chat.commandCenter.enabled": false,
+    echo   "workbench.colorTheme": "Light 2026"
     echo }
 )
 
-call code --disable-workspace-trust --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"
+rem argv.json の locale 設定でVSCode本体のUI表示言語を日本語にする
+rem （settings.jsonのdisplay.languageではなくargv.jsonのlocale項目が必要）。
+> "%VSCODE_USER_DATA%\argv.json" (
+    echo {
+    echo   "locale": "ja"
+    echo }
+)
+
+rem 言語パックは、専用user-data-dirでのVSCode「初回起動」だけではUIに反映
+rem されず、一度閉じて開き直した2回目の起動から反映されるという既知の挙動が
+rem ある（VSCode本体側の未解決issue）。そのため、まず1回目を起動して
+rem ウィンドウが立ち上がるまで待ってから閉じ、日本語化を確定させたうえで
+rem 改めて2回目を起動し直す。
+call :log "日本語UIを反映させるため、VSCodeを一度初期化します（1回目の起動）..."
+call code --disable-workspace-trust --new-window --locale ja --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%" >> "%LOG_FILE%" 2>&1
+
+rem ウィンドウ（Code.exeプロセス）が実際に立ち上がるまで待つ（最大15秒）。
+set WAIT_COUNT=0
+:wait_for_code_launch
+tasklist /FI "IMAGENAME eq Code.exe" 2>nul | find /I "Code.exe" >nul
+if not errorlevel 1 goto wait_for_code_launch_done
+set /a WAIT_COUNT+=1
+if %WAIT_COUNT% GEQ 15 goto wait_for_code_launch_done
+timeout /t 1 /nobreak >nul
+goto wait_for_code_launch
+:wait_for_code_launch_done
+timeout /t 1 /nobreak >nul
+
+call :log "VSCodeを一旦終了します（日本語化を確定させるため）..."
+taskkill /IM Code.exe /F >> "%LOG_FILE%" 2>&1
+timeout /t 1 /nobreak >nul
+
+call :log "VSCodeを改めて起動します（2回目の起動）..."
+call code --disable-workspace-trust --new-window --locale ja --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"
 
 call :log ""
 call :log "==== 4/4: PHPサーバーを起動します ===="

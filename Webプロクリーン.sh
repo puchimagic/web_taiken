@@ -9,7 +9,6 @@
 # 3) ブラウザ(Safari / Google Chrome)が起動していれば終了する
 # 4) プロジェクト一式（APP_BASE、VSCode専用プロファイル・実行ログ含む）を
 #    まとめて削除する
-# 5) 過去バージョンがデスクトップに残したファイルがあれば削除する
 #
 # Webプロセットアップ.sh 自身とこのスクリプト自身は削除しない。この2つだけが
 # デスクトップに残る。何度でも Webプロセットアップ.sh -> Webプロクリーン.sh
@@ -19,8 +18,6 @@
 # 確認させたあと、このログファイル自身も含めて最後にまとめて削除する）。
 
 set -u
-
-DESKTOP_DIR="$HOME/Desktop"
 
 # プロジェクト本体・VSCode専用プロファイル・実行ログはすべて
 # ~/Library/Application Support/web_taiken にまとまっている。
@@ -36,7 +33,7 @@ log() {
     echo "$1" >> "$LOG_FILE"
 }
 
-log "==== 1/4: PHPサーバーを停止します ===="
+log "==== 1/3: PHPサーバーを停止します ===="
 PORT_PID="$(lsof -ti tcp:8000 -sTCP:LISTEN 2>/dev/null || true)"
 if [ -n "$PORT_PID" ]; then
     log "ポート8000で待受中のプロセス（PID ${PORT_PID}）を終了します。"
@@ -46,7 +43,7 @@ else
 fi
 
 log ""
-log "==== 2/4: VSCodeとブラウザを終了します ===="
+log "==== 2/3: VSCodeとブラウザを終了します ===="
 if pgrep -f "Visual Studio Code" >/dev/null 2>&1; then
     log "VSCodeを終了します。"
     osascript -e 'quit app "Visual Studio Code"' >> "$LOG_FILE" 2>&1 || true
@@ -69,28 +66,8 @@ if pgrep -x "Google Chrome" >/dev/null 2>&1; then
 fi
 
 log ""
-log "==== 3/4: プロジェクト一式を削除します ===="
+log "==== 3/3: プロジェクト一式を削除します ===="
 log "「${APP_BASE}」（プロジェクト本体・VSCode専用プロファイル・実行ログ）を削除します。このログファイル自身もここに含まれます。"
-
-log ""
-log "==== 4/4: デスクトップの旧バージョン残留ファイルを削除します ===="
-# 注意: デスクトップの「web_taiken」フォルダ自体は削除しない。
-# セットアップスクリプトが実際にclone・生成するプロジェクト本体は常に
-# APP_BASE（~/Library/Application Support/web_taiken/project）側であり、
-# デスクトップの「web_taiken」という名前のフォルダは開発用リポジトリの
-# 作業コピーである可能性がある（誤って削除すると開発中の変更が失われる）。
-CLEANED=0
-for f in "Webプログラミング体験_資料.pptx" "Webプロサーバー起動.sh" "Webプロサーバー起動.bat" \
-         "web_taiken_setup_log.txt" "web_taiken_cleanup_log.txt" "web_taiken_start_log.txt"; do
-    if [ -e "$DESKTOP_DIR/$f" ]; then
-        CLEANED=1
-        rm -f "$DESKTOP_DIR/$f"
-        log "デスクトップの「${f}」を削除しました。"
-    fi
-done
-if [ "$CLEANED" = "0" ]; then
-    log "デスクトップに旧バージョンの残留ファイルは見つかりませんでした。"
-fi
 
 log ""
 log "クリーンアップが完了しました。Webプロセットアップ.sh とこのスクリプト自身は削除していません。"

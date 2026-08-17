@@ -10,7 +10,6 @@ rem 2) VSCode(Code.exe)が起動していれば終了する
 rem 3) ブラウザ(Microsoft Edge / Google Chrome)が起動していれば終了する
 rem 4) プロジェクト一式（%APP_BASE%、VSCode専用プロファイル・実行ログ含む）を
 rem    まとめて削除する
-rem 5) 過去バージョンがデスクトップに残したファイルがあれば削除する
 rem
 rem Webプロセットアップ.bat 自身とこのbat自身は削除しない。この2つだけが
 rem デスクトップに残る。何度でも Webプロセットアップ.bat -> Webプロクリーン.bat
@@ -18,15 +17,6 @@ rem を繰り返せる。
 rem
 rem 実行内容はすべて %LOG_FILE% にも記録される（トラブル調査用。画面表示を
 rem pauseで確認させたあと、このログファイル自身も含めて最後にまとめて削除する）。
-
-rem OneDriveの「デスクトップと同期」が有効な環境では、実際にエクスプローラーで
-rem 見えているデスクトップが %USERPROFILE%\Desktop ではなく OneDrive 配下に
-rem 移動していることがある。Webプロセットアップ.bat と同じロジックで実際の
-rem デスクトップの場所を取得する（取得できない場合は %USERPROFILE%\Desktop に
-rem フォールバック）。これは過去バージョンの残留ファイルを掃除するためだけに使う。
-set "DESKTOP_DIR=%USERPROFILE%\Desktop"
-for /f "usebackq tokens=2,*" %%A in (`reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop 2^>nul`) do set "DESKTOP_DIR=%%B"
-call set "DESKTOP_DIR=%DESKTOP_DIR%"
 
 rem プロジェクト本体・VSCode専用プロファイル・実行ログはすべて %LOCALAPPDATA%
 rem （OneDriveと同期されない場所）にまとまっている。Webプロセットアップ.bat と
@@ -37,7 +27,7 @@ set LOG_FILE=%APP_BASE%\web_taiken_cleanup_log.txt
 if not exist "%APP_BASE%" md "%APP_BASE%" >nul 2>nul
 echo ==== Webプロクリーン.bat 開始 %DATE% %TIME% ==== > "%LOG_FILE%"
 
-call :log "==== 1/4: PHPサーバーを停止します ===="
+call :log "==== 1/3: PHPサーバーを停止します ===="
 set FOUND_PHP=0
 for /f "tokens=5" %%P in ('netstat -ano ^| findstr /R /C:":8000 .*LISTENING"') do (
     set FOUND_PHP=1
@@ -49,7 +39,7 @@ if "%FOUND_PHP%"=="0" (
 )
 
 call :log ""
-call :log "==== 2/4: VSCodeとブラウザを終了します ===="
+call :log "==== 2/3: VSCodeとブラウザを終了します ===="
 tasklist /FI "IMAGENAME eq Code.exe" 2>nul | find /I "Code.exe" >nul
 if errorlevel 1 (
     call :log "VSCodeは起動していませんでした。"
@@ -72,33 +62,8 @@ if not errorlevel 1 (
 )
 
 call :log ""
-call :log "==== 3/4: プロジェクト一式を削除します ===="
+call :log "==== 3/3: プロジェクト一式を削除します ===="
 call :log "「%APP_BASE%」（プロジェクト本体・VSCode専用プロファイル・実行ログ）を削除します。このログファイル自身もここに含まれます。"
-
-call :log ""
-call :log "==== 4/4: デスクトップの旧バージョン残留ファイルを削除します ===="
-rem 注意: デスクトップの「web_taiken」フォルダ自体は削除しない。
-rem セットアップスクリプトが実際にclone・生成するプロジェクト本体は常に
-rem APP_BASE（%LOCALAPPDATA%\web_taiken\project）側であり、デスクトップの
-rem 「web_taiken」という名前のフォルダは開発用リポジトリの作業コピーである
-rem 可能性がある（誤って削除すると開発中の変更が失われる）。
-set CLEANED=0
-for %%F in (
-    "Webプログラミング体験_資料.pptx"
-    "Webプロサーバー起動.bat"
-    "web_taiken_setup_log.txt"
-    "web_taiken_cleanup_log.txt"
-    "web_taiken_start_log.txt"
-) do (
-    if exist "%DESKTOP_DIR%\%%~F" (
-        set CLEANED=1
-        del /f /q "%DESKTOP_DIR%\%%~F"
-        call :log "デスクトップの「%%~F」を削除しました。"
-    )
-)
-if "%CLEANED%"=="0" (
-    call :log "デスクトップに旧バージョンの残留ファイルは見つかりませんでした。"
-)
 
 call :log ""
 call :log "クリーンアップが完了しました。Webプロセットアップ.bat とこのbat自身は削除していません。"

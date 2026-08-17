@@ -27,8 +27,6 @@ EXTENSION_ID="brapifra.phpserver"
 SQLITE_EXTENSION_ID="qwtel.sqlite-viewer"
 JA_LANGUAGE_PACK_ID="ms-ceintl.vscode-language-pack-ja"
 
-DESKTOP_DIR="$HOME/Desktop"
-
 # プロジェクト本体・VSCode専用プロファイル・実行ログはすべて
 # ~/Library/Application Support/web_taiken（iCloud Driveの同期対象外）にまとめる。
 APP_BASE="$HOME/Library/Application Support/web_taiken"
@@ -37,15 +35,6 @@ VSCODE_USER_DATA="$APP_BASE/vscode_data"
 VSCODE_EXTENSIONS="$APP_BASE/vscode_extensions"
 LOG_FILE="$APP_BASE/web_taiken_setup_log.txt"
 mkdir -p "$APP_BASE"
-
-# 過去バージョンがデスクトップに残したプロジェクト関連ファイル・ログ
-# （現在は使用しない）があれば削除しておく。
-rm -f "$DESKTOP_DIR/Webプログラミング体験_資料.pptx"
-rm -f "$DESKTOP_DIR/Webプロサーバー起動.sh"
-rm -f "$DESKTOP_DIR/Webプロクリーン.sh"
-rm -f "$DESKTOP_DIR/web_taiken_cleanup_log.txt"
-rm -f "$DESKTOP_DIR/web_taiken_setup_log.txt"
-rm -f "$DESKTOP_DIR/web_taiken_start_log.txt"
 
 echo "==== Webプロセットアップ.sh 開始 $(date) ====" > "$LOG_FILE"
 
@@ -142,7 +131,7 @@ rm -f "$TARGET_DIR/README.md"
 # public・src・db（import以外）・画像（アプリの動作に必要）、
 # Webプロサーバー起動.sh（サーバー再起動用）・Webプロクリーン.sh
 # （体験授業の最後にMacを片付けたいときに手動実行する用）のみ。
-for f in "CLAUDE.md" "batファイルの説明.md" "体験内容.md" ".gitignore" \
+for f in "CLAUDE.md" "体験内容.md" ".gitignore" \
          "Webプロセットアップ.bat" "Webプロサーバー起動.bat" "Webプロクリーン.bat" \
          "Webプロセットアップ.sh"; do
     rm -f "$TARGET_DIR/$f"
