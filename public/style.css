@@ -538,7 +538,8 @@ button:hover {
   display: flex;
   gap: 14px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  overflow-y: visible;
+  padding: 6px 4px 4px;
 }
 
 .niche-theme-card {
