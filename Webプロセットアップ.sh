@@ -126,12 +126,14 @@ rm -f "$TARGET_DIR/README.md"
 
 # 上記以外にも、体験授業の実施に直接関係ない開発用ドキュメント・
 # スクリプト類・自己紹介画像（次回pptx作成用の講師写真）・パワポ用画像
-# （説明資料作成用のスクリーンショット、いずれも体験授業では不要）は
+# （説明資料作成用のスクリーンショット、いずれも体験授業では不要）・
+# その他フォルダ（開発用ドキュメント類）・
+# Windows版のセットアップ・サーバー起動・クリーンアップ用bat（このMacでは使わない）は
 # 取得後にできるだけ削除しておく。残すのはスライド(pptx)、
 # public・src・db（import以外）・画像（アプリの動作に必要）、
 # Webプロサーバー起動.sh（サーバー再起動用）・Webプロクリーン.sh
 # （体験授業の最後にMacを片付けたいときに手動実行する用）のみ。
-for f in "CLAUDE.md" "体験内容.md" ".gitignore" \
+for f in "CLAUDE.md" ".gitignore" \
          "Webプロセットアップ.bat" "Webプロサーバー起動.bat" "Webプロクリーン.bat" \
          "Webプロセットアップ.sh"; do
     rm -f "$TARGET_DIR/$f"
@@ -139,6 +141,7 @@ done
 rm -rf "$TARGET_DIR/scripts"
 rm -rf "$TARGET_DIR/自己紹介画像"
 rm -rf "$TARGET_DIR/パワポ用画像"
+rm -rf "$TARGET_DIR/その他"
 # db/import は郵便番号CSV（utf_ken_all.csv）以外は開発用ファイルなので、
 # CSVだけ db/ 直下へ退避してから import フォルダごと削除する。
 # CSVは初回PHPアクセス時（PHPサーバー起動後）にsrc/db.phpが自動で
@@ -244,9 +247,34 @@ fi
 log "停止するには Ctrl+C を押してください。"
 echo "PHPサーバーを起動しました" >> "$LOG_FILE"
 
-# ブラウザでホームページ（index.php）を自動で開く。既定のブラウザで開く。
-log "ブラウザで http://127.0.0.1:8000/index.php を開きます。"
-open "http://127.0.0.1:8000/index.php"
+# Google Chromeでホームページ（index.php）を自動で開く。インストール先が
+# 見つからない場合はエラーにせず、既定のブラウザで開く。
+CHROME_APP="/Applications/Google Chrome.app"
+if [ -d "$CHROME_APP" ]; then
+    log "PHPサーバーの起動を待ってからGoogle Chromeで http://127.0.0.1:8000/index.php を開きます。"
+
+    # PHPサーバー（このあと本体がフォアグラウンドで起動する）がポート8000で
+    # 実際に待受を始める前にChromeでアクセスすると「接続できません」が
+    # 一瞬表示されてしまう。curlで疎通確認しながら待ってからChromeを開く。
+    (
+        RETRY=0
+        while ! curl -s -o /dev/null "http://127.0.0.1:8000/index.php"; do
+            RETRY=$((RETRY + 1))
+            if [ "$RETRY" -ge 30 ]; then
+                break
+            fi
+            sleep 1
+        done
+        # ゲストモード（--guest）は他のプロファイルでChromeが起動中だと無視されて
+        # 通常ウィンドウが開いてしまうため、起動前に既存のChromeを終了しておく
+        # （前の参加者の入力履歴・ログイン情報などを引き継がないようにするため）。
+        osascript -e 'quit app "Google Chrome"' >/dev/null 2>&1 || true
+        sleep 1
+        open -a "Google Chrome" --args --guest --start-maximized "http://127.0.0.1:8000/index.php"
+    ) &
+else
+    log "警告: Google Chromeが見つかりませんでした。ブラウザで http://127.0.0.1:8000/index.php を開いてください。"
+fi
 
 php -d upload_max_filesize=200M -d post_max_size=200M -S 127.0.0.1:8000 -t "$TARGET_DIR/public"
 

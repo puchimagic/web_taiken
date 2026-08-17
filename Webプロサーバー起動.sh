@@ -21,8 +21,31 @@ log() {
 
 echo "==== Webプロサーバー起動.sh 開始 $(date) ====" > "$LOG_FILE"
 
-if ! command -v php >/dev/null 2>&1; then
-    log "エラー: 「php」コマンドが見つかりません。PHPをインストールしてください（例: brew install php）。"
+# ---------------------------------------------------------
+# PHPコマンドの検出。PATHになければよくあるインストール先
+# （Homebrew）を探し、見つかればこのスクリプト内のPATHに追加する。
+# ---------------------------------------------------------
+find_php() {
+    if command -v php >/dev/null 2>&1; then
+        return 0
+    fi
+
+    log "「php」コマンドが見つからないため、インストール先を探します..."
+
+    for d in /opt/homebrew/bin /usr/local/bin /opt/homebrew/opt/php/bin; do
+        if [ -x "$d/php" ]; then
+            log "PHPを発見しました: $d"
+            export PATH="$d:$PATH"
+            return 0
+        fi
+    done
+
+    log "PHPが見つかりませんでした。Homebrewで「brew install php」を実行するか、PHPをインストールしてください。"
+    return 1
+}
+
+if ! find_php; then
+    log "エラー: 「php」コマンドが見つかりません。PHPをインストールしてください。"
     echo ""
     echo "ログを \"$LOG_FILE\" に保存しました。"
     read -n 1 -s -r -p "何かキーを押すと終了します..."
