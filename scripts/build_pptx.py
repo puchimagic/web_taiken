@@ -356,13 +356,10 @@ textbox(s, Inches(0.9), Inches(4.65), Inches(9), Inches(0.6),
         "コードを直すと、Webアプリの動きが変わる。それを自分の手で体感しよう。",
         size=15, color=SUB, font=FONT_SANS)
 
-# 下部：使用ツールのタグ
-tools = ["VSCode", "PHP", "SQLite", "HTML / CSS / JS"]
-x = Inches(0.9)
-for t_ in tools:
-    w = Inches(0.5 + len(t_) * 0.11)
-    tag_badge(s, x, Inches(6.3), w, Inches(0.42), t_)
-    x = Emu(x + w + Inches(0.18))
+textbox(s, Inches(0.9), Inches(5.35), Inches(9), Inches(0.45),
+        "本日サポートする学生スタッフ", size=18, bold=True, color=MAIN, font=FONT_SANS)
+textbox(s, Inches(0.9), Inches(5.85), Inches(9), Inches(0.5),
+        "名前", size=20, color=INK, font=FONT_SANS)
 
 footer(s, 1, total=24)
 
