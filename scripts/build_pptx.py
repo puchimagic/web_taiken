@@ -328,7 +328,7 @@ for t_ in tools:
     tag_badge(s, x, Inches(6.3), w, Inches(0.42), t_)
     x = Emu(x + w + Inches(0.18))
 
-footer(s, 1, total=21)
+footer(s, 1, total=23)
 
 # ============================================================
 # スライド 1.5: 自己紹介（曽根先生・2026年版）
@@ -352,7 +352,7 @@ bullet_block(s, Inches(0.85), Inches(2.7), Inches(6.05), Inches(3.5),
               "実は高等専修学校のパンフレットにも\n実習授業の一コマがちらっと掲載されている"],
              size=14.5, gap=0.5)
 
-footer(s, 2, total=21)
+footer(s, 2, total=23)
 
 # ============================================================
 # スライド 1.6: 自己紹介（厨子先生・2024年版・予備）
@@ -383,7 +383,7 @@ bullet_block(s, Inches(0.85), Inches(5.3), Inches(6.9), Inches(1.15),
               "基本情報／応用情報対策講座、AIに関する授業、クラス担任"],
              size=13)
 
-footer(s, 3, total=21)
+footer(s, 3, total=23)
 
 # ============================================================
 # スライド 2: 今日やること（アジェンダ）
@@ -425,7 +425,7 @@ for i, (num, ttl, desc) in enumerate(items):
     textbox(s, Emu(x + Inches(0.22)), Emu(y + Inches(0.78)), Emu(col_w - Inches(0.4)), Inches(0.7),
             desc, size=11.5, color=SUB, font=FONT_SANS, line_spacing=1.25)
 
-footer(s, 4, total=21)
+footer(s, 4, total=23)
 
 # ============================================================
 # スライド 3: プログラミングって何？（料理の比喩）
@@ -469,7 +469,7 @@ textbox(s, Inches(3.85), Inches(5.3), Inches(5.6), Inches(0.55),
         "今日は「実装」「テスト」の部分を体験します", size=14.5, color=CREAM, bold=True,
         align=PP_ALIGN.CENTER, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
 
-footer(s, 5, total=21)
+footer(s, 5, total=23)
 
 # ============================================================
 # スライド 4: 表の顔・裏の顔（ラーメン比喩）
@@ -508,7 +508,62 @@ textbox(s, Inches(0.5), Inches(6.75), Inches(11.3), Inches(0.4),
         "今日は、この「厨房エリア（バックエンド）」を覗いてみましょう！",
         size=13.5, color=MAIN, bold=True, align=PP_ALIGN.CENTER, font=FONT_SANS)
 
-footer(s, 6, total=21)
+footer(s, 6, total=23)
+
+# ============================================================
+# スライド 4.5: これから使うエディタ（VSCode）
+# ============================================================
+s = add_slide()
+set_bg(s)
+kicker(s, "STEP 0 → 1")
+title(s, "これから使うエディタ：VSCode")
+textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
+        "コードを書き換えるときは、このエディタを使います",
+        size=14, color=SUB, font=FONT_SANS)
+
+bullet_block(s, Inches(0.5), Inches(2.35), Inches(5.7), Inches(4.0),
+             ["左側の「エクスプローラー」に、プロジェクトのファイル一式が並んでいる",
+              "開きたいファイルをダブルクリックすると、右側にコードが表示される",
+              "コードを直したら Ctrl + S で保存\n→ ブラウザを再読み込み、で結果を確認する"],
+             size=14, gap=0.5)
+
+screenshot(s, os.path.join(IMG_DIR, "00_VSCodeファイル構成_ズーム.png"), Inches(6.55), Inches(1.95),
+           Inches(6.3), Inches(4.85), label="エクスプローラー：ファイルをダブルクリックで開く", label_color=MAIN, border=MAIN)
+
+footer(s, 7, total=23)
+
+# ============================================================
+# スライド 4.6: ウィンドウの切り替え方（Alt + Tab）
+# ============================================================
+s = add_slide()
+set_bg(s)
+kicker(s, "STEP 0 → 1")
+title(s, "エディタとブラウザの切り替え方")
+textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
+        "1つの画面の中に、エディタとブラウザが最大化された状態で重なっています",
+        size=14, color=SUB, font=FONT_SANS)
+
+card(s, Inches(0.5), Inches(2.0), Inches(12.3), Inches(1.3), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
+
+textbox(s, Inches(0.9), Inches(2.15), Inches(6.2), Inches(0.5),
+        "⌨️ キーボードで「Alt + Tab」", size=19, color=MAIN, bold=True, font=FONT_SANS)
+
+bullet_block(s, Inches(0.9), Inches(2.68), Inches(11.5), Inches(0.55),
+             ["Alt キーを押したまま Tab キーを押す → 一覧から切り替えたい方を選ぶ"],
+             size=13, gap=0.3, marker="●")
+
+# エディタとブラウザを横並びで（Alt+Tabで切り替わる2つの画面）
+gap = Inches(0.4)
+half_w = Emu(int((Inches(12.3) - gap) / 2))
+img_top = Inches(4.0)
+img_h = Inches(3.0)
+
+screenshot(s, os.path.join(IMG_DIR, "00_VSCodeファイル構成.png"), Inches(0.5), img_top,
+           half_w, img_h, label="① エディタ（VSCode）", label_color=MAIN, border=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "01_トップ画面.png"), Emu(Inches(0.5) + half_w + gap), img_top,
+           half_w, img_h, label="② ブラウザ", label_color=MAIN, border=MAIN)
+
+footer(s, 8, total=23)
 
 # ============================================================
 # スライド 5: 目の前の画面を見てみよう
@@ -523,15 +578,14 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
 
 bullet_block(s, Inches(0.5), Inches(2.35), Inches(6.1), Inches(3.2),
              ["ブラウザに表示されているのが「キミの旅」のトップ画面",
-              "VSCodeにはプロジェクトのファイル一式がすでに開いている",
-              "エディタでコードを直して保存\n→ ブラウザを再読み込み、の繰り返しで進めていく"],
+              "これからはこの画面を見ながら、VSCodeでコードを直していく"],
              size=14, gap=0.5)
 
 rx, ry, rw, rh = Inches(6.95), Inches(2.15), Inches(5.85), Inches(4.4)
 screenshot(s, os.path.join(IMG_DIR, "01_トップ画面.png"), rx, ry, rw, rh,
            caption="トップ画面（一覧・検索）")
 
-footer(s, 7, total=21)
+footer(s, 9, total=23)
 
 # ============================================================
 # スライド 6: ボタンの文字を変えてみよう
@@ -555,7 +609,7 @@ screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正前_ボタン文言_�
 screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正後_住所を検索_ズーム.png"), Inches(0.9), Inches(5.25),
            Inches(11.5), Inches(1.6), label="AFTER：「住所を検索」に変更", label_color=MAIN, border=MAIN)
 
-footer(s, 8, total=21)
+footer(s, 10, total=23)
 
 # ============================================================
 # スライド 7: コメントアウトを外して住所検索を有効化
@@ -586,7 +640,7 @@ textbox(s, Inches(0.5), Inches(4.65), Inches(6.15), Inches(1.1),
 screenshot(s, os.path.join(IMG_DIR, "07_郵便番号検索_実行結果_ズーム.png"), Inches(6.95), Inches(2.3),
            Inches(5.85), Inches(4.65), label="有効化後：郵便番号から住所を自動入力", label_color=MAIN, border=MAIN)
 
-footer(s, 9, total=21)
+footer(s, 11, total=23)
 
 # ============================================================
 # スライド 7.5: 裏側で起きていること（関数の考え方）
@@ -636,7 +690,7 @@ textbox(s, Inches(1.15), Inches(5.35), Inches(11.0), Inches(0.7),
         "「機能をひとつのまとまりとして作っておき、必要なときに呼び出す」——これが関数の考え方。\n機能をつくることも、プログラマーの大事な仕事の一つです。",
         13.5, color=INK, font=FONT_SANS, line_spacing=1.35)
 
-footer(s, 10, total=21)
+footer(s, 12, total=23)
 
 # ============================================================
 # スライド 8: APIってなに？（現在地→住所）
@@ -682,7 +736,7 @@ screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押す前_ズーム.png"
 screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押した後_ズーム.png"), Inches(0.9), Inches(5.45),
            Inches(11.5), Inches(1.5), label="押した後：住所が自動入力される", label_color=MAIN, border=MAIN)
 
-footer(s, 11, total=21)
+footer(s, 13, total=23)
 
 # ============================================================
 # スライド 8.5: 郵便番号検索 vs 現在地取得（関数とAPIの比較）
@@ -723,7 +777,7 @@ textbox(s, Inches(1.15), Inches(5.15), Inches(11.0), Inches(1.0),
         "「値を渡す → 誰か（何か）が調べる → 答えが返ってくる」という形はまったく同じ。\n「API」という言葉はどちらの場所にも使えるが、実際に「APIを使う」というときは\nたいてい後者（＝Web API、インターネットの向こう）を指すことが多い。",
         13, color=INK, font=FONT_SANS, line_spacing=1.4)
 
-footer(s, 12, total=21)
+footer(s, 14, total=23)
 
 # ============================================================
 # スライド 10: データベースって何？（comments.message を有効化）
@@ -748,7 +802,7 @@ textbox(s, Inches(1.2), Inches(5.65), Inches(10.9), Inches(0.7),
         "考えてみよう：「どのコメントか」を特定して正しく表示するには、どんな情報が必要そう？",
         size=15, bold=True, color=MAIN, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
 
-footer(s, 13, total=21)
+footer(s, 15, total=23)
 
 # ============================================================
 # スライド 10.5: データベースって何？（comments テーブルを覗く）
@@ -781,7 +835,7 @@ code_block(s, Inches(0.5), Inches(6.48), Inches(12.3), Inches(0.5), [
     (58, "SELECT comments.id, /* comments.message, */ ... WHERE comments.spot_id = :spot_id", True),
 ], code_size=10.5)
 
-footer(s, 14, total=21)
+footer(s, 16, total=23)
 
 # ============================================================
 # スライド 11: 入力チェックを追加しよう
@@ -811,7 +865,7 @@ code_block(s, rx, Inches(6.15), Inches(6.5), Inches(0.85), [
     (32, "if ($title === '') {", True),
 ])
 
-footer(s, 15, total=21)
+footer(s, 17, total=23)
 
 # ============================================================
 # スライド 11.5: 発展トーク（サニタイズ・SQLインジェクション）
@@ -863,7 +917,7 @@ textbox(s, Inches(0.5), Inches(6.15), Inches(12.3), Inches(0.7),
         "見出しタグ・本文タグなど、タグの種類ごとに「ブラウザがどう表示するか」が決まっている",
         size=14.5, bold=True, color=INK, font=FONT_SANS)
 
-footer(s, 16, total=21)
+footer(s, 18, total=23)
 
 # ============================================================
 # スライド 11.6: 発展トーク（サニタイズ・SQLインジェクション）
@@ -902,7 +956,7 @@ textbox(s, Inches(1.15), Inches(5.68), Inches(11.0), Inches(1.05),
         "同じ考え方で、SQL文をそのまま実行できてしまうと、\nパスワードなどが盗まれる「SQLインジェクション」という攻撃もある。\n興味を持った人は、次回オープンキャンパスの「ホワイトハッカー体験」もチェック。",
         size=13.5, color=INK, font=FONT_SANS, line_spacing=1.4)
 
-footer(s, 17, total=21)
+footer(s, 19, total=23)
 
 # ============================================================
 # スライド 12: アレンジ課題
@@ -933,7 +987,7 @@ textbox(s, Inches(1.15), Inches(6.28), Inches(11.0), Inches(0.65),
         "ここまでは「Webプログラマー」の仕事。配色を工夫するのは「Webデザイナー」の仕事の入口。\n興味がある人は、次回オープンキャンパスの「Webデザイン体験」もチェックしてみよう。",
         size=12.5, color=INK, font=FONT_SANS, line_spacing=1.3)
 
-footer(s, 18, total=21)
+footer(s, 20, total=23)
 
 # ============================================================
 # スライド 13: 体験の流れ（振り返り）
@@ -973,7 +1027,7 @@ for i, f in enumerate(flow):
     textbox(s, Emu(x + Inches(0.85)), y, Emu(col_w - Inches(1.1)), row_h,
             f, size=13.5, color=INK, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.15)
 
-footer(s, 19, total=21)
+footer(s, 21, total=23)
 
 # ============================================================
 # スライド 14: まとめ
@@ -1005,7 +1059,7 @@ textbox(s, row_x, Inches(6.35), row_w, Inches(0.5),
         "小さな修正をして、動かして、確認する。この繰り返しが、実際の開発でも基本の流れです。",
         13.5, color=SUB, font=FONT_SANS, align=PP_ALIGN.CENTER)
 
-footer(s, 20, total=21)
+footer(s, 22, total=23)
 
 # ============================================================
 # スライド 15: 締め
@@ -1029,7 +1083,7 @@ textbox(s, Inches(1.0), Inches(4.4), Inches(11.33), Inches(1.1),
         "この教室にはもう戻ってきませんので、忘れ物にご注意ください。\nこのあとはスタッフの案内にしたがって移動をお願いします。",
         size=15, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.5)
 
-footer(s, 21, total=21)
+footer(s, 23, total=23)
 
 out_path = "/Users/shoyabushita/Desktop/web_taiken/Webプログラミング体験_資料.pptx"
 prs.save(out_path)
