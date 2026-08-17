@@ -164,11 +164,20 @@ call :log "==== 3/4: VSCodeでプロジェクトを開きます ===="
 rem 普段使っているVSCodeのプロファイル（%APPDATA%\Code）をそのまま使うと、
 rem 前回このPCで開いていたときのサイドバー開閉状態などのレイアウト記憶や、
 rem この端末に個人的に入れている拡張機能がそのまま引き継がれてしまう。
-rem このプロジェクト専用のuser-data-dirを使い、開く前に毎回削除してから
-rem 作り直すことで、常にVSCode本来の初期状態（プライマリサイドバーで
+rem このプロジェクト専用のuser-data-dirを使い、開く前に毎回設定をリセット
+rem することで、常にVSCode本来の初期状態（プライマリサイドバーで
 rem エクスプローラーにフォーカス、セカンダリサイドバーは閉じた状態、余計な
 rem 拡張機能のパネルも出ない）で開かれるようにする。
-if exist "%VSCODE_USER_DATA%" rd /s /q "%VSCODE_USER_DATA%"
+rem
+rem ただし %VSCODE_USER_DATA% フォルダ自体をrd /s /qで削除してからmdで
+rem 作り直すと、Windows版VSCodeでは（--extensions-dirで入れた）言語パックが
+rem 正しく認識されずUIが英語のままになる不具合を実機で確認した
+rem （user-data-dirフォルダ自体は残したまま中のUserサブフォルダだけを
+rem 作り直す場合は問題なく日本語化されることを確認済み）。そのため、
+rem トップレベルの%VSCODE_USER_DATA%フォルダ自体は削除せず、
+rem 設定が入っているUserサブフォルダだけを削除・再作成する。
+if not exist "%VSCODE_USER_DATA%" md "%VSCODE_USER_DATA%"
+if exist "%VSCODE_USER_DATA%\User" rd /s /q "%VSCODE_USER_DATA%\User"
 md "%VSCODE_USER_DATA%\User" >nul 2>nul
 > "%VSCODE_USER_DATA%\User\settings.json" (
     echo {
@@ -188,31 +197,7 @@ rem （settings.jsonのdisplay.languageではなくargv.jsonのlocale項目が必要）。
     echo }
 )
 
-rem 言語パックは、専用user-data-dirでのVSCode「初回起動」だけではUIに反映
-rem されず、一度閉じて開き直した2回目の起動から反映されるという既知の挙動が
-rem ある（VSCode本体側の未解決issue）。そのため、まず1回目を起動して
-rem ウィンドウが立ち上がるまで待ってから閉じ、日本語化を確定させたうえで
-rem 改めて2回目を起動し直す。
-call :log "日本語UIを反映させるため、VSCodeを一度初期化します（1回目の起動）..."
-call code --disable-workspace-trust --new-window --locale ja --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%" >> "%LOG_FILE%" 2>&1
-
-rem ウィンドウ（Code.exeプロセス）が実際に立ち上がるまで待つ（最大15秒）。
-set WAIT_COUNT=0
-:wait_for_code_launch
-tasklist /FI "IMAGENAME eq Code.exe" 2>nul | find /I "Code.exe" >nul
-if not errorlevel 1 goto wait_for_code_launch_done
-set /a WAIT_COUNT+=1
-if %WAIT_COUNT% GEQ 15 goto wait_for_code_launch_done
-timeout /t 1 /nobreak >nul
-goto wait_for_code_launch
-:wait_for_code_launch_done
-timeout /t 1 /nobreak >nul
-
-call :log "VSCodeを一旦終了します（日本語化を確定させるため）..."
-taskkill /IM Code.exe /F >> "%LOG_FILE%" 2>&1
-timeout /t 1 /nobreak >nul
-
-call :log "VSCodeを改めて起動します（2回目の起動）..."
+call :log "VSCodeを起動します..."
 call code --disable-workspace-trust --new-window --locale ja --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" "%TARGET_DIR%"
 
 call :log ""
