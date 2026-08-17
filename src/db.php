@@ -369,9 +369,18 @@ function seed_test_users(PDO $pdo): void
          VALUES (:username, :password_hash, :postal_code, :prefecture, :city, :address_line, :phone, :email)'
     );
 
+    // test ユーザーは大阪情報コンピュータ専門学校（OIC）の住所で固定する
     $seedIndex = 0;
     foreach ($testUsers as $username => $password) {
         $profile = build_seed_profile($pdo, $seedIndex++);
+        if ($username === 'test') {
+            $profile = array_merge($profile, [
+                'postal_code' => '5430001',
+                'prefecture' => '大阪府',
+                'city' => '大阪市天王寺区',
+                'address_line' => '上本町6-8-4',
+            ]);
+        }
         $insertUser->execute(array_merge($profile, [
             'username' => $username,
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
