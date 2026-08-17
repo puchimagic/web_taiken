@@ -176,7 +176,21 @@ rem （user-data-dirフォルダ自体は残したまま中のUserサブフォルダだけを
 rem 作り直す場合は問題なく日本語化されることを確認済み）。そのため、
 rem トップレベルの%VSCODE_USER_DATA%フォルダ自体は削除せず、
 rem 設定が入っているUserサブフォルダだけを削除・再作成する。
-if not exist "%VSCODE_USER_DATA%" md "%VSCODE_USER_DATA%"
+rem
+rem %VSCODE_USER_DATA%フォルダがまだ一度も存在しない場合（このPCで初めて
+rem 実行したとき、またはWebプロクリーン.batで痕跡を消したあとの初回実行）は
+rem 上記と同じ理由でいきなり日本語UIにならない。そのため、まず拡張機能や
+rem 言語設定なしでVSCodeを一度ダミー起動してすぐ終了させ、
+rem %VSCODE_USER_DATA%フォルダの実体を作ってから、改めてUserサブフォルダを
+rem 日本語設定で作り直す（実機で、この手順なら初回から日本語化することを
+rem 確認済み）。
+if not exist "%VSCODE_USER_DATA%" (
+    call :log "初回起動のため、VSCodeを一度ダミー起動して初期化します..."
+    call code --user-data-dir "%VSCODE_USER_DATA%" --extensions-dir "%VSCODE_EXTENSIONS%" >> "%LOG_FILE%" 2>&1
+    timeout /t 5 /nobreak >nul
+    taskkill /IM Code.exe /F >> "%LOG_FILE%" 2>&1
+    timeout /t 2 /nobreak >nul
+)
 if exist "%VSCODE_USER_DATA%\User" rd /s /q "%VSCODE_USER_DATA%\User"
 md "%VSCODE_USER_DATA%\User" >nul 2>nul
 > "%VSCODE_USER_DATA%\User\settings.json" (
