@@ -198,36 +198,39 @@ def step_badge(slide, l, t, num, label):
     run.font.name = FONT_SANS
 
 
+BLACK = RGBColor(0x00, 0x00, 0x00)
+WHITE = RGBColor(0xFF, 0xFF, 0xFF)
+
+
 def code_chip(slide, l, t, w, h, text):
     """ファイル名だけを表示するチップ"""
-    c = rect(slide, l, t, w, h, fill=INK, radius=0.15)
-    textbox(slide, l, t, w, h, text, size=13, color=RGBColor(0xF7, 0xE9, 0xDC), bold=False,
+    c = rect(slide, l, t, w, h, fill=WHITE, line=BLACK, line_w=Pt(1.5), radius=0.15)
+    textbox(slide, l, t, w, h, text, size=13, color=BLACK, bold=True,
             align=PP_ALIGN.CENTER, font="Courier New", anchor=MSO_ANCHOR.MIDDLE)
     return c
 
 
-CODE_DIM = RGBColor(0x9A, 0x9A, 0x8A)
-CODE_TEXT = RGBColor(0xF7, 0xE9, 0xDC)
-GUTTER_BG = RGBColor(0x14, 0x11, 0x0C)
-GUTTER_TEXT = RGBColor(0xFF, 0xFF, 0xFF)
+CODE_BG = WHITE
+CODE_DIM = BLACK
+CODE_TEXT = BLACK
+GUTTER_BG = WHITE
+GUTTER_TEXT = BLACK
 
 
 def code_block(slide, l, t, w, h, lines, code_size=12.5, gutter_w=Inches(0.55)):
     """行番号ガター付きのコードブロック。
     lines: [(行番号 or None, テキスト, 強調するか)] のリスト。行番号Noneなら空欄行として詰める。
     """
-    rect(slide, l, t, w, h, fill=INK, radius=0.06)
-    rect(slide, l, t, gutter_w, h, fill=GUTTER_BG, radius=0)
-    # 角の丸みを合わせるため、ガター右端の直線部分だけ再度重ねて角を隠す簡易対応は不要
-    # (rectは矩形なのでガターは左側面のみでOK。radius=0で四角のまま重ねる)
+    rect(slide, l, t, w, h, fill=CODE_BG, line=BLACK, line_w=Pt(1.5), radius=0.06)
+    rect(slide, l, t, gutter_w, h, fill=GUTTER_BG, line=BLACK, line_w=Pt(1.5), radius=0)
     line_h = Emu(int(h / len(lines)))
     for i, (num, text, emphasize) in enumerate(lines):
         y = Emu(t + line_h * i)
         if num is not None:
             textbox(slide, l, y, Emu(gutter_w - Inches(0.12)), line_h, str(num), size=code_size - 1,
-                    color=GUTTER_TEXT, align=PP_ALIGN.RIGHT, font="Courier New", anchor=MSO_ANCHOR.MIDDLE)
+                    color=GUTTER_TEXT, bold=True, align=PP_ALIGN.RIGHT, font="Courier New", anchor=MSO_ANCHOR.MIDDLE)
         textbox(slide, Emu(l + gutter_w + Inches(0.18)), y, Emu(w - gutter_w - Inches(0.3)), line_h,
-                text, size=code_size, color=(CODE_TEXT if emphasize else CODE_DIM),
+                text, size=code_size, color=(MAIN if emphasize else CODE_DIM), bold=emphasize,
                 font="Courier New", anchor=MSO_ANCHOR.MIDDLE)
 
 
@@ -394,7 +397,7 @@ s = add_slide()
 set_bg(s)
 kicker(s, "自己紹介")
 textbox(s, Inches(0.5), Inches(0.95), Inches(11.5), Inches(0.8),
-        "厨子　直人　(Zushi, Naoto)", size=28, color=INK, bold=True, font=FONT_SERIF)
+        "厨子　直人　(Zushi Naoto)", size=28, color=INK, bold=True, font=FONT_SERIF)
 
 img_path = os.path.join(PROFILE_DIR, "厨子先生_2024_杖を持った写真_conv.jpg")
 screenshot(s, img_path, Inches(8.35), Inches(1.9), Inches(3.45), Inches(4.6))
@@ -435,7 +438,7 @@ items = [
     ("2", "APIってなに？", "現在地から住所が自動で入力される仕組みを体験"),
     ("3", "データベースって何？", "投稿やコメントの情報がどう保存されているか"),
     ("4", "入力チェックを作ろう", "空欄のまま投稿できてしまう問題を自分で直す"),
-    ("5", "自由にアレンジ", "表示の文言などを自分の工夫で変えてみる"),
+    ("5", "自由にアレンジ", "ページの背景色などを自分の好きな配色に変えてみる"),
 ]
 
 col_w = Inches(3.9)
@@ -487,9 +490,10 @@ y = Inches(3.3)
 box_h = Inches(1.5)
 
 for i, (top_label, bottom_label) in enumerate(steps):
-    card(s, x, y, box_w, box_h, fill=SURFACE if i != 2 else SURFACE2, line=BORDER if i != 2 else MAIN)
+    highlighted = i in (2, 3)
+    card(s, x, y, box_w, box_h, fill=SURFACE2 if highlighted else SURFACE, line=MAIN if highlighted else BORDER)
     textbox(s, x, Emu(y + Inches(0.18)), box_w, Inches(0.4), top_label, size=13.5, bold=True,
-            color=INK if i != 2 else MAIN, align=PP_ALIGN.CENTER, font=FONT_SANS)
+            color=MAIN if highlighted else INK, align=PP_ALIGN.CENTER, font=FONT_SANS)
     rect(s, Emu(x + Inches(0.65)), Emu(y + Inches(0.62)), Inches(0.65), Pt(1.5), fill=BORDER)
     textbox(s, Emu(x + Inches(0.08)), Emu(y + Inches(0.82)), Emu(box_w - Inches(0.16)), Inches(0.6),
             bottom_label, size=11.5, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.15)
@@ -951,25 +955,25 @@ lx = Inches(0.5)
 card(s, lx, Inches(2.15), Inches(5.9), Inches(3.8))
 textbox(s, Emu(lx + Inches(0.3)), Inches(2.35), Inches(5.3), Inches(0.4),
         "書いたコード", size=14, bold=True, color=MAIN, font=FONT_SANS)
-codebox = rect(s, Emu(lx + Inches(0.3)), Inches(2.85), Inches(5.3), Inches(2.7), fill=INK, radius=0.06)
+codebox = rect(s, Emu(lx + Inches(0.3)), Inches(2.85), Inches(5.3), Inches(2.7), fill=WHITE, line=BLACK, line_w=Pt(1.5), radius=0.06)
 tf = codebox.text_frame
 tf.word_wrap = True
 tf.margin_left = Inches(0.28); tf.margin_top = Inches(0.25)
 lines_code = [
-    [("<h1>", RGBColor(0xF7, 0xE9, 0xDC)), ("  ← 見出しタグ", RGBColor(0x9A, 0x9A, 0x8A))],
-    [("  地元の人しか知らない絶景カフェ", RGBColor(0xE0, 0xB0, 0x88))],
-    [("</h1>", RGBColor(0xF7, 0xE9, 0xDC))],
-    [("<p>", RGBColor(0xF7, 0xE9, 0xDC)), ("  ← 本文タグ", RGBColor(0x9A, 0x9A, 0x8A))],
-    [("  夕方の光が綺麗です", RGBColor(0xE0, 0xB0, 0x88))],
-    [("</p>", RGBColor(0xF7, 0xE9, 0xDC))],
+    [("<h1>", BLACK, True), ("  ← 見出しタグ", BLACK, False)],
+    [("  地元の人しか知らない絶景カフェ", MAIN, True)],
+    [("</h1>", BLACK, True)],
+    [("<p>", BLACK, True), ("  ← 本文タグ", BLACK, False)],
+    [("  夕方の光が綺麗です", MAIN, True)],
+    [("</p>", BLACK, True)],
 ]
 for i, runs in enumerate(lines_code):
     p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
     p.line_spacing = 1.4
     p.alignment = PP_ALIGN.LEFT
-    for txt, color in runs:
+    for txt, color, bold in runs:
         r = p.add_run(); r.text = txt
-        r.font.name = "Courier New"; r.font.size = Pt(13.5); r.font.color.rgb = color
+        r.font.name = "Courier New"; r.font.size = Pt(13.5); r.font.bold = bold; r.font.color.rgb = color
 
 rx = Inches(6.95)
 card(s, rx, Inches(2.15), Inches(5.9), Inches(3.8), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
@@ -1002,13 +1006,13 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11.5), Inches(0.5),
 card(s, Inches(0.5), Inches(2.05), Inches(12.3), Inches(1.9), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
 textbox(s, Inches(0.85), Inches(2.25), Inches(11.5), Inches(0.45),
         "😱 投稿のタイトルに、さっきの <h1> をそのまま書けてしまったら？", size=16, bold=True, color=MAIN, font=FONT_SANS)
-codebox = rect(s, Inches(0.85), Inches(2.8), Inches(11.6), Inches(0.65), fill=INK, radius=0.06)
+codebox = rect(s, Inches(0.85), Inches(2.8), Inches(11.6), Inches(0.65), fill=WHITE, line=BLACK, line_w=Pt(1.5), radius=0.06)
 tf = codebox.text_frame
 tf.word_wrap = True
 tf.margin_left = Inches(0.28); tf.margin_top = Inches(0.13)
 p1 = tf.paragraphs[0]; p1.line_spacing = 1.2; p1.alignment = PP_ALIGN.LEFT
 r1 = p1.add_run(); r1.text = "<h1>絶対見て！</h1>"
-r1.font.name = "Courier New"; r1.font.size = Pt(15); r1.font.color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
+r1.font.name = "Courier New"; r1.font.size = Pt(15); r1.font.bold = True; r1.font.color.rgb = BLACK
 textbox(s, Inches(0.85), Inches(3.6), Inches(11.6), Inches(0.35),
         "→ 本物の見出しタグとして実行され、他の投稿と文字の大きさがバラバラになりレイアウトが崩れる",
         size=14, color=INK, font=FONT_SANS)
