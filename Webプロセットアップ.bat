@@ -260,8 +260,28 @@ if exist "%ProgramFiles%\Google\Chrome\Application\chrome.exe" set "CHROME_EXE=%
 if not defined CHROME_EXE if exist "%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe" set "CHROME_EXE=%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"
 if not defined CHROME_EXE if exist "%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe" set "CHROME_EXE=%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe"
 if defined CHROME_EXE (
-    call :log "Google Chromeで http://127.0.0.1:8000/index.php を開きます。"
-    start "" "%CHROME_EXE%" --start-maximized "http://127.0.0.1:8000/index.php"
+    call :log "PHPサーバーの起動を待ってからGoogle Chromeで http://127.0.0.1:8000/index.php を開きます。"
+
+    rem PHPサーバー（このあと本体がフォアグラウンドで起動する）がポート8000で
+    rem 実際に待受を始める前にChromeでアクセスすると「接続できません」が
+    rem 一瞬表示されてしまう。curlで疎通確認しながら待ってからChromeを開く
+    rem 処理を別の.batファイルに書き出し、完全に非表示のウィンドウで裏起動しておく
+    rem （フォアグラウンド側のPHPサーバー起動・Ctrl+Cでの停止には影響しない）。
+    rem cmd.exeはバックスラッシュによる引用符エスケープをサポートしないため、
+    rem 複雑な引用符を含むコマンドは直接startに埋め込まず.batに書き出す。
+    type nul > "%APP_BASE%\open_chrome_when_ready.bat"
+    echo @echo off >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo set RETRY=0 >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo :retry >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo curl -s -o nul "http://127.0.0.1:8000/index.php" >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo if not errorlevel 1 goto :ready >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo set /a RETRY+=1 >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo if %%RETRY%% GEQ 30 goto :ready >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo timeout /t 1 /nobreak ^>nul >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo goto :retry >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo :ready >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo start "" "%CHROME_EXE%" --start-maximized "http://127.0.0.1:8000/index.php" >> "%APP_BASE%\open_chrome_when_ready.bat"
+    powershell -NoProfile -WindowStyle Hidden -Command "Start-Process -FilePath '%APP_BASE%\open_chrome_when_ready.bat' -WindowStyle Hidden" >> "%LOG_FILE%" 2>&1
 ) else (
     call :log "警告: Google Chromeが見つかりませんでした。ブラウザで http://127.0.0.1:8000/index.php を開いてください。"
 )
