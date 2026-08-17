@@ -9,7 +9,10 @@ rem 2) VSCodeにPHP Server・SQLite Viewer・Japanese Language Pack拡張機能が
 rem    無ければインストール
 rem 3) VSCodeでプロジェクト専用プロファイル（明るいテーマ・日本語UI）を
 rem    使ってフォルダを開き、ウィンドウを最大化する（毎回まっさらな画面になる）
-rem 4) PHPサーバーを起動する
+rem 4) PHPサーバーを起動し、Google Chromeをゲストモード（--guest）で開く
+rem    （前の参加者の入力履歴・ログイン情報などを引き継がないようにするため。
+rem    ゲストモードは他のプロファイルが起動中だと無視されることがあるため、
+rem    起動前に既存のChromeを終了する）
 rem をまとめて行う。
 rem
 rem スライド(pptx)やサーバー起動用bat(Webプロサーバー起動.bat)、クリーンアップ用
@@ -280,7 +283,11 @@ if defined CHROME_EXE (
     echo timeout /t 1 /nobreak ^>nul >> "%APP_BASE%\open_chrome_when_ready.bat"
     echo goto :retry >> "%APP_BASE%\open_chrome_when_ready.bat"
     echo :ready >> "%APP_BASE%\open_chrome_when_ready.bat"
-    echo start "" "%CHROME_EXE%" --start-maximized "http://127.0.0.1:8000/index.php" >> "%APP_BASE%\open_chrome_when_ready.bat"
+    rem ゲストモード（--guest）は他のプロファイルでChromeが起動中だと無視されて
+    rem 通常ウィンドウが開いてしまうため、起動前に既存のChromeを終了しておく。
+    echo taskkill /IM chrome.exe /F ^>nul 2^>nul >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo timeout /t 1 /nobreak ^>nul >> "%APP_BASE%\open_chrome_when_ready.bat"
+    echo start "" "%CHROME_EXE%" --guest --start-maximized "http://127.0.0.1:8000/index.php" >> "%APP_BASE%\open_chrome_when_ready.bat"
     powershell -NoProfile -WindowStyle Hidden -Command "Start-Process -FilePath '%APP_BASE%\open_chrome_when_ready.bat' -WindowStyle Hidden" >> "%LOG_FILE%" 2>&1
 ) else (
     call :log "警告: Google Chromeが見つかりませんでした。ブラウザで http://127.0.0.1:8000/index.php を開いてください。"
