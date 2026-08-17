@@ -226,12 +226,19 @@ rem PowerShellコマンドは直接--Commandに埋め込まず、一旦.ps1ファイルに
 rem 書き出してから--Fileで呼び出す（>>による1行ずつの追記で、cmd.exe側の
 rem 引用符解釈に一切依存しない形にしている）。
 type nul > "%APP_BASE%\maximize_vscode.ps1"
-echo $sig = 'using System;using System.Runtime.InteropServices;public class NativeMax{[DllImport("user32.dll")]public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);}' >> "%APP_BASE%\maximize_vscode.ps1"
+echo $sig = 'using System;using System.Runtime.InteropServices;public class NativeMax{[DllImport("user32.dll")]public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);[DllImport("user32.dll")]public static extern bool SetForegroundWindow(IntPtr hWnd);}' >> "%APP_BASE%\maximize_vscode.ps1"
 echo Add-Type -TypeDefinition $sig >> "%APP_BASE%\maximize_vscode.ps1"
+echo Add-Type -AssemblyName System.Windows.Forms >> "%APP_BASE%\maximize_vscode.ps1"
 echo $p = Get-Process -Name Code -ErrorAction SilentlyContinue ^| Where-Object { $_.MainWindowHandle -ne 0 } ^| Select-Object -First 1 >> "%APP_BASE%\maximize_vscode.ps1"
-echo if ($p) { [NativeMax]::ShowWindowAsync($p.MainWindowHandle, 3) ^| Out-Null } >> "%APP_BASE%\maximize_vscode.ps1"
+echo if ($p) { [NativeMax]::ShowWindowAsync($p.MainWindowHandle, 3) ^| Out-Null; Start-Sleep -Milliseconds 500; [NativeMax]::SetForegroundWindow($p.MainWindowHandle) ^| Out-Null; Start-Sleep -Milliseconds 300; [System.Windows.Forms.SendKeys]::SendWait('{ESC}') } >> "%APP_BASE%\maximize_vscode.ps1"
 timeout /t 3 /nobreak >nul
 powershell -NoProfile -ExecutionPolicy Bypass -File "%APP_BASE%\maximize_vscode.ps1" >> "%LOG_FILE%" 2>&1
+
+rem Welcome/Get StartedのウォークスルータブやRelease Notesなどの初回ポップアップは
+rem 表示タイミングがまちまちなため、上のEsc送信だけでは間に合わないことがある。
+rem 少し間を空けてもう一度Escを送って取りこぼしを減らす。
+timeout /t 2 /nobreak >nul
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('{ESC}')" >> "%LOG_FILE%" 2>&1
 
 call :log ""
 call :log "==== 4/4: PHPサーバーを起動します ===="
