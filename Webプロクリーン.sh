@@ -74,6 +74,11 @@ log "「${APP_BASE}」（プロジェクト本体・VSCode専用プロファイ�
 
 log ""
 log "==== 4/4: デスクトップの旧バージョン残留ファイルを削除します ===="
+# 注意: デスクトップの「web_taiken」フォルダ自体は削除しない。
+# セットアップスクリプトが実際にclone・生成するプロジェクト本体は常に
+# APP_BASE（~/Library/Application Support/web_taiken/project）側であり、
+# デスクトップの「web_taiken」という名前のフォルダは開発用リポジトリの
+# 作業コピーである可能性がある（誤って削除すると開発中の変更が失われる）。
 CLEANED=0
 for f in "Webプログラミング体験_資料.pptx" "Webプロサーバー起動.sh" "Webプロサーバー起動.bat" \
          "web_taiken_setup_log.txt" "web_taiken_cleanup_log.txt" "web_taiken_start_log.txt"; do
@@ -83,11 +88,6 @@ for f in "Webプログラミング体験_資料.pptx" "Webプロサーバー起�
         log "デスクトップの「${f}」を削除しました。"
     fi
 done
-if [ -d "$DESKTOP_DIR/web_taiken" ]; then
-    CLEANED=1
-    rm -rf "$DESKTOP_DIR/web_taiken"
-    log "デスクトップの「web_taiken」フォルダ（旧バージョンの残留）を削除しました。"
-fi
 if [ "$CLEANED" = "0" ]; then
     log "デスクトップに旧バージョンの残留ファイルは見つかりませんでした。"
 fi

@@ -77,6 +77,11 @@ call :log "u%APP_BASE%viƒvƒƒWƒFƒNƒg–{‘ÌEVSCodeê—pƒvƒƒtƒ@ƒCƒ‹EŽÀsƒƒOj‚
 
 call :log ""
 call :log "==== 4/4: ƒfƒXƒNƒgƒbƒv‚Ì‹Œƒo[ƒWƒ‡ƒ“Žc—¯ƒtƒ@ƒCƒ‹‚ðíœ‚µ‚Ü‚· ===="
+rem ’ˆÓ: ƒfƒXƒNƒgƒbƒv‚Ìuweb_taikenvƒtƒHƒ‹ƒ_Ž©‘Ì‚Ííœ‚µ‚È‚¢B
+rem ƒZƒbƒgƒAƒbƒvƒXƒNƒŠƒvƒg‚ªŽÀÛ‚ÉcloneE¶¬‚·‚éƒvƒƒWƒFƒNƒg–{‘Ì‚Íí‚É
+rem APP_BASEi%LOCALAPPDATA%\web_taiken\projectj‘¤‚Å‚ ‚èAƒfƒXƒNƒgƒbƒv‚Ì
+rem uweb_taikenv‚Æ‚¢‚¤–¼‘O‚ÌƒtƒHƒ‹ƒ_‚ÍŠJ”­—pƒŠƒ|ƒWƒgƒŠ‚Ìì‹ÆƒRƒs[‚Å‚ ‚é
+rem ‰Â”\«‚ª‚ ‚éiŒë‚Á‚Äíœ‚·‚é‚ÆŠJ”­’†‚Ì•ÏX‚ªŽ¸‚í‚ê‚éjB
 set CLEANED=0
 for %%F in (
     "WebƒvƒƒOƒ‰ƒ~ƒ“ƒO‘ÌŒ±_Ž‘—¿.pptx"
@@ -90,12 +95,6 @@ for %%F in (
         del /f /q "%DESKTOP_DIR%\%%~F"
         call :log "ƒfƒXƒNƒgƒbƒv‚Ìu%%~Fv‚ðíœ‚µ‚Ü‚µ‚½B"
     )
-)
-if exist "%DESKTOP_DIR%\web_taiken" (
-    set CLEANED=1
-    attrib -r "%DESKTOP_DIR%\web_taiken\*.*" /s /d >nul 2>nul
-    rd /s /q "%DESKTOP_DIR%\web_taiken"
-    call :log "ƒfƒXƒNƒgƒbƒv‚Ìuweb_taikenvƒtƒHƒ‹ƒ_i‹Œƒo[ƒWƒ‡ƒ“‚ÌŽc—¯j‚ðíœ‚µ‚Ü‚µ‚½B"
 )
 if "%CLEANED%"=="0" (
     call :log "ƒfƒXƒNƒgƒbƒv‚É‹Œƒo[ƒWƒ‡ƒ“‚ÌŽc—¯ƒtƒ@ƒCƒ‹‚ÍŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½B"
