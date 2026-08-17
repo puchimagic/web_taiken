@@ -25,6 +25,7 @@ set -u
 REPO_URL="https://github.com/puchimagic/web_taiken.git"
 EXTENSION_ID="brapifra.phpserver"
 SQLITE_EXTENSION_ID="qwtel.sqlite-viewer"
+JA_LANGUAGE_PACK_ID="ms-ceintl.vscode-language-pack-ja"
 
 DESKTOP_DIR="$HOME/Desktop"
 
@@ -90,25 +91,34 @@ if ! command -v git >/dev/null 2>&1; then
     pause_and_exit 1
 fi
 
-if [ -d "$TARGET_DIR" ]; then
-    log "フォルダ「$TARGET_DIR」が既に存在するため、削除してから改めて取得し直します。"
+# ポート8000を使っているプロセスがあれば、project フォルダの有無に関係なく
+# 常に停止しておく（このスクリプト以外の理由でPHPサーバーが8000番を
+# 使っていると、後続のPHPサーバー起動が失敗するため）。
+PORT_PID="$(lsof -ti tcp:8000 -sTCP:LISTEN 2>/dev/null || true)"
+if [ -n "$PORT_PID" ]; then
+    log "ポート8000で待受中のプロセス（PID ${PORT_PID}）を終了します。"
+    kill -9 $PORT_PID >> "$LOG_FILE" 2>&1 || true
+fi
 
-    # 削除前にPHPサーバーとVSCodeを止めておく（ファイルが使用中だと削除に失敗するため）。
-    PORT_PID="$(lsof -ti tcp:8000 -sTCP:LISTEN 2>/dev/null || true)"
-    if [ -n "$PORT_PID" ]; then
-        log "ポート8000で待受中のプロセス（PID $PORT_PID）を終了します。"
-        kill -9 $PORT_PID >> "$LOG_FILE" 2>&1 || true
-    fi
-    if pgrep -x "Electron" >/dev/null 2>&1 || pgrep -f "Visual Studio Code" >/dev/null 2>&1; then
-        log "VSCodeを終了します。"
-        osascript -e 'quit app "Visual Studio Code"' >> "$LOG_FILE" 2>&1 || true
-        sleep 1
-        pkill -f "Visual Studio Code" >> "$LOG_FILE" 2>&1 || true
-    fi
+# VSCodeが既に起動していると、後で --user-data-dir / --extensions-dir を
+# 指定して code コマンドを実行しても、既存の実行中インスタンス（個人プロファイル
+# 等）が使い回されてしまい、専用プロファイルが反映されないことがある
+# （VSCode CLIの既知の挙動）。project フォルダの有無に関係なく、
+# 毎回いったんVSCodeを終了させてから起動し直す。
+if pgrep -x "Electron" >/dev/null 2>&1 || pgrep -f "Visual Studio Code" >/dev/null 2>&1; then
+    log "VSCodeを終了します。"
+    osascript -e 'quit app "Visual Studio Code"' >> "$LOG_FILE" 2>&1 || true
+    sleep 1
+    pkill -f "Visual Studio Code" >> "$LOG_FILE" 2>&1 || true
+    sleep 1
+fi
+
+if [ -d "$TARGET_DIR" ]; then
+    log "フォルダ「${TARGET_DIR}」が既に存在するため、削除してから改めて取得し直します。"
 
     rm -rf "$TARGET_DIR"
     if [ -d "$TARGET_DIR" ]; then
-        log "エラー: 「$TARGET_DIR」の削除に失敗しました。VSCode等で開いたままになっていないか確認してください。"
+        log "エラー: 「${TARGET_DIR}」の削除に失敗しました。VSCode等で開いたままになっていないか確認してください。"
         pause_and_exit 1
     fi
 fi
@@ -170,6 +180,13 @@ else
     code --extensions-dir "$VSCODE_EXTENSIONS" --install-extension "$SQLITE_EXTENSION_ID" >> "$LOG_FILE" 2>&1
 fi
 
+if code --extensions-dir "$VSCODE_EXTENSIONS" --list-extensions 2>/dev/null | grep -qi "$JA_LANGUAGE_PACK_ID"; then
+    log "「Japanese Language Pack」拡張機能は既にインストールされています。"
+else
+    log "「Japanese Language Pack」拡張機能をインストールします..."
+    code --extensions-dir "$VSCODE_EXTENSIONS" --install-extension "$JA_LANGUAGE_PACK_ID" >> "$LOG_FILE" 2>&1
+fi
+
 log ""
 log "==== 3/4: VSCodeでプロジェクトを開きます ===="
 # 普段使っているVSCodeのプロファイル（~/Library/Application Support/Code）をそのまま
@@ -184,11 +201,49 @@ cat > "$VSCODE_USER_DATA/User/settings.json" <<'EOS'
   "workbench.startupEditor": "none",
   "workbench.welcomePage.walkthroughs.openOnInstall": false,
   "workbench.secondarySideBar.defaultVisibility": "hidden",
-  "chat.commandCenter.enabled": false
+  "chat.commandCenter.enabled": false,
+  "workbench.colorTheme": "Light 2026"
 }
 EOS
 
-code --disable-workspace-trust --user-data-dir "$VSCODE_USER_DATA" --extensions-dir "$VSCODE_EXTENSIONS" "$TARGET_DIR"
+# argv.json の locale 設定でVSCode本体のUI表示言語を日本語にする
+# （settings.jsonのdisplay.languageではなくargv.jsonのlocale項目が必要）。
+cat > "$VSCODE_USER_DATA/argv.json" <<'EOS'
+{
+  "locale": "ja"
+}
+EOS
+
+# 言語パックは、専用user-data-dirでのVSCode「初回起動」だけではUIに反映
+# されず、一度閉じて開き直した2回目の起動から反映されるという既知の挙動が
+# ある（VSCode本体側の未解決issue）。そのため、まず1回目を起動して
+# ウィンドウが立ち上がるまで待ってから閉じ、日本語化を確定させたうえで
+# 改めて2回目を起動し直す。
+log "日本語UIを反映させるため、VSCodeを一度初期化します（1回目の起動）..."
+code --disable-workspace-trust --new-window --locale ja --user-data-dir "$VSCODE_USER_DATA" --extensions-dir "$VSCODE_EXTENSIONS" "$TARGET_DIR" >> "$LOG_FILE" 2>&1
+
+# ウィンドウ（Electronプロセス）が実際に立ち上がるまで待つ（最大15秒）。
+for i in $(seq 1 15); do
+    if pgrep -f "$VSCODE_USER_DATA" >/dev/null 2>&1; then
+        break
+    fi
+    sleep 1
+done
+sleep 1
+
+log "VSCodeを一旦終了します（日本語化を確定させるため）..."
+osascript -e 'quit app "Visual Studio Code"' >> "$LOG_FILE" 2>&1 || true
+for i in $(seq 1 10); do
+    if ! pgrep -f "$VSCODE_USER_DATA" >/dev/null 2>&1; then
+        break
+    fi
+    sleep 1
+done
+pkill -f "$VSCODE_USER_DATA" >> "$LOG_FILE" 2>&1 || true
+sleep 1
+
+log "VSCodeを改めて起動します（2回目の起動）..."
+code --disable-workspace-trust --new-window --locale ja --user-data-dir "$VSCODE_USER_DATA" --extensions-dir "$VSCODE_EXTENSIONS" "$TARGET_DIR"
 
 log ""
 log "==== 4/4: PHPサーバーを起動します ===="

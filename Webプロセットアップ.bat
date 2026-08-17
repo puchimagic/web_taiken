@@ -66,14 +66,18 @@ if errorlevel 1 (
     goto :pause_and_exit
 )
 
+rem ポート8000を使っているプロセスがあれば、TARGET_DIRの有無に関係なく
+rem 常に停止しておく（このbat以外の理由でPHPサーバーが8000番を使っていると、
+rem 後続のPHPサーバー起動が失敗するため）。
+for /f "tokens=5" %%P in ('netstat -ano ^| findstr /R /C:":8000 .*LISTENING"') do (
+    call :log "ポート8000で待受中のプロセス（PID %%P）を終了します。"
+    taskkill /PID %%P /F >> "%LOG_FILE%" 2>&1
+)
+
 if exist "%TARGET_DIR%" (
     call :log "フォルダ「%TARGET_DIR%」が既に存在するため、削除してから改めて取得し直します。"
 
-    rem 削除前にPHPサーバーとVSCodeを止めておく（ファイルが使用中だと削除に失敗するため）。
-    for /f "tokens=5" %%P in ('netstat -ano ^| findstr /R /C:":8000 .*LISTENING"') do (
-        call :log "ポート8000で待受中のプロセス（PID %%P）を終了します。"
-        taskkill /PID %%P /F >> "%LOG_FILE%" 2>&1
-    )
+    rem 削除前にVSCodeも止めておく（ファイルが使用中だと削除に失敗するため）。
     tasklist /FI "IMAGENAME eq Code.exe" 2>nul | find /I "Code.exe" >nul
     if not errorlevel 1 (
         call :log "VSCode（Code.exe）を終了します。"

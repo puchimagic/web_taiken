@@ -39,7 +39,7 @@ log() {
 log "==== 1/4: PHPサーバーを停止します ===="
 PORT_PID="$(lsof -ti tcp:8000 -sTCP:LISTEN 2>/dev/null || true)"
 if [ -n "$PORT_PID" ]; then
-    log "ポート8000で待受中のプロセス（PID $PORT_PID）を終了します。"
+    log "ポート8000で待受中のプロセス（PID ${PORT_PID}）を終了します。"
     kill -9 $PORT_PID >> "$LOG_FILE" 2>&1 || true
 else
     log "ポート8000で起動中のPHPサーバーは見つかりませんでした。"
@@ -70,7 +70,7 @@ fi
 
 log ""
 log "==== 3/4: プロジェクト一式を削除します ===="
-log "「$APP_BASE」（プロジェクト本体・VSCode専用プロファイル・実行ログ）を削除します。このログファイル自身もここに含まれます。"
+log "「${APP_BASE}」（プロジェクト本体・VSCode専用プロファイル・実行ログ）を削除します。このログファイル自身もここに含まれます。"
 
 log ""
 log "==== 4/4: デスクトップの旧バージョン残留ファイルを削除します ===="
@@ -80,7 +80,7 @@ for f in "Webプログラミング体験_資料.pptx" "Webプロサーバー起�
     if [ -e "$DESKTOP_DIR/$f" ]; then
         CLEANED=1
         rm -f "$DESKTOP_DIR/$f"
-        log "デスクトップの「$f」を削除しました。"
+        log "デスクトップの「${f}」を削除しました。"
     fi
 done
 if [ -d "$DESKTOP_DIR/web_taiken" ]; then
