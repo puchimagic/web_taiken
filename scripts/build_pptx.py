@@ -760,14 +760,14 @@ textbox(s, Inches(9.75), Emu(cy + Inches(0.55)), Inches(3.0), Inches(0.85), "住
         size=12.5, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.2)
 
 # 関数の実体（db.php）
-code_chip(s, Inches(0.5), Inches(3.85), Inches(2.6), Inches(0.4), "db.php")
-screenshot(s, os.path.join(IMG_DIR, "23_db_find_postal_address_ズーム.png"), Inches(0.5), Inches(4.3),
-           Inches(7.7), Inches(1.2))
+code_chip(s, Inches(2.02), Inches(3.95), Inches(2.6), Inches(0.4), "db.php")
+screenshot(s, os.path.join(IMG_DIR, "23_db_find_postal_address_ズーム.png"), Inches(2.02), Inches(4.5),
+           Inches(9.3), Inches(1.4))
 
-box = card(s, Inches(0.85), Inches(5.75), Inches(11.6), Inches(0.95), fill=SURFACE)
-textbox(s, Inches(1.15), Inches(5.9), Inches(11.0), Inches(0.65),
+box = card(s, Inches(0.85), Inches(6.25), Inches(11.6), Inches(0.55), fill=SURFACE)
+textbox(s, Inches(1.15), Inches(6.32), Inches(11.0), Inches(0.4),
         "「機能をひとつのまとまりとして作っておき、必要なときに呼び出す」——これが関数の考え方。",
-        13, color=INK, font=FONT_SANS, line_spacing=1.3)
+        13, color=INK, font=FONT_SANS, line_spacing=1.3, anchor=MSO_ANCHOR.MIDDLE)
 
 footer(s, 13, total=24)
 
@@ -811,14 +811,19 @@ for i, (emoji, label) in enumerate(flow_items):
     x = Emu(x + box_w + gap)
 
 # 実際に呼び出しているAPIのURL（geocode.php）
-code_chip(s, Inches(0.9), Inches(2.95), Inches(2.6), Inches(0.36), "geocode.php")
-screenshot(s, os.path.join(IMG_DIR, "26_geocode_API_URL_ズーム.png"), Inches(0.9), Inches(3.35),
-           Inches(5.95), Inches(0.95))
+code_chip(s, Inches(0.5), Inches(3.05), Inches(2.6), Inches(0.36), "geocode.php")
+screenshot(s, os.path.join(IMG_DIR, "26_geocode_API_URL_ズーム.png"), Inches(0.5), Inches(3.5),
+           Inches(5.8), Inches(1.0))
 
-screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押す前_ズーム.png"), Inches(0.9), Inches(4.4),
-           Inches(11.5), Inches(1.2), label="押す前", label_color=SUB)
-screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押した後_ズーム.png"), Inches(0.9), Inches(6.0),
-           Inches(11.5), Inches(1.2), label="押した後：住所が自動入力される", label_color=MAIN, border=MAIN)
+box = card(s, Inches(0.5), Inches(4.75), Inches(5.8), Inches(1.85), fill=SURFACE)
+textbox(s, Inches(0.8), Inches(4.95), Inches(5.2), Inches(1.45),
+        "緯度・経度をこのURLに渡すと、OpenStreetMap側で住所に変換してくれる。\n\n「自分のサーバーの外にある機能を呼び出す」——これが外部APIを使うということ。",
+        size=12, color=INK, font=FONT_SANS, line_spacing=1.35)
+
+screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押す前_ズーム.png"), Inches(6.8), Inches(3.5),
+           Inches(6.0), Inches(1.25), label="押す前", label_color=SUB)
+screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押した後_ズーム.png"), Inches(6.8), Inches(5.35),
+           Inches(6.0), Inches(1.25), label="押した後：住所が自動入力される", label_color=MAIN, border=MAIN)
 
 footer(s, 14, total=24)
 
@@ -913,9 +918,10 @@ for f in fields:
     fx = Emu(fx + w + Inches(0.15))
 
 # SQL文についてさらっと触れる（show.php の実際のSQL文）
-textbox(s, Inches(0.5), Inches(6.2), Inches(9), Inches(0.25),
-        "これがデータベースへの問い合わせ文＝SQL文", size=11, bold=True, color=MAIN, font=FONT_SANS)
-screenshot(s, os.path.join(IMG_DIR, "27_show_SQL_コメントアウト_ズーム.png"), Inches(0.5), Inches(6.55),
+textbox(s, Inches(2.49), Inches(6.2), Inches(8.35), Inches(0.25),
+        "これがデータベースへの問い合わせ文＝SQL文", size=11, bold=True, color=MAIN, font=FONT_SANS,
+        align=PP_ALIGN.CENTER)
+screenshot(s, os.path.join(IMG_DIR, "27_show_SQL_コメントアウト_ズーム.png"), Inches(2.49), Inches(6.55),
            Inches(8.35), Inches(0.4))
 
 footer(s, 17, total=24)
@@ -930,23 +936,26 @@ title(s, "入力チェックを追加しよう")
 textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
         "タイトル欄が空白のままでも投稿できてしまう",
         size=13.5, color=SUB, font=FONT_SANS)
-code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "spots.php")
 
-screenshot(s, os.path.join(IMG_DIR, "05_タイトル空欄カード_ズーム.png"), Inches(2.83), Inches(2.0),
-           Inches(7.7), Inches(2.85), label="😮 左のカードだけタイトルが空欄（右は比較用）", label_color=MAIN, border=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "05_タイトル空欄カード_ズーム.png"), Inches(0.5), Inches(2.0),
+           Inches(6.0), Inches(3.3), label="😮 左のカードだけタイトルが空欄（右は比較用）", label_color=MAIN, border=MAIN)
 
-# 対応方針（画像の下に横並び）
-lx = Inches(0.5)
-card(s, lx, Inches(5.55), Inches(5.6), Inches(1.5))
-textbox(s, Emu(lx + Inches(0.3)), Inches(5.68), Inches(5.0), Inches(0.35), "✅ やること", size=13.5,
-        bold=True, color=INK, font=FONT_SANS)
-bullet_block(s, Emu(lx + Inches(0.3)), Inches(6.05), Inches(5.0), Inches(0.9),
-             ["if文（/* */ でコメントアウト）を有効化"], size=11, gap=0.4)
+box_l = card(s, Inches(0.5), Inches(5.55), Inches(6.0), Inches(1.4), fill=SURFACE)
+textbox(s, Inches(0.8), Inches(5.72), Inches(5.4), Inches(1.05),
+        "タイトルが空のままでも投稿できてしまうと、\n一覧にタイトルの無いカードが並んでしまい、\n見た人が困ってしまう。",
+        size=12.5, color=INK, font=FONT_SANS, line_spacing=1.3)
 
-rx = Inches(6.3)
-code_chip(s, rx, Inches(5.55), Inches(2.2), Inches(0.36), "spots.php")
-screenshot(s, os.path.join(IMG_DIR, "28_spots_タイトルチェック_ズーム.png"), rx, Inches(5.98),
-           Inches(3.9), Inches(1.07))
+# 対応するコード（右カラムに縦長で表示）
+rx = Inches(6.95)
+rw = Inches(5.9)
+code_chip(s, rx, Inches(2.0), Inches(2.2), Inches(0.42), "spots.php")
+screenshot(s, os.path.join(IMG_DIR, "28_spots_タイトルチェック_ズーム.png"), rx, Inches(2.6),
+           rw, Inches(1.65))
+
+box = card(s, rx, Inches(4.5), rw, Inches(2.45), fill=SURFACE)
+textbox(s, Emu(rx + Inches(0.3)), Inches(4.65), Inches(5.3), Inches(2.1),
+        "✅ やること：if文（/* */ でコメントアウト）を有効化\n\nこの「入力チェック」のことを\n「バリデーションチェック（バリデーション）」と呼ぶ。\n\n入力された値が形式やルールに合っているかを\n確認する処理のこと。",
+        size=12.5, bold=False, color=INK, font=FONT_SANS, line_spacing=1.35)
 
 footer(s, 18, total=24)
 
@@ -1029,15 +1038,18 @@ textbox(s, Inches(0.85), Inches(3.6), Inches(11.6), Inches(0.35),
         size=14, color=INK, font=FONT_SANS)
 
 # ステップ2：対策（サニタイズ）
-textbox(s, Inches(0.5), Inches(4.2), Inches(12.3), Inches(0.9),
-        "この対策が「サニタイズ」：入力された文字をタグとして実行させず、\n無害な文字として表示に変換する処理（キミの旅の表示側はすでに対策済み）",
-        size=14.5, bold=True, color=INK, font=FONT_SANS, line_spacing=1.4)
+textbox(s, Inches(0.5), Inches(4.28), Inches(12.3), Inches(0.9),
+        "この対策が「サニタイズ」：入力された <h1> をタグとして認識させず、\nただの文字（見た目そのままの文字列）として表示させる処理のこと",
+        size=14.5, bold=True, color=INK, font=FONT_SANS, line_spacing=1.4,
+        align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
 
 # ステップ3：SQLインジェクション（一言）
-box = card(s, Inches(0.85), Inches(5.5), Inches(11.6), Inches(1.4), fill=SURFACE2)
-textbox(s, Inches(1.15), Inches(5.68), Inches(11.0), Inches(1.05),
-        "同じ考え方で、SQL文をそのまま実行できてしまうと、\nパスワードなどが盗まれる「SQLインジェクション」という攻撃もある。\n興味を持った人は、次回オープンキャンパスの「ホワイトハッカー体験」もチェック。",
-        size=13.5, color=INK, font=FONT_SANS, line_spacing=1.4)
+box_w = Inches(8.6)
+box_x = Emu((SLIDE_W - int(box_w)) // 2)
+box = card(s, box_x, Inches(5.42), box_w, Inches(1.55), fill=SURFACE2)
+textbox(s, Emu(box_x + Inches(0.3)), Inches(5.57), Emu(box_w - Inches(0.6)), Inches(1.25),
+        "入力された文字がそのまま実行されると危険、という話は他にもある。\nSQL文をそのまま実行できてしまうと、パスワードなどが盗まれる\n「SQLインジェクション」という攻撃もある（対策方法はサニタイズとは別）。\n興味を持った人は、次回オープンキャンパスの「ホワイトハッカー体験」もチェック。",
+        size=13, color=INK, font=FONT_SANS, line_spacing=1.35, align=PP_ALIGN.CENTER)
 
 footer(s, 20, total=24)
 
@@ -1059,13 +1071,15 @@ arrow(s, Inches(6.15), Inches(3.35), Inches(0.85), Inches(0.5), fill=MAIN)
 screenshot(s, os.path.join(IMG_DIR, "06_テーマカラー_修正後_ブルー.png"), Inches(7.2), Inches(2.15),
            Inches(5.7), Inches(2.75), label="AFTER：好きな色に変更", label_color=MAIN, border=MAIN)
 
-screenshot(s, os.path.join(IMG_DIR, "29_style_テーマカラー_ズーム.png"), Inches(2.5), Inches(5.15),
+screenshot(s, os.path.join(IMG_DIR, "29_style_テーマカラー_ズーム.png"), Inches(4.49), Inches(5.15),
            Inches(4.35), Inches(0.8))
 
-box = card(s, Inches(0.85), Inches(6.15), Inches(11.6), Inches(0.9), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
-textbox(s, Inches(1.15), Inches(6.28), Inches(11.0), Inches(0.65),
+box_w = Inches(8.6)
+box_x = Emu((SLIDE_W - int(box_w)) // 2)
+box = card(s, box_x, Inches(6.15), box_w, Inches(0.9), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
+textbox(s, Emu(box_x + Inches(0.3)), Inches(6.28), Emu(box_w - Inches(0.6)), Inches(0.65),
         "ここまでは「Webプログラマー」の仕事。配色を工夫するのは「Webデザイナー」の仕事の入口。\n興味がある人は、次回オープンキャンパスの「Webデザイン体験」もチェックしてみよう。",
-        size=12.5, color=INK, font=FONT_SANS, line_spacing=1.3)
+        size=12.5, color=INK, font=FONT_SANS, line_spacing=1.3, align=PP_ALIGN.CENTER)
 
 footer(s, 21, total=24)
 
@@ -1080,19 +1094,21 @@ title(s, "今日たどった道のり")
 flow = [
     "プログラミングと Web の仕組みを知る",
     "サイトを起動して画面を確認",
-    "ボタンの文字を直して“味見”",
     "会員登録してログイン",
-    "現在地から住所を自動入力（API体験）",
+    "ボタンの文字を直して“味見”",
+    "郵便番号から住所を自動入力（関数の呼び出し）",
+    "現在地から住所を自動入力（外部API体験）",
     "コメント投稿を有効化",
     "データベースの考え方を知る",
     "入力チェックを自分で追加",
+    "背景色を自由にアレンジ",
 ]
 col_n = 2
-row_n = 4
+row_n = 5
 col_w = Inches(5.55)
-row_h = Inches(1.0)
+row_h = Inches(0.82)
 gap_x = Inches(0.2)
-gap_y = Inches(0.12)
+gap_y = Inches(0.1)
 grid_w = Emu(col_w * col_n + gap_x)
 start_x = Emu((SLIDE_W - grid_w) // 2)
 start_y = Inches(1.85)
@@ -1103,7 +1119,7 @@ for i, f in enumerate(flow):
     x = Emu(start_x + col * (col_w + gap_x))
     y = Emu(start_y + row * (row_h + gap_y))
     card(s, x, y, col_w, row_h)
-    step_badge(s, Emu(x + Inches(0.22)), Emu(y + Inches(0.29)), i + 1, "")
+    step_badge(s, Emu(x + Inches(0.22)), Emu(y + Inches(0.2)), i + 1, "")
     textbox(s, Emu(x + Inches(0.85)), y, Emu(col_w - Inches(1.1)), row_h,
             f, size=13.5, color=INK, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.15)
 
@@ -1119,23 +1135,26 @@ title(s, "今日の体験、実は仕事そのもの")
 
 pairs = [
     ("ボタンの文字を変える", "→ UIの改善"),
-    ("住所を自動入力する", "→ 外部API連携・データ処理"),
+    ("郵便番号から住所を自動入力する", "→ 関数の呼び出し・データ処理"),
+    ("現在地から住所を自動入力する", "→ 外部API連携"),
     ("コメントを投稿できるようにする", "→ 機能の実装"),
     ("空欄チェックを追加する", "→ バリデーション（入力チェック）"),
     ("表示をアレンジする", "→ 使いやすさ・見た目の工夫"),
 ]
 row_w = Inches(11.3)
 row_x = Emu((SLIDE_W - row_w) // 2)
-y = Inches(1.95)
+y = Inches(1.75)
+row_h = Inches(0.65)
+row_gap = Inches(0.72)
 for left, right in pairs:
-    card(s, row_x, y, row_w, Inches(0.75))
-    textbox(s, Emu(row_x + Inches(0.35)), y, Inches(6.3), Inches(0.75), left, size=14, color=INK,
+    card(s, row_x, y, row_w, row_h)
+    textbox(s, Emu(row_x + Inches(0.35)), y, Inches(6.3), row_h, left, size=13.5, color=INK,
             anchor=MSO_ANCHOR.MIDDLE, font=FONT_SANS)
-    textbox(s, Emu(row_x + Inches(6.8)), y, Inches(4.3), Inches(0.75), right, size=14, color=MAIN, bold=True,
+    textbox(s, Emu(row_x + Inches(6.8)), y, Inches(4.3), row_h, right, size=13.5, color=MAIN, bold=True,
             anchor=MSO_ANCHOR.MIDDLE, font=FONT_SANS)
-    y = Emu(y + Inches(0.85))
+    y = Emu(y + row_gap)
 
-textbox(s, row_x, Inches(6.35), row_w, Inches(0.5),
+textbox(s, row_x, Inches(6.55), row_w, Inches(0.5),
         "小さな修正をして、動かして、確認する。この繰り返しが、実際の開発でも基本の流れです。",
         13.5, color=SUB, font=FONT_SANS, align=PP_ALIGN.CENTER)
 
@@ -1154,14 +1173,14 @@ c2 = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(10.8), Inches(4.8), Inches(4.2), 
 c2.fill.solid(); c2.fill.fore_color.rgb = RGBColor(0xF7, 0xE9, 0xDC)
 c2.line.fill.background(); c2.shadow.inherit = False
 
-textbox(s, Inches(1.0), Inches(3.0), Inches(11.33), Inches(1.0),
-        "ご参加ありがとうございました", size=30, color=INK, bold=True, align=PP_ALIGN.CENTER, font=FONT_SERIF)
+textbox(s, Inches(1.0), Inches(3.0), Inches(11.33), Inches(1.1),
+        "ご参加ありがとうございました", size=36, color=INK, bold=True, align=PP_ALIGN.CENTER, font=FONT_SERIF)
 
-line = rect(s, Inches(5.87), Inches(4.1), Inches(1.6), Pt(3), fill=MAIN)
+line = rect(s, Inches(5.87), Inches(4.25), Inches(1.6), Pt(3), fill=MAIN)
 
-textbox(s, Inches(1.0), Inches(4.4), Inches(11.33), Inches(1.1),
-        "この教室にはもう戻ってきませんので、忘れ物にご注意ください。\nこのあとはスタッフの案内にしたがって移動をお願いします。",
-        size=15, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.5)
+textbox(s, Inches(1.0), Inches(4.55), Inches(11.33), Inches(1.3),
+        "このあとはスタッフの案内にしたがって移動をお願いします。\nこの教室にはもう戻ってきませんので、忘れ物にご注意ください。",
+        size=18, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.5)
 
 footer(s, 24, total=24)
 
