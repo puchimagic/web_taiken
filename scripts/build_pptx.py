@@ -636,11 +636,13 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11.3), Inches(0.5),
 row_top = Inches(2.15)
 card2_w = Inches(4.3)
 card2_h = Inches(4.5)
-card2_x = Inches(1.5)
-
 card3_w = Inches(3.0)
 card3_h = Inches(4.5)
-card3_x = Inches(7.3)
+gap = Inches(1.5)
+
+group_w = Emu(int(card2_w) + int(gap) + int(card3_w))
+card2_x = Emu((SLIDE_W - group_w) // 2)
+card3_x = Emu(int(card2_x) + int(card2_w) + int(gap))
 
 geom2 = screenshot(s, os.path.join(IMG_DIR, "11_ログイン画面_フォーム.png"), card2_x, row_top, card2_w, card2_h,
                     label="① 「新規登録」タブを押す", label_color=MAIN, border=MAIN, return_geometry=True)
@@ -669,14 +671,14 @@ textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
 code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "login.php")
 
 screenshot(s, os.path.join(IMG_DIR, "25_login_ボタン部分_ズーム.png"), Inches(0.5), Inches(1.85),
-           Inches(9.3), Inches(0.5))
+           Inches(12.3), Inches(1.1))
 
 # Before/After（郵便番号欄〜ボタンにズームしたスクリーンショット）
-screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正前_ボタン文言_ズーム.png"), Inches(0.9), Inches(2.95),
-           Inches(11.5), Inches(1.6), label="BEFORE：「ボタン」のまま", label_color=SUB)
+screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正前_ボタン文言_ズーム.png"), Inches(1.4), Inches(3.55),
+           Inches(10.5), Inches(1.1), label="BEFORE：「ボタン」のまま", label_color=SUB)
 
-screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正後_住所を検索_ズーム.png"), Inches(0.9), Inches(5.25),
-           Inches(11.5), Inches(1.6), label="AFTER：「住所を検索」に変更", label_color=MAIN, border=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正後_住所を検索_ズーム.png"), Inches(1.4), Inches(5.35),
+           Inches(10.5), Inches(1.1), label="AFTER：「住所を検索」に変更", label_color=MAIN, border=MAIN)
 
 footer(s, 11, total=24)
 
@@ -691,20 +693,26 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
         "ボタンを押しても、まだ住所は出てこない",
         size=14, color=SUB, font=FONT_SANS)
 
-code_chip(s, Inches(0.5), Inches(2.0), Inches(3.4), Inches(0.5), "postal_lookup.php")
-textbox(s, Inches(4.1), Inches(2.0), Inches(2.7), Inches(0.5),
+code_chip(s, Inches(0.5), Inches(1.95), Inches(3.4), Inches(0.42), "postal_lookup.php")
+textbox(s, Inches(4.1), Inches(1.95), Inches(2.7), Inches(0.42),
         "/* */ を外そう", size=14.5, color=INK, bold=True, font=FONT_SANS,
         anchor=MSO_ANCHOR.MIDDLE)
 
-screenshot(s, os.path.join(IMG_DIR, "24_postal_lookup_コメントアウト_ズーム.png"), Inches(0.5), Inches(2.75),
+screenshot(s, os.path.join(IMG_DIR, "24_postal_lookup_コメントアウト_ズーム.png"), Inches(0.5), Inches(2.9),
            Inches(6.15), Inches(2.15))
 
-textbox(s, Inches(0.5), Inches(5.1), Inches(6.15), Inches(1.6),
+box = card(s, Inches(0.5), Inches(5.35), Inches(6.15), Inches(1.35), fill=SURFACE)
+textbox(s, Inches(0.8), Inches(5.6), Inches(5.55), Inches(0.9),
         "「/* と */ で囲まれた部分は実行時に無視される」\nこの2文字を外すだけで、住所検索の関数呼び出しが有効になる。",
-        size=12.5, color=SUB, font=FONT_SANS, line_spacing=1.3)
+        size=13, color=INK, font=FONT_SANS, line_spacing=1.4)
 
-screenshot(s, os.path.join(IMG_DIR, "07_郵便番号検索_実行結果_ズーム.png"), Inches(6.95), Inches(2.3),
-           Inches(5.85), Inches(4.65), label="有効化後：郵便番号から住所を自動入力", label_color=MAIN, border=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "07_郵便番号検索_実行結果_ズーム.png"), Inches(6.95), Inches(2.9),
+           Inches(5.85), Inches(2.4), label="有効化後：郵便番号から住所を自動入力", label_color=MAIN, border=MAIN)
+
+box2 = card(s, Inches(6.95), Inches(5.75), Inches(5.85), Inches(0.95), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
+textbox(s, Inches(7.25), Inches(5.88), Inches(5.25), Inches(0.7),
+        "郵便番号を入力してボタンを押すと、都道府県・市区町村が自動で入力される。",
+        size=12.5, color=INK, font=FONT_SANS, line_spacing=1.35)
 
 footer(s, 12, total=24)
 
