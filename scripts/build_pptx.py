@@ -364,30 +364,6 @@ textbox(s, Inches(0.9), Inches(5.85), Inches(9), Inches(0.5),
 footer(s, 1, total=26)
 
 # ============================================================
-# スライド 1.5: 自己紹介（曽根先生・2026年版）
-# ============================================================
-s = add_slide()
-set_bg(s)
-kicker(s, "自己紹介")
-textbox(s, Inches(0.5), Inches(0.95), Inches(11.5), Inches(0.8),
-        "曽根　大智　(Sone Daichi)", size=28, color=INK, bold=True, font=FONT_SERIF)
-
-img_path = os.path.join(PROFILE_DIR, "曽根先生_2026_実習授業.png")
-screenshot(s, img_path, Inches(7.55), Inches(1.9), Inches(4.25), Inches(4.6),
-           caption="高等専修学校勤務時：実習授業での一コマ")
-
-card(s, Inches(0.5), Inches(1.9), Inches(6.7), Inches(4.6))
-textbox(s, Inches(0.85), Inches(2.15), Inches(6.0), Inches(0.4),
-        "大阪情報コンピュータ専門学校 講師", size=14, bold=True, color=MAIN, font=FONT_SANS)
-bullet_block(s, Inches(0.85), Inches(2.7), Inches(6.05), Inches(3.5),
-             ["今年3月まで大阪情報コンピュータ高等専修学校\n（OICのグループ校）に勤務",
-              "高校生に情報系の授業を教えていた",
-              "実は高等専修学校のパンフレットにも\n実習授業の一コマがちらっと掲載されている"],
-             size=14.5, gap=0.5)
-
-footer(s, 2, total=26)
-
-# ============================================================
 # スライド 1.6: 自己紹介（厨子先生・2024年版・予備）
 # ============================================================
 s = add_slide()
@@ -415,6 +391,30 @@ bullet_block(s, Inches(0.85), Inches(5.3), Inches(6.9), Inches(1.15),
              ["IT基礎科目／プログラミング（1年生）、システム設計各種（1〜3年生）",
               "基本情報／応用情報対策講座、AIに関する授業、クラス担任"],
              size=13)
+
+footer(s, 2, total=26)
+
+# ============================================================
+# スライド 1.5: 自己紹介（曽根先生・2026年版）
+# ============================================================
+s = add_slide()
+set_bg(s)
+kicker(s, "自己紹介")
+textbox(s, Inches(0.5), Inches(0.95), Inches(11.5), Inches(0.8),
+        "曽根　大智　(Sone Daichi)", size=28, color=INK, bold=True, font=FONT_SERIF)
+
+img_path = os.path.join(PROFILE_DIR, "曽根先生_2026_実習授業.png")
+screenshot(s, img_path, Inches(7.55), Inches(1.9), Inches(4.25), Inches(4.6),
+           caption="高等専修学校勤務時：実習授業での一コマ")
+
+card(s, Inches(0.5), Inches(1.9), Inches(6.7), Inches(4.6))
+textbox(s, Inches(0.85), Inches(2.15), Inches(6.0), Inches(0.4),
+        "大阪情報コンピュータ専門学校 講師", size=14, bold=True, color=MAIN, font=FONT_SANS)
+bullet_block(s, Inches(0.85), Inches(2.7), Inches(6.05), Inches(3.5),
+             ["今年3月まで大阪情報コンピュータ高等専修学校\n（OICのグループ校）に勤務",
+              "高校生に情報系の授業を教えていた",
+              "実は高等専修学校のパンフレットにも\n実習授業の一コマがちらっと掲載されている"],
+             size=14.5, gap=0.5)
 
 footer(s, 3, total=26)
 
@@ -476,7 +476,7 @@ steps = [
     ("設計", "レシピを考える"),
     ("実装", "調理する"),
     ("テスト", "味見して直す"),
-    ("運用保守", "食事・片付け"),
+    ("運用保守", "同じ品質で提供し続ける"),
 ]
 n = len(steps)
 total_w = Inches(11.3)
@@ -513,32 +513,35 @@ set_bg(s)
 kicker(s, "STEP 0")
 title(s, "Webページの「表の顔」と「裏の顔」")
 textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
-        "見えている部分（フロントエンド）と、見えない部分（バックエンド）があります",
+        "画面に映る部分（フロントエンド）と、裏側でデータを処理する部分（バックエンド）があります",
         size=14, color=SUB, font=FONT_SANS)
 
 # 左カード：カップラーメン
-lx, ly, lw, lh = Inches(1.0), Inches(2.1), Inches(5.55), Inches(4.5)
+lx, ly, lw, lh = Inches(1.0), Inches(2.0), Inches(5.55), Inches(3.6)
 card(s, lx, ly, lw, lh)
 textbox(s, Emu(lx + Inches(0.35)), Emu(ly + Inches(0.3)), Emu(lw - Inches(0.7)), Inches(0.45),
         "🍜 表の顔だけ＝カップラーメン", size=17, color=INK, bold=True, font=FONT_SANS)
 textbox(s, Emu(lx + Inches(0.35)), Emu(ly + Inches(0.85)), Emu(lw - Inches(0.7)), Inches(0.4),
         "フロントエンド（HTML / CSS / JavaScript）のみ", size=12.5, color=SUB, font=FONT_SANS)
 bullet_block(s, Emu(lx + Inches(0.35)), Emu(ly + Inches(1.5)), Emu(lw - Inches(0.7)), Inches(2.6),
-             ["すぐに提供できる", "だれに対しても同じ表示・同じ動き", "サーバー側の処理がない＝\n個人に合わせた表示はできない"],
+             ["お湯を注いで3分で完成", "棚にあるどれを取っても同じ味", "そもそも注文を聞いてくれる人がいない"],
              size=13)
 
 # 右カード：ラーメン屋
-rx, ry, rw, rh = Inches(6.78), Inches(2.1), Inches(5.55), Inches(4.5)
+rx, ry, rw, rh = Inches(6.78), Inches(2.0), Inches(5.55), Inches(3.6)
 card(s, rx, ry, rw, rh, fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
 textbox(s, Emu(rx + Inches(0.35)), Emu(ry + Inches(0.3)), Emu(rw - Inches(0.7)), Inches(0.45),
         "🍜 裏の顔まで＝ラーメン屋さん", size=17, color=INK, bold=True, font=FONT_SANS)
 textbox(s, Emu(rx + Inches(0.35)), Emu(ry + Inches(0.85)), Emu(rw - Inches(0.7)), Inches(0.4),
         "＋ バックエンド（今回は PHP）", size=12.5, color=MAIN, bold=True, font=FONT_SANS)
 bullet_block(s, Emu(rx + Inches(0.35)), Emu(ry + Inches(1.5)), Emu(rw - Inches(0.7)), Inches(2.6),
-             ["提供までに少し時間がかかる", "お客さんに合わせた味・トッピングができる", "サーバー側でデータを処理\n＝一人ひとりに合わせた表示ができる"],
+             ["注文してから少し待つ", "「あなた専用の一杯」を作ってくれる", "「辛さ増やして」にちゃんと応えてくれる"],
              size=13)
 
-textbox(s, Inches(0.5), Inches(6.75), Inches(11.3), Inches(0.4),
+textbox(s, Inches(0.5), Inches(5.95), Inches(11.3), Inches(0.5),
+        "Webで言うと：「辛さ増やして」＝ログインして自分専用の画面を出す、ということ",
+        size=16, color=SUB, bold=True, align=PP_ALIGN.CENTER, font=FONT_SANS)
+textbox(s, Inches(0.5), Inches(6.5), Inches(11.3), Inches(0.4),
         "今日は、この「厨房エリア（バックエンド）」を覗いてみましょう！",
         size=13.5, color=MAIN, bold=True, align=PP_ALIGN.CENTER, font=FONT_SANS)
 
@@ -709,10 +712,10 @@ textbox(s, Inches(0.8), Inches(5.6), Inches(5.55), Inches(0.9),
 screenshot(s, os.path.join(IMG_DIR, "07_郵便番号検索_実行結果_ズーム.png"), Inches(6.95), Inches(2.9),
            Inches(5.85), Inches(2.4), label="有効化後：郵便番号から住所を自動入力", label_color=MAIN, border=MAIN)
 
-box2 = card(s, Inches(6.95), Inches(5.75), Inches(5.85), Inches(0.95), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
-textbox(s, Inches(7.25), Inches(5.88), Inches(5.25), Inches(0.7),
-        "郵便番号を入力してボタンを押すと、都道府県・市区町村が自動で入力される。",
-        size=12.5, color=INK, font=FONT_SANS, line_spacing=1.35)
+box2 = card(s, Inches(6.95), Inches(5.3), Inches(5.85), Inches(1.4), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
+textbox(s, Inches(7.25), Inches(5.42), Inches(5.25), Inches(1.2),
+        "郵便番号を入力してボタンを押すと、都道府県・市区町村が自動で入力される。\n住所検索ができるようになったら、そのまま「新規登録してログイン」を押そう。",
+        size=12.5, color=INK, font=FONT_SANS, line_spacing=1.3)
 
 footer(s, 12, total=26)
 
