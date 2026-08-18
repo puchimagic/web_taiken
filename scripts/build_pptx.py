@@ -1074,11 +1074,11 @@ screenshot(s, os.path.join(IMG_DIR, "06_テーマカラー_修正後_ブルー.p
 screenshot(s, os.path.join(IMG_DIR, "29_style_テーマカラー_ズーム.png"), Inches(4.49), Inches(5.15),
            Inches(4.35), Inches(0.8))
 
-box_w = Inches(8.6)
+box_w = Inches(11.6)
 box_x = Emu((SLIDE_W - int(box_w)) // 2)
 box = card(s, box_x, Inches(6.15), box_w, Inches(0.9), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
 textbox(s, Emu(box_x + Inches(0.3)), Inches(6.28), Emu(box_w - Inches(0.6)), Inches(0.65),
-        "ここまでは「Webプログラマー」の仕事。配色を工夫するのは「Webデザイナー」の仕事の入口。\n興味がある人は、次回オープンキャンパスの「Webデザイン体験」もチェックしてみよう。",
+        "ここまでは「Webプログラマー」の仕事。配色やレイアウトを工夫するのは「Webデザイナー」の仕事の入口。\n興味がある人は、次回オープンキャンパスの「Webデザイン体験」もチェックしてみよう。",
         size=12.5, color=INK, font=FONT_SANS, line_spacing=1.3, align=PP_ALIGN.CENTER)
 
 footer(s, 21, total=24)
