@@ -668,8 +668,8 @@ textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
         size=13.5, color=SUB, font=FONT_SANS)
 code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "login.php")
 
-code_block(s, Inches(0.5), Inches(1.85), Inches(11.3), Inches(0.5),
-           [(53, '<button ... class="btn-ghost">ボタン</button>', True)])
+screenshot(s, os.path.join(IMG_DIR, "25_login_ボタン部分_ズーム.png"), Inches(0.5), Inches(1.85),
+           Inches(9.3), Inches(0.5))
 
 # Before/After（郵便番号欄〜ボタンにズームしたスクリーンショット）
 screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正前_ボタン文言_ズーム.png"), Inches(0.9), Inches(2.95),
@@ -696,15 +696,12 @@ textbox(s, Inches(4.1), Inches(2.0), Inches(2.7), Inches(0.5),
         "/* */ を外そう", size=14.5, color=INK, bold=True, font=FONT_SANS,
         anchor=MSO_ANCHOR.MIDDLE)
 
-code_block(s, Inches(0.5), Inches(2.65), Inches(6.15), Inches(1.65), [
-    (25, "/*  ← ここから", False),
-    (26, "find_postal_address($pdo, ...);", True),
-    (40, "*/  ← ここまでを無効化している", False),
-])
+screenshot(s, os.path.join(IMG_DIR, "24_postal_lookup_コメントアウト_ズーム.png"), Inches(0.5), Inches(2.75),
+           Inches(6.15), Inches(2.15))
 
-textbox(s, Inches(0.5), Inches(4.65), Inches(6.15), Inches(1.1),
+textbox(s, Inches(0.5), Inches(5.1), Inches(6.15), Inches(1.6),
         "「/* と */ で囲まれた部分は実行時に無視される」\nこの2文字を外すだけで、住所検索の関数呼び出しが有効になる。",
-        size=13, color=SUB, font=FONT_SANS, line_spacing=1.35)
+        size=12.5, color=SUB, font=FONT_SANS, line_spacing=1.3)
 
 screenshot(s, os.path.join(IMG_DIR, "07_郵便番号検索_実行結果_ズーム.png"), Inches(6.95), Inches(2.3),
            Inches(5.85), Inches(4.65), label="有効化後：郵便番号から住所を自動入力", label_color=MAIN, border=MAIN)
@@ -722,42 +719,47 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
         "「郵便番号を渡すと、住所が返ってくる」——これが「関数」です",
         size=14, color=SUB, font=FONT_SANS)
 
-cy = Inches(2.6)
-ch = Inches(1.6)
+cy = Inches(2.15)
+ch = Inches(1.45)
 # システム（呼び出す側）
 card(s, Inches(0.5), cy, Inches(3.0), ch, fill=SURFACE2)
-textbox(s, Inches(0.5), Emu(cy + Inches(0.15)), Inches(3.0), Inches(0.4), "あなた", size=14, bold=True,
+textbox(s, Inches(0.5), Emu(cy + Inches(0.12)), Inches(3.0), Inches(0.4), "あなた", size=14, bold=True,
         color=INK, align=PP_ALIGN.CENTER, font=FONT_SANS)
-textbox(s, Inches(0.5), Emu(cy + Inches(0.6)), Inches(3.0), Inches(0.9), "「住所教えて」\nと呼び出す", size=12.5,
+textbox(s, Inches(0.5), Emu(cy + Inches(0.55)), Inches(3.0), Inches(0.85), "「住所教えて」\nと呼び出す", size=12.5,
         color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.2)
 
-arrow(s, Inches(3.65), Emu(cy + Inches(0.15)), Inches(1.15), Inches(0.4))
-textbox(s, Inches(3.55), Emu(cy - Inches(0.32)), Inches(1.4), Inches(0.35), "郵便番号を渡す",
+arrow(s, Inches(3.65), Emu(cy + Inches(0.12)), Inches(1.15), Inches(0.4))
+textbox(s, Inches(3.55), Emu(cy - Inches(0.3)), Inches(1.4), Inches(0.35), "郵便番号を渡す",
         size=10.5, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS)
 
 # 関数（住所検索）
 fx = Inches(4.95)
 card(s, fx, cy, Inches(3.35), ch, fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
-textbox(s, fx, Emu(cy + Inches(0.15)), Inches(3.35), Inches(0.4), "find_postal_address()", size=13, bold=True,
+textbox(s, fx, Emu(cy + Inches(0.12)), Inches(3.35), Inches(0.4), "find_postal_address()", size=13, bold=True,
         color=MAIN, align=PP_ALIGN.CENTER, font="Courier New")
-textbox(s, fx, Emu(cy + Inches(0.6)), Inches(3.35), Inches(0.9), "（関数）\n中でどう処理するかは\n呼び出す側は知らなくてよい",
+textbox(s, fx, Emu(cy + Inches(0.55)), Inches(3.35), Inches(0.85), "（関数）\n中でどう処理するかは\n呼び出す側は知らなくてよい",
         size=11.5, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.2)
 
-arrow(s, Inches(8.45), Emu(cy + Inches(0.15)), Inches(1.15), Inches(0.4))
-textbox(s, Inches(8.3), Emu(cy - Inches(0.32)), Inches(1.5), Inches(0.35), "住所データを返す",
+arrow(s, Inches(8.45), Emu(cy + Inches(0.12)), Inches(1.15), Inches(0.4))
+textbox(s, Inches(8.3), Emu(cy - Inches(0.3)), Inches(1.5), Inches(0.35), "住所データを返す",
         size=10.5, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS)
 
 # 結果
 card(s, Inches(9.75), cy, Inches(3.0), ch, fill=SURFACE2)
-textbox(s, Inches(9.75), Emu(cy + Inches(0.15)), Inches(3.0), Inches(0.4), "画面", size=14, bold=True,
+textbox(s, Inches(9.75), Emu(cy + Inches(0.12)), Inches(3.0), Inches(0.4), "画面", size=14, bold=True,
         color=INK, align=PP_ALIGN.CENTER, font=FONT_SANS)
-textbox(s, Inches(9.75), Emu(cy + Inches(0.6)), Inches(3.0), Inches(0.9), "住所が\n自動入力される",
+textbox(s, Inches(9.75), Emu(cy + Inches(0.55)), Inches(3.0), Inches(0.85), "住所が\n自動入力される",
         size=12.5, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.2)
 
-box = card(s, Inches(0.85), Inches(5.1), Inches(11.6), Inches(1.15), fill=SURFACE)
-textbox(s, Inches(1.15), Inches(5.35), Inches(11.0), Inches(0.7),
-        "「機能をひとつのまとまりとして作っておき、必要なときに呼び出す」——これが関数の考え方。\n機能をつくることも、プログラマーの大事な仕事の一つです。",
-        13.5, color=INK, font=FONT_SANS, line_spacing=1.35)
+# 関数の実体（db.php）
+code_chip(s, Inches(0.5), Inches(3.85), Inches(2.6), Inches(0.4), "db.php")
+screenshot(s, os.path.join(IMG_DIR, "23_db_find_postal_address_ズーム.png"), Inches(0.5), Inches(4.3),
+           Inches(7.7), Inches(1.2))
+
+box = card(s, Inches(0.85), Inches(5.75), Inches(11.6), Inches(0.95), fill=SURFACE)
+textbox(s, Inches(1.15), Inches(5.9), Inches(11.0), Inches(0.65),
+        "「機能をひとつのまとまりとして作っておき、必要なときに呼び出す」——これが関数の考え方。",
+        13, color=INK, font=FONT_SANS, line_spacing=1.3)
 
 footer(s, 13, total=24)
 
@@ -784,14 +786,14 @@ box_w = Inches(2.6)
 total_w = Inches(11.3)
 gap = Emu((total_w - box_w * n) // (n - 1))
 x = Emu((SLIDE_W - total_w) // 2)
-y = Inches(2.0)
-box_h = Inches(1.0)
+y = Inches(1.85)
+box_h = Inches(0.9)
 
 for i, (emoji, label) in enumerate(flow_items):
     fill = RGBColor(0xF7, 0xE9, 0xDC) if i == 2 else SURFACE
     line = MAIN if i == 2 else BORDER
     card(s, x, y, box_w, box_h, fill=fill, line=line)
-    textbox(s, x, Emu(y + Inches(0.1)), Inches(0.65), Emu(box_h - Inches(0.2)), emoji, size=22,
+    textbox(s, x, Emu(y + Inches(0.08)), Inches(0.65), Emu(box_h - Inches(0.16)), emoji, size=22,
             align=PP_ALIGN.CENTER, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
     textbox(s, Emu(x + Inches(0.6)), y, Emu(box_w - Inches(0.7)), box_h,
             label, size=10.5, color=INK, align=PP_ALIGN.LEFT, font=FONT_SANS, line_spacing=1.15,
@@ -800,10 +802,15 @@ for i, (emoji, label) in enumerate(flow_items):
         arrow(s, Emu(x + box_w + Inches(0.04)), Emu(y + box_h/2 - Inches(0.12)), Emu(gap - Inches(0.08)), Inches(0.24))
     x = Emu(x + box_w + gap)
 
-screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押す前_ズーム.png"), Inches(0.9), Inches(3.45),
-           Inches(11.5), Inches(1.5), label="押す前", label_color=SUB)
-screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押した後_ズーム.png"), Inches(0.9), Inches(5.45),
-           Inches(11.5), Inches(1.5), label="押した後：住所が自動入力される", label_color=MAIN, border=MAIN)
+# 実際に呼び出しているAPIのURL（geocode.php）
+code_chip(s, Inches(0.9), Inches(2.95), Inches(2.6), Inches(0.36), "geocode.php")
+screenshot(s, os.path.join(IMG_DIR, "26_geocode_API_URL_ズーム.png"), Inches(0.9), Inches(3.35),
+           Inches(5.95), Inches(0.95))
+
+screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押す前_ズーム.png"), Inches(0.9), Inches(4.4),
+           Inches(11.5), Inches(1.2), label="押す前", label_color=SUB)
+screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押した後_ズーム.png"), Inches(0.9), Inches(6.0),
+           Inches(11.5), Inches(1.2), label="押した後：住所が自動入力される", label_color=MAIN, border=MAIN)
 
 footer(s, 14, total=24)
 
@@ -900,9 +907,8 @@ for f in fields:
 # SQL文についてさらっと触れる（show.php の実際のSQL文）
 textbox(s, Inches(0.5), Inches(6.2), Inches(9), Inches(0.25),
         "これがデータベースへの問い合わせ文＝SQL文", size=11, bold=True, color=MAIN, font=FONT_SANS)
-code_block(s, Inches(0.5), Inches(6.48), Inches(12.3), Inches(0.5), [
-    (58, "SELECT comments.id, /* comments.message, */ ... WHERE comments.spot_id = :spot_id", True),
-], code_size=10.5)
+screenshot(s, os.path.join(IMG_DIR, "27_show_SQL_コメントアウト_ズーム.png"), Inches(0.5), Inches(6.55),
+           Inches(8.35), Inches(0.4))
 
 footer(s, 17, total=24)
 
@@ -918,21 +924,21 @@ textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
         size=13.5, color=SUB, font=FONT_SANS)
 code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "spots.php")
 
-screenshot(s, os.path.join(IMG_DIR, "05_タイトル空欄カード_ズーム.png"), Inches(2.83), Inches(2.1),
-           Inches(7.7), Inches(3.55), label="😮 左のカードだけタイトルが空欄（右は比較用）", label_color=MAIN, border=MAIN)
+screenshot(s, os.path.join(IMG_DIR, "05_タイトル空欄カード_ズーム.png"), Inches(2.83), Inches(2.0),
+           Inches(7.7), Inches(2.85), label="😮 左のカードだけタイトルが空欄（右は比較用）", label_color=MAIN, border=MAIN)
 
 # 対応方針（画像の下に横並び）
 lx = Inches(0.5)
-card(s, lx, Inches(6.15), Inches(5.6), Inches(0.85))
-textbox(s, Emu(lx + Inches(0.3)), Inches(6.28), Inches(5.0), Inches(0.35), "✅ やること", size=13.5,
+card(s, lx, Inches(5.55), Inches(5.6), Inches(1.5))
+textbox(s, Emu(lx + Inches(0.3)), Inches(5.68), Inches(5.0), Inches(0.35), "✅ やること", size=13.5,
         bold=True, color=INK, font=FONT_SANS)
-bullet_block(s, Emu(lx + Inches(0.3)), Inches(6.6), Inches(5.0), Inches(0.35),
+bullet_block(s, Emu(lx + Inches(0.3)), Inches(6.05), Inches(5.0), Inches(0.9),
              ["if文（/* */ でコメントアウト）を有効化"], size=11, gap=0.4)
 
 rx = Inches(6.3)
-code_block(s, rx, Inches(6.15), Inches(6.5), Inches(0.85), [
-    (32, "if ($title === '') {", True),
-])
+code_chip(s, rx, Inches(5.55), Inches(2.2), Inches(0.36), "spots.php")
+screenshot(s, os.path.join(IMG_DIR, "28_spots_タイトルチェック_ズーム.png"), rx, Inches(5.98),
+           Inches(3.9), Inches(1.07))
 
 footer(s, 18, total=24)
 
@@ -1045,11 +1051,8 @@ arrow(s, Inches(6.15), Inches(3.35), Inches(0.85), Inches(0.5), fill=MAIN)
 screenshot(s, os.path.join(IMG_DIR, "06_テーマカラー_修正後_ブルー.png"), Inches(7.2), Inches(2.15),
            Inches(5.7), Inches(2.75), label="AFTER：好きな色に変更", label_color=MAIN, border=MAIN)
 
-code_block(s, Inches(2.5), Inches(5.15), Inches(8.3), Inches(0.9), [
-    (13, "--main-color: #b5551f;", False),
-    (14, "--main-color-hover: #96461a;", False),
-    (16, "--bg: #f6f1e6;", True),
-], code_size=11.5)
+screenshot(s, os.path.join(IMG_DIR, "29_style_テーマカラー_ズーム.png"), Inches(2.5), Inches(5.15),
+           Inches(4.35), Inches(0.8))
 
 box = card(s, Inches(0.85), Inches(6.15), Inches(11.6), Inches(0.9), fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
 textbox(s, Inches(1.15), Inches(6.28), Inches(11.0), Inches(0.65),
