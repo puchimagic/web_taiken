@@ -361,7 +361,7 @@ textbox(s, Inches(0.9), Inches(5.35), Inches(9), Inches(0.45),
 textbox(s, Inches(0.9), Inches(5.85), Inches(9), Inches(0.5),
         "名前", size=20, color=INK, font=FONT_SANS)
 
-footer(s, 1, total=24)
+footer(s, 1, total=26)
 
 # ============================================================
 # スライド 1.5: 自己紹介（曽根先生・2026年版）
@@ -385,7 +385,7 @@ bullet_block(s, Inches(0.85), Inches(2.7), Inches(6.05), Inches(3.5),
               "実は高等専修学校のパンフレットにも\n実習授業の一コマがちらっと掲載されている"],
              size=14.5, gap=0.5)
 
-footer(s, 2, total=24)
+footer(s, 2, total=26)
 
 # ============================================================
 # スライド 1.6: 自己紹介（厨子先生・2024年版・予備）
@@ -416,7 +416,7 @@ bullet_block(s, Inches(0.85), Inches(5.3), Inches(6.9), Inches(1.15),
               "基本情報／応用情報対策講座、AIに関する授業、クラス担任"],
              size=13)
 
-footer(s, 3, total=24)
+footer(s, 3, total=26)
 
 # ============================================================
 # スライド 2: 今日やること（アジェンダ）
@@ -458,7 +458,7 @@ for i, (num, ttl, desc) in enumerate(items):
     textbox(s, Emu(x + Inches(0.22)), Emu(y + Inches(0.78)), Emu(col_w - Inches(0.4)), Inches(0.7),
             desc, size=11.5, color=SUB, font=FONT_SANS, line_spacing=1.25)
 
-footer(s, 4, total=24)
+footer(s, 4, total=26)
 
 # ============================================================
 # スライド 3: プログラミングって何？（料理の比喩）
@@ -503,7 +503,7 @@ textbox(s, Inches(3.85), Inches(5.3), Inches(5.6), Inches(0.55),
         "今日は「実装」「テスト」の部分を体験します", size=14.5, color=CREAM, bold=True,
         align=PP_ALIGN.CENTER, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
 
-footer(s, 5, total=24)
+footer(s, 5, total=26)
 
 # ============================================================
 # スライド 4: 表の顔・裏の顔（ラーメン比喩）
@@ -542,7 +542,7 @@ textbox(s, Inches(0.5), Inches(6.75), Inches(11.3), Inches(0.4),
         "今日は、この「厨房エリア（バックエンド）」を覗いてみましょう！",
         size=13.5, color=MAIN, bold=True, align=PP_ALIGN.CENTER, font=FONT_SANS)
 
-footer(s, 6, total=24)
+footer(s, 6, total=26)
 
 # ============================================================
 # スライド 4.5: これから使うエディタ（VSCode）
@@ -564,7 +564,7 @@ bullet_block(s, Inches(0.5), Inches(2.35), Inches(5.7), Inches(4.0),
 screenshot(s, os.path.join(IMG_DIR, "00_VSCodeファイル構成_ズーム.png"), Inches(6.55), Inches(1.95),
            Inches(6.3), Inches(4.85), label="エクスプローラー：ファイルをダブルクリックで開く", label_color=MAIN, border=MAIN)
 
-footer(s, 7, total=24)
+footer(s, 7, total=26)
 
 # ============================================================
 # スライド 4.6: ウィンドウの切り替え方（Alt + Tab）
@@ -597,7 +597,7 @@ screenshot(s, os.path.join(IMG_DIR, "00_VSCodeファイル構成.png"), Inches(0
 screenshot(s, os.path.join(IMG_DIR, "01_トップ画面.png"), Emu(Inches(0.5) + half_w + gap), img_top,
            half_w, img_h, label="② ブラウザ", label_color=MAIN, border=MAIN)
 
-footer(s, 8, total=24)
+footer(s, 8, total=26)
 
 # ============================================================
 # スライド 5: 目の前の画面を見てみよう
@@ -619,7 +619,7 @@ rx, ry, rw, rh = Inches(6.95), Inches(2.15), Inches(5.85), Inches(4.4)
 screenshot(s, os.path.join(IMG_DIR, "01_トップ画面.png"), rx, ry, rw, rh,
            caption="トップ画面（一覧・検索）")
 
-footer(s, 9, total=24)
+footer(s, 9, total=26)
 
 # ============================================================
 # スライド 5.5: 新規登録フォームまでの画面遷移
@@ -656,7 +656,7 @@ arrow(s, arrow_x, arrow_y, arrow_w, Inches(0.24))
 screenshot(s, os.path.join(IMG_DIR, "12_新規登録画面_フォーム.png"), card3_x, row_top, card3_w, card3_h,
            label="② 新規登録フォームが開く", label_color=MAIN, border=MAIN)
 
-footer(s, 10, total=24)
+footer(s, 10, total=26)
 
 # ============================================================
 # スライド 6: ボタンの文字を変えてみよう
@@ -680,7 +680,7 @@ screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正前_ボタン文言_�
 screenshot(s, os.path.join(IMG_DIR, "02_新規登録_修正後_住所を検索_ズーム.png"), Inches(1.4), Inches(5.35),
            Inches(10.5), Inches(1.1), label="AFTER：「住所を検索」に変更", label_color=MAIN, border=MAIN)
 
-footer(s, 11, total=24)
+footer(s, 11, total=26)
 
 # ============================================================
 # スライド 7: コメントアウトを外して住所検索を有効化
@@ -714,7 +714,7 @@ textbox(s, Inches(7.25), Inches(5.88), Inches(5.25), Inches(0.7),
         "郵便番号を入力してボタンを押すと、都道府県・市区町村が自動で入力される。",
         size=12.5, color=INK, font=FONT_SANS, line_spacing=1.35)
 
-footer(s, 12, total=24)
+footer(s, 12, total=26)
 
 # ============================================================
 # スライド 7.5: 裏側で起きていること（関数の考え方）
@@ -769,7 +769,7 @@ textbox(s, Inches(1.15), Inches(6.32), Inches(11.0), Inches(0.4),
         "「機能をひとつのまとまりとして作っておき、必要なときに呼び出す」——これが関数の考え方。",
         13, color=INK, font=FONT_SANS, line_spacing=1.3, anchor=MSO_ANCHOR.MIDDLE)
 
-footer(s, 13, total=24)
+footer(s, 13, total=26)
 
 # ============================================================
 # スライド 8: APIってなに？（現在地→住所）
@@ -825,7 +825,7 @@ screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押す前_ズーム.png"
 screenshot(s, os.path.join(IMG_DIR, "04_現在地取得_押した後_ズーム.png"), Inches(6.8), Inches(5.35),
            Inches(6.0), Inches(1.25), label="押した後：住所が自動入力される", label_color=MAIN, border=MAIN)
 
-footer(s, 14, total=24)
+footer(s, 14, total=26)
 
 # ============================================================
 # スライド 8.5: 郵便番号検索 vs 現在地取得（関数とAPIの比較）
@@ -871,7 +871,7 @@ textbox(s, Emu(box_x2 + Inches(0.3)), Inches(5.15), Emu(box_w2 - Inches(0.6)), I
         "「値を渡す → 誰か（何か）が調べる → 答えが返ってくる」という形はまったく同じ。\n「API」という言葉はどちらの場所にも使えるが、実際に「APIを使う」というときは\nたいてい後者（＝Web API、インターネットの向こう）を指すことが多い。",
         13, color=INK, font=FONT_SANS, line_spacing=1.4, align=PP_ALIGN.CENTER)
 
-footer(s, 15, total=24)
+footer(s, 15, total=26)
 
 # ============================================================
 # スライド 10: データベースって何？（comments.message を有効化）
@@ -896,7 +896,7 @@ textbox(s, Inches(1.2), Inches(5.65), Inches(10.9), Inches(0.7),
         "考えてみよう：「どのコメントか」を特定して正しく表示するには、どんな情報が必要そう？",
         size=15, bold=True, color=MAIN, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE)
 
-footer(s, 16, total=24)
+footer(s, 16, total=26)
 
 # ============================================================
 # スライド 10.5: データベースって何？（comments テーブルを覗く）
@@ -929,7 +929,7 @@ textbox(s, Inches(2.49), Inches(6.2), Inches(8.35), Inches(0.25),
 screenshot(s, os.path.join(IMG_DIR, "27_show_SQL_コメントアウト_ズーム.png"), Inches(2.49), Inches(6.55),
            Inches(8.35), Inches(0.4))
 
-footer(s, 17, total=24)
+footer(s, 17, total=26)
 
 # ============================================================
 # スライド 11: 入力チェックを追加しよう
@@ -962,7 +962,7 @@ textbox(s, Emu(rx + Inches(0.3)), Inches(4.65), Inches(5.3), Inches(2.1),
         "✅ やること：if文（/* */ でコメントアウト）を有効化\n\nこの「入力チェック」のことを\n「バリデーションチェック（バリデーション）」と呼ぶ。\n\n入力された値が形式やルールに合っているかを\n確認する処理のこと。",
         size=12.5, bold=False, color=INK, font=FONT_SANS, line_spacing=1.35)
 
-footer(s, 18, total=24)
+footer(s, 18, total=26)
 
 # ============================================================
 # スライド 11.5: 発展トーク（サニタイズ・SQLインジェクション）
@@ -1014,7 +1014,7 @@ textbox(s, Inches(0.5), Inches(6.15), Inches(12.3), Inches(0.7),
         "見出しタグ・本文タグなど、タグの種類ごとに「ブラウザがどう表示するか」が決まっている",
         size=14.5, bold=True, color=INK, font=FONT_SANS)
 
-footer(s, 19, total=24)
+footer(s, 19, total=26)
 
 # ============================================================
 # スライド 11.6: 発展トーク（サニタイズ・SQLインジェクション）
@@ -1056,7 +1056,7 @@ textbox(s, Emu(box_x + Inches(0.3)), Inches(5.57), Emu(box_w - Inches(0.6)), Inc
         "入力された文字がそのまま実行されると危険、という話は他にもある。\nSQL文をそのまま実行できてしまうと、パスワードなどが盗まれる\n「SQLインジェクション」という攻撃もある（対策方法はサニタイズとは別）。\n興味を持った人は、次回オープンキャンパスの「ホワイトハッカー体験」もチェック。",
         size=13, color=INK, font=FONT_SANS, line_spacing=1.35, align=PP_ALIGN.CENTER)
 
-footer(s, 20, total=24)
+footer(s, 20, total=26)
 
 # ============================================================
 # スライド 12: アレンジ課題
@@ -1086,7 +1086,7 @@ textbox(s, Emu(box_x + Inches(0.3)), Inches(6.28), Emu(box_w - Inches(0.6)), Inc
         "ここまでは「Webプログラマー」の仕事。配色やレイアウトを工夫するのは「Webデザイナー」の仕事の入口。\n興味がある人は、次回オープンキャンパスの「Webデザイン体験」もチェックしてみよう。",
         size=12.5, color=INK, font=FONT_SANS, line_spacing=1.3, align=PP_ALIGN.CENTER)
 
-footer(s, 21, total=24)
+footer(s, 21, total=26)
 
 # ============================================================
 # スライド 13: 体験の流れ（振り返り）
@@ -1128,7 +1128,7 @@ for i, f in enumerate(flow):
     textbox(s, Emu(x + Inches(0.85)), y, Emu(col_w - Inches(1.1)), row_h,
             f, size=13.5, color=INK, font=FONT_SANS, anchor=MSO_ANCHOR.MIDDLE, line_spacing=1.15)
 
-footer(s, 22, total=24)
+footer(s, 22, total=26)
 
 # ============================================================
 # スライド 14: まとめ
@@ -1163,7 +1163,95 @@ textbox(s, row_x, Inches(6.55), row_w, Inches(0.5),
         "小さな修正をして、動かして、確認する。この繰り返しが、実際の開発でも基本の流れです。",
         13.5, color=SUB, font=FONT_SANS, align=PP_ALIGN.CENTER)
 
-footer(s, 23, total=24)
+footer(s, 23, total=26)
+
+# ============================================================
+# スライド 14.3: 一人では作らない
+# ============================================================
+s = add_slide()
+set_bg(s)
+kicker(s, "MAKING THINGS TOGETHER")
+title(s, "ものづくりは、一人では完結しない")
+textbox(s, Inches(0.5), Inches(1.35), Inches(11.3), Inches(0.5),
+        "今日はプログラマーの役割を体験。実際には様々な役割の人が力を合わせています",
+        size=14, color=SUB, font=FONT_SANS)
+
+roles = [
+    ("Webプログラマー", "コードを書いて動かす（今日の体験）"),
+    ("デザイナー", "見やすさ・使いやすさを形にする"),
+    ("インフラエンジニア", "サイトが動き続ける場所を用意する"),
+    ("セキュリティ担当", "安全に使える仕組みを守る"),
+]
+n = len(roles)
+box_w = Inches(2.75)
+total_w = Inches(11.3)
+gap = Emu((total_w - box_w * n) // (n - 1))
+x = Emu((SLIDE_W - total_w) // 2)
+y = Inches(2.3)
+box_h = Inches(2.2)
+
+for i, (head, desc) in enumerate(roles):
+    highlighted = i == 0
+    card(s, x, y, box_w, box_h, fill=RGBColor(0xF7, 0xE9, 0xDC) if highlighted else SURFACE,
+         line=MAIN if highlighted else BORDER)
+    textbox(s, Emu(x + Inches(0.2)), Emu(y + Inches(0.25)), Emu(box_w - Inches(0.4)), Inches(0.7),
+            head, size=15, bold=True, color=MAIN if highlighted else INK, align=PP_ALIGN.CENTER,
+            font=FONT_SANS, line_spacing=1.15)
+    rect(s, Emu(x + box_w/2 - Inches(0.25)), Emu(y + Inches(1.0)), Inches(0.5), Pt(2), fill=BORDER)
+    textbox(s, Emu(x + Inches(0.2)), Emu(y + Inches(1.25)), Emu(box_w - Inches(0.4)), Inches(0.85),
+            desc, size=11.5, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.3)
+    x = Emu(x + box_w + gap)
+
+badge = pill(s, Inches(2.0), Inches(5.1), Inches(9.3), Inches(0.6), fill=MAIN)
+textbox(s, Inches(2.0), Inches(5.1), Inches(9.3), Inches(0.6),
+        "必要なのは「作る力」＋「人と話す力」＋「相手の意図をくみ取る力」",
+        size=15, color=CREAM, bold=True, align=PP_ALIGN.CENTER, font=FONT_SANS,
+        anchor=MSO_ANCHOR.MIDDLE)
+
+footer(s, 24, total=26)
+
+# ============================================================
+# スライド 14.5: ものづくりの入口
+# ============================================================
+s = add_slide()
+set_bg(s)
+kicker(s, "CLOSING MESSAGE")
+title(s, "今日の「できた！」は、ものづくりの入口")
+textbox(s, Inches(0.5), Inches(1.35), Inches(11.3), Inches(0.5),
+        "小さな修正でも、動くものが変わる。それが、ものづくりの原点です。",
+        size=14, color=SUB, font=FONT_SANS)
+
+items = [
+    ("好き", "「直したら動いた」の楽しさ"),
+    ("技術", "考えて、試して、確かめる力"),
+    ("人に役立つ", "作ったものが誰かの役に立つ"),
+]
+n = len(items)
+box_w = Inches(3.6)
+total_w = Inches(11.3)
+gap = Emu((total_w - box_w * n) // (n - 1))
+x = Emu((SLIDE_W - total_w) // 2)
+y = Inches(2.35)
+box_h = Inches(2.6)
+
+for i, (head, desc) in enumerate(items):
+    card(s, x, y, box_w, box_h, fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
+    textbox(s, x, Emu(y + Inches(0.35)), box_w, Inches(0.6),
+            head, size=22, bold=True, color=MAIN, align=PP_ALIGN.CENTER, font=FONT_SERIF)
+    rect(s, Emu(x + box_w/2 - Inches(0.3)), Emu(y + Inches(1.05)), Inches(0.6), Pt(2.5), fill=MAIN)
+    textbox(s, Emu(x + Inches(0.25)), Emu(y + Inches(1.35)), Emu(box_w - Inches(0.5)), Inches(1.0),
+            desc, size=13.5, color=INK, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.35)
+    x = Emu(x + box_w + gap)
+
+box_w2 = Inches(11.3)
+box_x2 = Emu((SLIDE_W - int(box_w2)) // 2)
+box = card(s, box_x2, Inches(5.5), box_w2, Inches(1.1), fill=SURFACE)
+textbox(s, Emu(box_x2 + Inches(0.3)), Inches(5.68), Emu(box_w2 - Inches(0.6)), Inches(0.75),
+        "ものづくりは、誰かの「便利になった」「使いやすくなった」をつくること。\n今日の体験は、そのものづくりの入口です。",
+        size=14.5, bold=True, color=INK, font=FONT_SANS, line_spacing=1.4, align=PP_ALIGN.CENTER,
+        anchor=MSO_ANCHOR.MIDDLE)
+
+footer(s, 25, total=26)
 
 # ============================================================
 # スライド 15: 締め
@@ -1187,7 +1275,7 @@ textbox(s, Inches(1.0), Inches(4.55), Inches(11.33), Inches(1.3),
         "このあとはスタッフの案内にしたがって移動をお願いします。\nこの教室にはもう戻ってきませんので、忘れ物にご注意ください。",
         size=18, color=SUB, align=PP_ALIGN.CENTER, font=FONT_SANS, line_spacing=1.5)
 
-footer(s, 24, total=24)
+footer(s, 26, total=26)
 
 out_path = "/Users/shoyabushita/Desktop/web_taiken/Webプログラミング体験_資料.pptx"
 prs.save(out_path)
