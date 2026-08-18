@@ -840,31 +840,36 @@ textbox(s, Inches(0.5), Inches(1.35), Inches(11), Inches(0.5),
 
 cy = Inches(2.5)
 ch = Inches(2.1)
+card_w = Inches(4.5)
+gap = Inches(0.6)
+group_w = Emu(int(card_w) * 2 + int(gap))
+lx = Emu((SLIDE_W - group_w) // 2)
+rx = Emu(int(lx) + int(card_w) + int(gap))
 
 # 左：郵便番号検索（関数）
-lx = Inches(0.85)
-card(s, lx, cy, Inches(5.4), ch, fill=SURFACE2)
-textbox(s, Emu(lx + Inches(0.3)), Emu(cy + Inches(0.22)), Inches(4.8), Inches(0.4),
+card(s, lx, cy, card_w, ch, fill=SURFACE2)
+textbox(s, Emu(lx + Inches(0.3)), Emu(cy + Inches(0.22)), Inches(3.9), Inches(0.4),
         "郵便番号検索", size=15, bold=True, color=INK, font=FONT_SANS)
-textbox(s, Emu(lx + Inches(0.3)), Emu(cy + Inches(0.68)), Inches(4.8), Inches(0.35),
+textbox(s, Emu(lx + Inches(0.3)), Emu(cy + Inches(0.68)), Inches(3.9), Inches(0.35),
         "find_postal_address()", size=12, color=SUB, font="Courier New")
-bullet_block(s, Emu(lx + Inches(0.3)), Emu(cy + Inches(1.15)), Inches(4.8), Inches(0.9),
+bullet_block(s, Emu(lx + Inches(0.3)), Emu(cy + Inches(1.15)), Inches(3.9), Inches(0.9),
              ["調べる相手：自分のパソコンの中\n（postal_codes テーブル）"], size=12.5, gap=0.4)
 
 # 右：現在地取得（外部API）
-rx = Inches(6.95)
-card(s, rx, cy, Inches(5.4), ch, fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
-textbox(s, Emu(rx + Inches(0.3)), Emu(cy + Inches(0.22)), Inches(4.8), Inches(0.4),
+card(s, rx, cy, card_w, ch, fill=RGBColor(0xF7, 0xE9, 0xDC), line=MAIN)
+textbox(s, Emu(rx + Inches(0.3)), Emu(cy + Inches(0.22)), Inches(3.9), Inches(0.4),
         "現在地取得（外部API）", size=15, bold=True, color=MAIN, font=FONT_SANS)
-textbox(s, Emu(rx + Inches(0.3)), Emu(cy + Inches(0.68)), Inches(4.8), Inches(0.35),
+textbox(s, Emu(rx + Inches(0.3)), Emu(cy + Inches(0.68)), Inches(3.9), Inches(0.35),
         "OpenStreetMap Nominatim", size=12, color=MAIN, font="Courier New")
-bullet_block(s, Emu(rx + Inches(0.3)), Emu(cy + Inches(1.15)), Inches(4.8), Inches(0.9),
+bullet_block(s, Emu(rx + Inches(0.3)), Emu(cy + Inches(1.15)), Inches(3.9), Inches(0.9),
              ["調べる相手：インターネットの向こうの\n別のサーバー"], size=12.5, gap=0.4)
 
-box = card(s, Inches(0.85), Inches(4.95), Inches(11.6), Inches(1.4), fill=SURFACE)
-textbox(s, Inches(1.15), Inches(5.15), Inches(11.0), Inches(1.0),
+box_w2 = group_w
+box_x2 = lx
+box = card(s, box_x2, Inches(4.95), box_w2, Inches(1.4), fill=SURFACE)
+textbox(s, Emu(box_x2 + Inches(0.3)), Inches(5.15), Emu(box_w2 - Inches(0.6)), Inches(1.0),
         "「値を渡す → 誰か（何か）が調べる → 答えが返ってくる」という形はまったく同じ。\n「API」という言葉はどちらの場所にも使えるが、実際に「APIを使う」というときは\nたいてい後者（＝Web API、インターネットの向こう）を指すことが多い。",
-        13, color=INK, font=FONT_SANS, line_spacing=1.4)
+        13, color=INK, font=FONT_SANS, line_spacing=1.4, align=PP_ALIGN.CENTER)
 
 footer(s, 15, total=24)
 
