@@ -237,6 +237,30 @@ sleep 1
 log "VSCodeを改めて起動します（2回目の起動）..."
 code --disable-workspace-trust --new-window --locale ja --user-data-dir "$VSCODE_USER_DATA" --extensions-dir "$VSCODE_EXTENSIONS" "$TARGET_DIR"
 
+# macのVSCodeにはウィンドウを最大化した状態で起動する公式フラグが無く、
+# settings.jsonのwindow.newWindowDimensions（"maximized"）も、保存済みの
+# ウィンドウ状態が無い専用プロファイルの最初のウィンドウには効かない
+# （Windows版と同様の既知の挙動）。そのため、起動後にウィンドウが実際に
+# 表示されるまで少し待ってから、AppleScriptでVSCodeのウィンドウを
+# zoom（緑ボタン相当の最大化）してからEscキーを送る
+# （Welcome/Get StartedタブやRelease Notesなどの初回ポップアップを閉じるため）。
+sleep 3
+osascript -e 'tell application "Visual Studio Code" to activate' \
+          -e 'tell application "System Events" to tell process "Code"' \
+          -e 'if (count of windows) > 0 then' \
+          -e 'set frontWindow to window 1' \
+          -e 'if value of attribute "AXFullScreen" of frontWindow is false then' \
+          -e 'set position of frontWindow to {0, 0}' \
+          -e 'tell application "Finder" to set screenSize to bounds of window of desktop' \
+          -e 'set size of frontWindow to {item 3 of screenSize, item 4 of screenSize}' \
+          -e 'end if' \
+          -e 'end if' \
+          -e 'end tell' >> "$LOG_FILE" 2>&1 || true
+sleep 1
+osascript -e 'tell application "System Events" to key code 53' >> "$LOG_FILE" 2>&1 || true
+sleep 2
+osascript -e 'tell application "System Events" to key code 53' >> "$LOG_FILE" 2>&1 || true
+
 log ""
 log "==== 4/4: PHPサーバーを起動します ===="
 if ! find_php; then

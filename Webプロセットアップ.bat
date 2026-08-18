@@ -60,15 +60,20 @@ for /f "tokens=5" %%P in ('netstat -ano ^| findstr /R /C:":8000 .*LISTENING"') d
     taskkill /PID %%P /F >> "%LOG_FILE%" 2>&1
 )
 
+rem VSCodeが既に起動していると、後で --user-data-dir / --extensions-dir を
+rem 指定して code コマンドを実行しても、既存の実行中インスタンス（個人プロファイル
+rem 等）が使い回されてしまい、専用プロファイルが反映されないことがある
+rem （VSCode CLIの既知の挙動）。TARGET_DIRの有無に関係なく、
+rem 毎回いったんVSCodeを終了させてから起動し直す。
+tasklist /FI "IMAGENAME eq Code.exe" 2>nul | find /I "Code.exe" >nul
+if not errorlevel 1 (
+    call :log "VSCode（Code.exe）を終了します。"
+    taskkill /IM Code.exe /F >> "%LOG_FILE%" 2>&1
+    timeout /t 1 /nobreak >nul
+)
+
 if exist "%TARGET_DIR%" (
     call :log "フォルダ「%TARGET_DIR%」が既に存在するため、削除してから改めて取得し直します。"
-
-    rem 削除前にVSCodeも止めておく（ファイルが使用中だと削除に失敗するため）。
-    tasklist /FI "IMAGENAME eq Code.exe" 2>nul | find /I "Code.exe" >nul
-    if not errorlevel 1 (
-        call :log "VSCode（Code.exe）を終了します。"
-        taskkill /IM Code.exe /F >> "%LOG_FILE%" 2>&1
-    )
 
     attrib -r "%TARGET_DIR%\*.*" /s /d >nul 2>nul
     rd /s /q "%TARGET_DIR%"
