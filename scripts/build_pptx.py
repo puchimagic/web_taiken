@@ -913,24 +913,34 @@ textbox(s, Inches(0.5), Inches(1.32), Inches(7.5), Inches(0.4),
         size=13.5, color=SUB, font=FONT_SANS)
 code_chip(s, Inches(9.5), Inches(1.28), Inches(2.3), Inches(0.42), "show.php")
 
-screenshot(s, os.path.join(IMG_DIR, "08_DBテーブルの中身_comments_ズーム.png"), Inches(2.66), Inches(2.4),
-           Inches(8.0), Inches(2.9), label="comments テーブルの中身（db/board.sqlite・VSCode）", label_color=SUB, pad=Pt(16))
+left_x = Inches(0.5)
+left_w = Inches(5.8)
+right_x = Inches(6.65)
+right_w = Inches(6.2)
 
-fields = ["コメントID", "投稿されたスポット", "投稿したユーザー", "コメント本文", "投稿日時"]
-total_fw = sum(Inches(0.35 + len(f) * 0.16) for f in fields) + Inches(0.15) * (len(fields) - 1)
-fx = Emu((SLIDE_W - total_fw) // 2)
-fy = Inches(5.65)
-for f in fields:
-    w = Inches(0.35 + len(f) * 0.16)
-    tag_badge(s, fx, fy, w, Inches(0.4), f)
-    fx = Emu(fx + w + Inches(0.15))
+screenshot(s, os.path.join(IMG_DIR, "08_DBテーブルの中身_comments_ズーム.png"), left_x, Inches(2.5),
+           left_w, Inches(2.4), label="comments テーブルの中身（db/board.sqlite・VSCode）", label_color=SUB, pad=Pt(16))
+
+field_rows = [
+    ["コメントID", "投稿されたスポット", "投稿したユーザー"],
+    ["コメント本文", "投稿日時"],
+]
+fy = Inches(5.4)
+for row in field_rows:
+    total_fw = sum(Inches(0.35 + len(f) * 0.16) for f in row) + Inches(0.15) * (len(row) - 1)
+    fx = Emu(int(left_x + (left_w - total_fw) / 2))
+    for f in row:
+        w = Inches(0.35 + len(f) * 0.16)
+        tag_badge(s, fx, fy, w, Inches(0.4), f)
+        fx = Emu(fx + w + Inches(0.15))
+    fy = Emu(fy + Inches(0.5))
 
 # SQL文についてさらっと触れる（show.php の実際のSQL文）
-textbox(s, Inches(2.49), Inches(6.2), Inches(8.35), Inches(0.25),
-        "これがデータベースへの問い合わせ文＝SQL文", size=11, bold=True, color=MAIN, font=FONT_SANS,
+textbox(s, right_x, Inches(2.9), right_w, Inches(0.4),
+        "これがデータベースへの問い合わせ文＝SQL文", size=16, bold=True, color=MAIN, font=FONT_SANS,
         align=PP_ALIGN.CENTER)
-screenshot(s, os.path.join(IMG_DIR, "27_show_SQL_コメントアウト_ズーム.png"), Inches(2.49), Inches(6.55),
-           Inches(8.35), Inches(0.4))
+screenshot(s, os.path.join(IMG_DIR, "27_show_SQL_コメントアウト_ズーム.png"), right_x, Inches(3.5),
+           right_w, Inches(1.7))
 
 footer(s, 17, total=26)
 
